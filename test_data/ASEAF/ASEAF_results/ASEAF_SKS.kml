@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.0">
+      <Placemark>
+      <description><![CDATA[<b>Lat: 42.794830   Long: 6.163520 </b>         <br>Antares, Var
+         ]]></description>
+      <name>ASEAF (FR)</name>
+      <LookAt>
+        <longitude>6.163520</longitude>
+        <latitude>42.794830</latitude>
+        <range>35000.</range>
+        <tilt>40.</tilt>
+        <heading>0</heading>
+      </LookAt>
+      <visibility>1</visibility>
+      <open>1</open>
+      <styleUrl>#khStyle652</styleUrl>
+      <Style>
+       <IconStyle>
+          <Icon>
+            <href>root://icons/palette-3.png</href>
+            <x>224</x>
+            <y>128</y>
+            <w>32</w>
+            <h>32</h>
+          </Icon>
+        </IconStyle>
+      </Style>
+      <Point>
+        <extrude>0</extrude>
+        <tessellate>0</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>6.163520,42.794830,0</coordinates>
+      </Point>
+    </Placemark>
+</kml>
