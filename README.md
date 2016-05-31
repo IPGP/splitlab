@@ -1,4 +1,4 @@
-# splitlab
+# SplitLab
 
 SplitLab is a Matlab based GUI to facilitate the processing of teleseismic shear-wave splitting observations. In contrast to fully automated techniques, SplitLab offers a per-event approach that maintains a user control during the sequence of processing. For more information, see the [SplitLab webpage](http://splitting.gm.univ-montp2.fr/).
 
