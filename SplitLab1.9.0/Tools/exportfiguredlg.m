@@ -93,7 +93,7 @@ if isequal(filename,0) | isequal(TMPexportdir,0)
     return
 else
    exportdir  = TMPexportdir;
-   figstr  = ['-f' num2str(fig)];
+   figstr  = ['-f' num2str(fig.Number)];
    
    F = fullfile(exportdir,filename);
    [dummy, dummy,ext] = fileparts(filename);
