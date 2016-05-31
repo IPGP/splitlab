@@ -6,3 +6,8 @@ The most recent version, SplitLab1.9.0, works on **Matlab R2015b** and **R2016a*
 
 Althought most functionalties are tested, we recommand to use the tool with caution. We cannot garantee for any bugs. However, we invite you to help us maintaining the software by reporting issues or, even better, by contributing to the code.
 
+<br> </br>
+
+<p align="center">
+  <img src="https://github.com/john-robert/splitlab/blob/master/.screen.png" align="center" height="460">
+</p>
