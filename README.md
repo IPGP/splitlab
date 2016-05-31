@@ -9,5 +9,5 @@ Althought most functionalties are tested, we recommand to use the tool with caut
 <br> </br>
 
 <p align="center">
-  <img src="https://github.com/john-robert/splitlab/blob/master/.screen.png" align="center" height="460">
+  <img src="https://github.com/john-robert/splitlab/blob/master/SplitLab1.9.0/screen.png" align="center" height="460">
 </p>
