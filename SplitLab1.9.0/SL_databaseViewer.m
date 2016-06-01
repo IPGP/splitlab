@@ -23,8 +23,6 @@ sortorder = [3  2  1  4 %date:  day month year
 
 
 %%
-strlen   = [ 0 11  12  8 8 7 6  9 8 5];
-%strlen   = [ 0 10  5 8  8 8 7 6  9 8 5];
 strlen   = [ 0 12  5 11  9 9 9 6  10 10 4];
 fontsize = 12; %pixel
 
@@ -34,7 +32,6 @@ names    = {'Date','JDay','Time','lat','long','depth','Mw','back-azi','distance'
 
 figpos=get(0,'ScreenSize');
 width= 365*1.5; height=180*1.5;
-%width= 360*1.5; height=180*1.5;
 xpos = figpos(3)- figpos(1) - width*2.22;
 ypos = 70 ;
 figpos=[xpos ypos width 270];
@@ -77,7 +74,7 @@ uimenu(h.cmenu, 'Label', 'Delete','UserData',h.list,...
 
 
 %% result list
-header = '  Phase  \Phi_{SC}  \Phi_{RC}   \deltat_{SC}   \deltat_{RC}  Quality  Null     Filter       Remark';
+header = '  Phase  \Phi_{SC}   \Phi_{RC}  \deltat_{SC}  \deltat_{RC}  Quality   Null   Filter      Remark';
 h.info(1)=uipanel('parent',h.dlg, 'units','pixel', 'Position',[40 40 ext(3)+17 100],'tag','ResultsPanel');
 h.info(4)=axes('parent',h.info(1), 'units','pixel', 'Position',[2 78 ext(3)+11 18]);
 axis off
@@ -325,7 +322,7 @@ set(l,'Position',[lold(1:3) figpos(4)-179]);
 
 
 %% This program is part of SplitLab
-% © 2006 Andreas Wüstefeld, Université de Montpellier, France
+% ? 2006 Andreas W?stefeld, Universit? de Montpellier, France
 %
 % DISCLAIMER:
 %

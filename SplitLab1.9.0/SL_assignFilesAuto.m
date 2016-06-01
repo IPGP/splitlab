@@ -35,7 +35,7 @@ if isempty(eqin)
     new_eq   = eqin;
     nomatch  = [];
     notthree = [];
-    success =0;
+    success = false;
     return
 end
 
@@ -132,14 +132,14 @@ manualfiles = union(restfiles,not3File);
 %if any([~isempty(nomatch), ~isempty(notthree)])
 set(gcbo, 'UserData', []);
 
-if length(new_eq)==0
+if isempty(new_eq)
     h= warndlg({'Found no matching files for earthquakes!',...
         'Please check: ','  - station parameters', '  - request offset time', '  - search string',' ',...
         'File search on Windows is not case sentive!',...
            'Also, the "?" wildcard may act ambiguously.',...
            'Please use a maximum uniqueness for your search string'}, 'No Match');
     waitfor(h)
-    success = 0;
+    success = false;
 else
     if ~isempty(not3File)
         h= helpdlg({['Automatically found ' num2str(length(new_eq)) ' earthquakes'],...
@@ -153,7 +153,7 @@ else
     end
 end
 %% This program is part of SplitLab
-% © 2006 Andreas Wüstefeld, Université de Montpellier, France
+% ? 2006 Andreas W?stefeld, Universit? de Montpellier, France
 %
 % DISCLAIMER:
 %

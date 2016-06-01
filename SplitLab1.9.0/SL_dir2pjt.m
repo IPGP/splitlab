@@ -8,7 +8,6 @@ function [success, config, eq] = SL_dir2pjt(config)
 % dir2pjt(searchstr, indir, outfile,Nextension,Zextension) uses
 % Nextension and Zextension as replacement for the components
 
-
 %
 % Example:
 %
@@ -35,7 +34,7 @@ switch config.FileNameConvention
         Nextension = 'BHN';
         Zextension = 'BHZ'; 
 
-%  format for RHUM-RUM raw data arriving from RESIF
+    % format for RHUM-RUM raw data arriving from RESIF
     case 'RHUM-RUM'
         % miniSEED format 'YV.RR39.00.BH1.M.2012.318.221725.SAC' 36 car
         Eextension = 'BH2';
@@ -296,7 +295,7 @@ for k = 1:length(d)
     
     eq(idx).offset      = -Offset;
     eq(idx).energy      = nan;
-    if all(strcmp(region{1}, region)) & region{1}~=-12345
+    if all(strcmp(region{1}, region)) && region{1}~=-12345
         eq(1).region    = region{1};
     else
         eq(1).region    = '';
@@ -311,7 +310,7 @@ for k = 1:length(d)
 end
 
 workbar(1)
-if length(eq)>0;
+if ~isempty(eq);
     h=helpdlg(sprintf('Succesfully imported %d events. %d files were skipped. Please save the database!',length(eq), problematic),'Import');
     waitfor(h)
     success=1;

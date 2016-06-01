@@ -1,5 +1,5 @@
 function [FIsec, FIyyyy, EQsec, Omarker] = getFileAndEQseconds(F,eqin,offset)
-%	Calculate start times of the files in seconds after midnight, January 1st
+% Calculate start times of the files in seconds after midnight, January 1st
 % this works for SAC files created with rdseed4.5.1
 % eg: F = '1993.159.23.15.09.7760.IU.KEV..BHN.D.SAC'
 % if your filnames contains no julian day, please use command
@@ -45,11 +45,19 @@ if config.UseHeaderTimes || strcmp(config.FileNameConvention, '*.e; *.n; *.z')
     fclose all;
 
 
-
 else % USE FILENAME
+
     switch config.FileNameConvention
-        case 'RDSEED'
-            % RDSEED format '1993.159.23.15.09.7760.IU.KEV..BHN.D.SAC' 
+        case 'RDSEED' % should be soft-coded ..
+            % '2012.169.20.32.00.0150.YV.EURO.00.BHE.M.SAC'
+            %
+            % letter position of Component descriptor in filename
+            % here: letter before second but last point
+            % use for last letter: comp = fstr(end);
+            % eg: 1994.130.06.35.24.9000.GR.GRA1..BHZ.D.SAC
+            %     dot is [5 9 12 15 18 23 26 31 32 36 38]
+            %     thus, pos would be 35
+            
             FIyyyy = str2num(F(:,1:4));%#ok
             FIddd  = str2num(F(:,6:8));%#ok
             FIHH   = str2num(F(:,10:11));%#ok
@@ -58,8 +66,9 @@ else % USE FILENAME
             FIMMMM = str2num(F(:,18:22));%#ok
             FIsec  = FIMMMM + FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
 
-        case 'miniSEED'
-            % miniSEED format 'IU.AGIN.00.BHN.D.1993.159.231500.SAC'
+        case 'miniSEED' % should be soft-coded ..
+            % miniSEED format (with commas)
+            % 'TA.ELFS..LHZ.R.2006,123,153619.SAC'
             FIyyyy = str2num(F(:,18:21));%#ok
             FIddd  = str2num(F(:,23:25));%#ok
             FIHH   = str2num(F(:,27:28));%#ok
@@ -67,8 +76,9 @@ else % USE FILENAME
             FISS   = str2num(F(:,31:32));%#ok
             FIsec  = FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
 
-         case 'RHUM-RUM'
-            % miniSEED format 'YV.RR39.00.BH1.M.2012.318.221725.SAC'
+        case 'RHUM-RUM' % should be soft-coded ..
+            % miniSEED format (with points) 
+            % 'YV.RR39.00.BH1.M.2012.318.221725.SAC'
             FIyyyy = str2num(F(:,18:21));%#ok
             FIddd  = str2num(F(:,23:25));%#ok
             FIHH   = str2num(F(:,27:28));%#ok
@@ -76,7 +86,7 @@ else % USE FILENAME
             FISS   = str2num(F(:,31:32));%#ok
             FIsec  = FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
 
-        case 'SEISAN'
+        case 'SEISAN' % should be soft-coded ..
             % SEISAN format '2003-05-26-0947-20S.HOR___003_HORN__BHZ__SAC'
             FIyyyy = str2num(F(:,1:4));%#ok
             FImonth= str2num(F(:,6:7));%#ok
@@ -85,9 +95,8 @@ else % USE FILENAME
             FIMM   = str2num(F(:,14:15));%#ok
             FISS   = str2num(F(:,17:18));%#ok
 
-            FIddd = dayofyear(FIyyyy',FImonth',FIdd')';%julian Day
+            FIddd = dayofyear(FIyyyy',FImonth',FIdd')'; %julian Day
             FIsec =  FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
-
 
         case 'YYYY.JJJ.hh.mm.ss.stn.sac.e'
             %  Format: 1999.136.15.25.00.ATD.sac.z
