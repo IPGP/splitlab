@@ -15,7 +15,7 @@ if ~isfield(thiseq, 'Spick') || (isempty(thiseq.Spick(1)) && isempty(thiseq.Spic
 end
 
 if  strcmp('Minimum Energy', config.splitoption) &&  strcmp('estimated', config.inipoloption)
-    answ =questdlg('Minimum energy method assumes an initial polarisation parallel to the backazimuth. Your settings still estimate the polaristion. Are you sure you want to continue?',...
+    answ = questdlg('Minimum energy method assumes an initial polarisation parallel to the backazimuth. Your settings still estimate the polaristion. Are you sure you want to continue?',...
         'Minimum Energy?','Ooops, I better check my settings', 'I know what I am doing', 'Ooops, I better check my settings');
     if strcmp(answ, 'Ooops, I better check my settings')
         return
@@ -23,14 +23,14 @@ if  strcmp('Minimum Energy', config.splitoption) &&  strcmp('estimated', config.
 end
 
 if diff(thiseq.Spick) < 1.2*config.maxSplitTime
-    answ =questdlg(['Your picked S-window is rather short (' num2str(diff(thiseq.Spick)) 'sec) compared to maximum delay time (' num2str(config.maxSplitTime)  'sec). Are you sure you want to continue?'],...
+    answ = questdlg(['Your picked S-window is rather short (' num2str(diff(thiseq.Spick)) 'sec) compared to maximum delay time (' num2str(config.maxSplitTime)  'sec). Are you sure you want to continue?'],...
         'Too short...','Ooops, I better check my settings', 'I know what I am doing', 'Ooops, I better check my settings');
     if strcmp(answ, 'Ooops, I better check my settings')
         return
     end
 end
 if  strcmp('Minimum Energy', config.splitoption) && isempty(strfind(thiseq.SplitPhase,'KS'))
-    answ =questdlg({'Eigenvalue methods for non-core-refracted waves (*KS) do only work if the S-polarisation is estimated from the S-Waveform. Are you sure you want to continue?',...
+    answ = questdlg({'Eigenvalue methods for non-core-refracted waves (*KS) do only work if the S-polarisation is estimated from the S-Waveform. Are you sure you want to continue?',...
         ' ' ,['You currently have the "' thiseq.SplitPhase '" phase selected.']},...
         'Minimum Energy?','Ooops, I better check my settings', 'I know what I am doing', 'Ooops, I better check my settings');
     if strcmp(answ, 'Ooops, I better check my settings')
@@ -52,7 +52,7 @@ if isBatchMode
         case '1 1'
             nmax = sum(config.filterset(:,5)) *  config.batch.nStartWin * config.batch.nStopWin;
         case '1 0'
-            nmax = sum(config.filterset(:,5)) ;
+            nmax = sum(config.filterset(:,5));
         case '0 1'
             nmax = config.batch.nStartWin * config.batch.nStopWin;
         case '0 0'
@@ -86,10 +86,10 @@ sbar=findobj('Tag','Statusbar');
 for ii=1:length(f1)
     
     % Get Seismograms....
-    [tmp_SG, tmp_SH,extime,winStartVec,winStopVec] = localGetFilteredSeismograms(isBatchMode, f1(ii), f2(ii), npoles(ii));
+    [tmp_SG, tmp_SH, extime, winStartVec, winStopVec] = localGetFilteredSeismograms(isBatchMode, f1(ii), f2(ii), npoles(ii));
     
     if isBatchMode && config.batch.useFilterInBatch
-        set(sbar,'String',sprintf('Status: Batch mode using filter  %.3f -- %.3f Hz',f1(ii),f2(ii) )); drawnow;
+        set(sbar, 'String', sprintf('Status: Batch mode using filter  %.3f -- %.3f Hz', f1(ii), f2(ii))); drawnow;
     end
     count    = 0;
     countmax = length(winStartVec)*length(winStopVec);
@@ -146,16 +146,7 @@ for ii=1:length(f1)
                              config.StepsPhi,...
                              config.isWeiredMAC);
            
-           %% Computation of splitting intensities (Chevrot [2000])
            if strcmp(config.studytype,'Teleseismic')
-               
-               Time = thiseq.Amp.time;
-               DT   = thiseq.dt;
-               baz  = thiseq.bazi;
-
-               Q    = thiseq.Amp.North*cosd(baz)+thiseq.Amp.East*sind(baz);  % radial component
-               T    = -thiseq.Amp.North*sind(baz)+thiseq.Amp.East*cosd(baz); % transverse component
-               
                if isfield(thiseq,'Spick')
                    T0 = thiseq.Spick(1);
                    T1 = thiseq.Spick(2);
@@ -163,57 +154,15 @@ for ii=1:length(f1)
                    T0 = thiseq.a;
                    T1 = thiseq.f;
                end
-                   
-               % filtering of the traces:
-               ny = 1/(2*thiseq.dt);
-               nf = 3;
-               f1 = thiseq.filter(1);
-               f2 = thiseq.filter(2);
                
-               if f1==0 && f2==inf % i.e. no filter
-                   continue % do nothing
-               else
-                   if f1 > 0  &&  f2 < inf % bandpass
-                       [b,a]  = butter(nf, [f1 f2]/ny);
-                   elseif f1==0 &&  f2 < inf % lowpass
-                       [b,a]  = butter(nf, [f2]/ny,'low');
-                   elseif f1>0 &&  f2 == inf % highpass
-                       [b,a]  = butter(nf, [f1]/ny, 'high');
-                   end
-                   Qfil = filtfilt(b,a,Q)'; % Radial     (Q) component
-                   Tfil = filtfilt(b,a,T)'; % Transverse (T) component
-               end
-               
-               % extend the time window
-               T0 = T0-5;
-               T1 = T1+5;
-               
-               % Deconvolution of the trace
-               i0  = find(Time>T0, 1, 'first');
-               i1  = find(Time>T1, 1, 'first');
-               reg = 0.5;
-               [RadialDeconv, TransverseDeconv] = Deconvolue(Qfil,...
-                                                             Tfil,...
-                                                             i0,...
-                                                             i1,...
-                                                             reg);
-
-               % Wiener filter (see Monteiller & Chevrot (2011))
-               regw = 0.0001;
-               tau  = 30;
-               [RadialWiener, TransverseWiener] = WienerFilter(RadialDeconv,...
-                                                               TransverseDeconv,...
-                                                               DT,...
-                                                               tau,...
-                                                               regw,...
-                                                               i0,...
-                                                               i1);
-
-               % computation of the splitting intensity 
-               splitIntens = zeros(1,2);
-               [splitIntens(1,1), splitIntens(1,2)] = splitting_intensity(RadialWiener,...
-                                                                          TransverseWiener,...
-                                                                          DT);
+               splitIntens = splitChevrot(thiseq.Amp.North,...
+                                          thiseq.Amp.East,...
+                                          thiseq.bazi,...
+                                          thiseq.dt,...
+                                          thiseq.Amp.time,...
+                                          T0,...
+                                          T1,...
+                                          thiseq.filter);
            end
            
            
@@ -230,8 +179,8 @@ for ii=1:length(f1)
             Qmean = Qsum/n;
             if Q > Qmax;
             end
-            allFasts(n,1:3)  = [ tmp_phiRC   tmp_phiSC   tmp_phiEV];
-            allDelays(n,1:3) = [ tmp_dtRC    tmp_dtSC    tmp_dtEV];
+            allFasts(n,1:3)  = [ tmp_phiRC   tmp_phiSC   tmp_phiEV]; %#ok
+            allDelays(n,1:3) = [ tmp_dtRC    tmp_dtSC    tmp_dtEV]; %#ok
             
             if ~isBatchMode
                 useThis=1;
@@ -256,11 +205,11 @@ for ii=1:length(f1)
                             EmapStack(:,:,1) = EmapStack(:,:,1) + Ematrix(:,:,1) / tmp_Eresult(1);
                             EmapStack(:,:,2) = EmapStack(:,:,2) + Ematrix(:,:,2) / tmp_Eresult(2) * sign(tmp_Eresult(2));
                         end
-                        param(n,:)= [i1 i2 f1(ii), f2(ii), npoles(ii)];
+                        param(n,:)= [i1 i2 f1(ii), f2(ii), npoles(ii)]; %#ok
                     case 6 %cluster analysis                        
                         useThis=0;
-                        param(n,:)= [i1 i2 f1(ii), f2(ii), npoles(ii)];
-                        thispick(n,:) = [winStartVec(kk) winStopVec(jj)];
+                        param(n,:)= [i1 i2 f1(ii), f2(ii), npoles(ii)]; %#ok
+                        thispick(n,:) = [winStartVec(kk) winStopVec(jj)]; %#ok
                 end
             end
             

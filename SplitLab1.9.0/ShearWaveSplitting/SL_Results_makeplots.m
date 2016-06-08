@@ -1,16 +1,15 @@
 function SL_Results_makeplots(good, fair, poor, goodN, fairN, ...
-    evt, back, phiSC, dtSC, phiRC, dtRC, phiEV, dtEV,Omega, inc, Phas)
+                              evt, back, phiSC, dtSC, phiRC, dtRC, phiEV, dtEV,Omega, inc, Phas)
 % PLot results as Misfit, Stereoplot and as function of backazimuth
 % pramters are parsed from the dialog created in SL_Results.m
 
-global config eq
+global config
 
 goodMarker  = 'r+';
 goodNMarker = 'ro';
 fairMarker  = 'bx';
 fairNMarker = 'bs';
 poorMarker  = 'm^';
-
 
 selected    = getappdata(gcbf);
 DefPos      = get(0,'DefaultFigurePosition');
@@ -21,15 +20,12 @@ defcol   = get(handles.color, 'UserData');
 defwidth = get(handles.width, 'UserData');
 defstyle = get(handles.style, 'UserData');
 
-
-
-phiErrSC = [phiSC(:,1) phiSC(:,1)]  +  [-phiSC(:,2)    phiSC(:,2)];
-dtErrSC  = [dtSC(:,1)  dtSC(:,1) ]  +  [-dtSC(:, 2)    dtSC(:,2)];
-phiErrRC = [phiRC(:,1) phiRC(:,1)]  +  [-phiRC(:,2)    phiRC(:,2)];
-dtErrRC  = [dtRC(:,1)  dtRC(:,1) ]  +  [-dtRC(:, 2)    dtRC(:,2)];
-phiErrEV = [phiEV(:,1) phiEV(:,1)]  +  [-phiEV(:,2)    phiEV(:,2)];
-dtErrEV  = [dtEV(:,1)  dtEV(:,1) ]  +  [-dtEV(:, 2)    dtEV(:,2)];
-
+phiErrSC = [phiSC(:,1) phiSC(:,1)]  +  [-phiSC(:,2) phiSC(:,2)];
+dtErrSC  = [dtSC(:,1)  dtSC(:,1) ]  +  [-dtSC(:, 2)  dtSC(:,2)];
+phiErrRC = [phiRC(:,1) phiRC(:,1)]  +  [-phiRC(:,2) phiRC(:,2)];
+dtErrRC  = [dtRC(:,1)  dtRC(:,1) ]  +  [-dtRC(:, 2)  dtRC(:,2)];
+phiErrEV = [phiEV(:,1) phiEV(:,1)]  +  [-phiEV(:,2) phiEV(:,2)];
+dtErrEV  = [dtEV(:,1)  dtEV(:,1) ]  +  [-dtEV(:, 2)  dtEV(:,2)];
 
 %if any(isinf(dtErrSC)); dtErrSC(isinf(dtErrSC)) = [0 config.maxSplitTime];  end
 %if any(isinf(dtErrRC)); dtErrRC(isinf(dtErrRC)) = [0 config.maxSplitTime];  end
@@ -43,8 +39,6 @@ phiErrSC = mod(phiErrSC+90,180)-90;
 phiErrRC = mod(phiErrRC+90,180)-90;
 phiErrEV = mod(phiErrEV+90,180)-90;
 
-
-
 phiSC = phiSC(:,1);
 dtSC  = dtSC(:,1);
 phiRC = phiRC(:,1);
@@ -52,11 +46,9 @@ dtRC  = dtRC(:,1);
 phiEV = phiEV(:,1);
 dtEV  = dtEV(:,1);
 
-
 SignRC   = sign(diff(   [phiErrRC(:,1) phiRC phiErrRC(:,2)]   ,1,2));
 SignSC   = sign(diff(   [phiErrSC(:,1) phiSC phiErrSC(:,2)]   ,1,2));
 SignEV   = sign(diff(   [phiErrEV(:,1) phiEV phiErrEV(:,2)]   ,1,2));
-
 
 
 %% XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

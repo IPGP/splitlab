@@ -4,17 +4,16 @@ function out = SL_Results_getvalues
 global  eq
 
 for i = 1 : length(eq) %just look again for evetns with results
-    x(i)=~isempty(eq(i).results);
+    x(i) = ~isempty(eq(i).results);
 end
+
 res = find(x==1) ;
 if isempty(res)
     out=[];
     return
 end
 
-
 selected = getappdata(gcf);
-
 
 
 %%
@@ -32,7 +31,7 @@ for i = 1:length(res)% Loop over each event with result
 
         if isempty(thisphase); break; end
         %check if result phase corresponds to any of the selected phase
-        correspond = ~isempty(strmatch(thisphase,selected.phases, 'exact'));
+        correspond = ~isempty(strmatch(thisphase, selected.phases, 'exact'));
         if correspond
             k=k+1;
             if strcmp(selected.method, 'Manual')
@@ -57,7 +56,7 @@ for i = 1:length(res)% Loop over each event with result
                 QQ=eq(num).results(val).Q;
                 if (QQ >.85)                 && selected.Quality(1)  && selected.Nulls(2)
                     out.good(end+1) = k;
-                elseif (QQ >.65  & QQ<=.85)  && selected.Quality(2)  && selected.Nulls(2)
+                elseif (QQ >.65 & QQ<=.85)  && selected.Quality(2)  && selected.Nulls(2)
                     out.fair(end+1) = k;
                 elseif (QQ >-.65 & QQ<=.65)  && selected.Quality(3)
                     out.poor(end+1) = k;
@@ -83,6 +82,10 @@ for i = 1:length(res)% Loop over each event with result
             out.phiEV(k,:)  = eq(num).results(val).phiEV;
             out.dtEV(k,:)   = eq(num).results(val).dtEV;
 
+            out.SI(k,:)     = eq(num).results(val).SI;
+            out.WS(:,:,k)   = eq(num).results(val).ErrorSurface(:,:,1);
+            out.ndfSC(k,:)  = eq(num).results(val).ndfSC;
+            
             out.inc(k)   = eq(num).results(val).incline;
             out.Omega(k) = mod(abs(out.phiSC(k)-out.phiRC(k)), 90);
             out.Phas{k}  = eq(num).results(val).SplitPhase;
@@ -91,8 +94,6 @@ for i = 1:length(res)% Loop over each event with result
     end
 end
 
-
-
 count = [length(out.good) length(out.fair) length(out.poor) length(out.fairN) length(out.goodN)];
 
 if k==0
@@ -100,8 +101,6 @@ if k==0
     out=[];
     return
 end
-
-
 
 disp(['Number of results: ' num2str(k)]);
 

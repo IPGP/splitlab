@@ -12,7 +12,3 @@ mes(:,3) = err(:);
 
 fit(:,1) = x(:)/deg2rad;
 fit(:,2) = y(:);
-
-
-%rms=0;%#ok
-rms= norm(pp - dt*sin(2*((az-phi)*deg2rad)))/sqrt(length(pp));
