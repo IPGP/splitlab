@@ -1,15 +1,12 @@
 function splitagain % This function automatically measured anisotropic parameters from yet measured data.
-
 %% Get through a SplitLab project and recompute the measurements already performed
 
 global thiseq config eq
-
 
 for i = 1:length(eq)% Loop over each event with result
     if isempty(eq(i).results);
         
     else
-
 		n    = 0;
 		Qmax = -inf;
 		Qsum = 0;
@@ -31,9 +28,18 @@ for i = 1:length(eq)% Loop over each event with result
 
         	SG = LQT(2,:)'; % Radial trace
         	SH = LQT(3,:)'; % Transverse trace
-
-        	thiseq.filter  = thiseq.results(num).filter; % Filter parameters (freq. min., freq. max. and poles)
-        	thiseq.Spick   = thiseq.results(num).Spick;  % Analysis windoq previously defined by the user
+            
+            if numel(thiseq.results(num).filter)==3
+                thiseq.filter  = thiseq.results(num).filter; % Filter parameters (freq. min., freq. max. and poles)
+            else % compatibilty with former versions of SplitLab
+                thiseq.filter    = thiseq.results(num).filter;
+                thiseq.filter(3) = 3; % assign pole number to the filter matrix - default is 3
+            end
+            if isfield(thiseq.results(num),'Spick')
+                thiseq.Spick = thiseq.results(num).Spick;
+            else % compatibilty with former versions of SplitLab
+                thiseq.Spick = [thiseq.results(num).a thiseq.results(num).f];
+            end
 
 			%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			%      BEGIN SPLITTING
@@ -125,6 +131,20 @@ for i = 1:length(eq)% Loop over each event with result
                              	 		 0, ...
                              	 		 config.StepsPhi,...
                              	 		 0);  % Rotation correlation method
+                                     
+                    if strcmp(config.studytype,'Teleseismic')
+                        T0 = thiseq.Spick(1);
+                        T1 = thiseq.Spick(2);
+                    
+                        splitIntens = splitChevrot(thiseq.Amp.North,...
+                                                   thiseq.Amp.East,...
+                                                   thiseq.bazi,...
+                                                   thiseq.dt,...
+                                                   thiseq.Amp.time,...
+                                                   T0,...
+                                                   T1,...
+                                                   thiseq.filter);
+                    end
         
             		% PUT VALUES IN TEMPORARY VARIABLES...
             		switch config.splitoption
@@ -144,6 +164,8 @@ for i = 1:length(eq)% Loop over each event with result
                 	dtRC_val    = tmp_dtRC  ;
                 	FSrc        = tmp_FSrc;
                 	SG_SH_corRC = tmp_SG_SH_corRC;
+                    
+                    SI          = splitIntens;
                 
                 	phiEV_val   = tmp_phiEV;
                 	dtEV_val    = tmp_dtEV  ;
@@ -245,10 +267,10 @@ for i = 1:length(eq)% Loop over each event with result
      
     			steps             = floor(mod(rota, 180)/config.StepsPhi) ;
     			CmapStack         = circshift(CmapStack, steps);
-    			Ematrix(:,:,2)  = circshift(Ematrix(:,:,2), steps);
+    			Ematrix(:,:,2)    = circshift(Ematrix(:,:,2), steps);
     
     			steps             = floor(mod(thiseq.bazi, 180)/config.StepsPhi) ;
-    			Ematrix(:,:,1)  = circshift(Ematrix(:,:,1), steps);
+    			Ematrix(:,:,1)    = circshift(Ematrix(:,:,1), steps);
 
     			phiRC(1) = mod(phiRC(1)+rota,180);
     			phiSC(1) = mod(phiSC(1)+rota,180);
@@ -259,8 +281,8 @@ for i = 1:length(eq)% Loop over each event with result
     			if phiEV(1)>90, phiEV(1)=phiEV(1)-180;end
             end
 
- 			fprintf(' Phi = %5.1f; %5.1f; %5.1f    dt = %.1f; %.1f; %.1f\n', ...
-    				phiRC(1),phiSC(1),phiEV(1), dtRC(1),dtSC(1), dtEV(1));
+ 			fprintf(' Phi = %5.1f; %5.1f; %5.1f    dt = %.1f; %.1f; %.1f    SI = %5.2f ± %4.2f\n', ...
+    				phiRC(1),phiSC(1),phiEV(1), dtRC(1),dtSC(1), dtEV(1), SI(1), SI(2));
             
         	% ASSIGN RESULTS FIELD TO GLOBAL VARIABLE
         	% first temporary, since we don't know if results will be used
@@ -274,6 +296,7 @@ for i = 1:length(eq)% Loop over each event with result
 			thiseq.tmpresult.dtSC  = dtSC;
 			thiseq.tmpresult.phiEV = phiEV;
 			thiseq.tmpresult.dtEV  = dtEV;
+            thiseq.tmpresult.SI    = SI;
             thiseq.tmpresult.LevelRC = LevelRC;
             thiseq.tmpresult.LevelSC = LevelSC;
             thiseq.tmpresult.LevelEV = LevelEV;
@@ -301,6 +324,7 @@ for i = 1:length(eq)% Loop over each event with result
 	    	eq(i).results(num).dtSC    = thiseq.tmpresult.dtSC;
 	    	eq(i).results(num).phiEV   = thiseq.tmpresult.phiEV;
 	    	eq(i).results(num).dtEV    = thiseq.tmpresult.dtEV;
+            eq(i).results(num).SI      = thiseq.tmpresult.SI;
             eq(i).results(num).LevelRC = thiseq.tmpresult.LevelRC;
             eq(i).results(num).LevelSC = thiseq.tmpresult.LevelSC;
             eq(i).results(num).LevelEV = thiseq.tmpresult.LevelEV;

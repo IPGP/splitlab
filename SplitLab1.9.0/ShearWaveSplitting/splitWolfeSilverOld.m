@@ -24,26 +24,35 @@ if dt_mod(ldt) ~= mSplitTime
     ldt = ldt+1;
 end
 
-out = SL_Results_getvalues; % import info from the checked button of the "Resuls" panel
-
 Esurf = zeros(lphi,ldt);
 
+ndf = 0;
 K=2;
-
-for i = 1:length(out.ndfSC)
-    Emap  = out.WS(:,:,i);
-    lmin  = min(Emap(:));
-    Esurf = Esurf + (Emap/lmin);
+for i = 1:length(eq) % Loop over each event with result
+    if isempty(eq(i).results);        
+    else
+        for val = 1:length(eq(i).results)     % Loop over number of results per event
+            thiseq = eq(i).results(val);
+            if ~strcmp('Poor    ',thiseq.Qstr)
+                Emap = thiseq.ErrorSurface(:,:,1);
+                lmin = min(Emap(:));
+                ndf = ndf + thiseq.ndfSC;
+                Esurf = Esurf + (Emap/lmin);
+            else
+                continue
+            end
+        end
+    end
 end
-ndf = sum(out.ndfSC);
 
 % Energy Map
 Ematrix=Esurf;
 Ematrix(end+1,:) = Ematrix(1,:);
 
-[m,i]       = min(Ematrix);
-[Eresult,j] = min(m);
-Ecrit       = Eresult*(1+K*sign(Eresult) / (ndf-K)*inv_f(K,ndf-K));
+[m,i] = min(Ematrix);
+[n,j] = min(m);
+Eresult=n;
+Ecrit = Eresult*(1+K*sign(Eresult) / (ndf-K)*inv_f(K,ndf-K));
 
 %% reconstruct grid
 f     = size(Ematrix);
@@ -75,12 +84,12 @@ config.mean_res.dtWS  = [dt errbar_t(1)];
 filename = fullfile(config.projectdir,config.project);
 save(filename,'config','eq');
 
-tit   = ['Stacked energy map of ', config.project];
-figWS = findobj('type', 'figure', 'Name', tit);
-if isempty(figWS)
+tit = ['Stacked energy map of ', config.project];
+figSW = findobj('type', 'figure', 'Name', tit);
+if isempty(figSW)
     figure('Name', tit, 'NumberTitle', 'off');
 else
-    figure(figWS)
+    figure(figSW)
     clf
 end
 

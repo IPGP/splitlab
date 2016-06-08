@@ -1,22 +1,21 @@
 function preSplit(isBatchMode)
 %% pre-processing of Shear-wave splitting
 % input is a logical determine wither batch processing or not batch
-% OUTPUT:
-%
 
-%%
+
+%% Initializing
 global thiseq config eq
 if nargin==0
     isBatchMode=false;
 end
 
 if ~isfield(thiseq, 'Spick') || (isempty(thiseq.Spick(1)) && isempty(thiseq.Spick(2)))
-    errordlg('no time window picked... Sorry, can''t split','Error')
+    errordlg('No time window picked... Sorry, can''t split','Error')
     return
 end
 
 if  strcmp('Minimum Energy', config.splitoption) &&  strcmp('estimated', config.inipoloption)
-    answ =questdlg('Minimum energy method assumes an initial polarisation parallel to the backazimuth. Your settings still estimate the polaristion. Are you sure you want to continue?',...
+    answ = questdlg('Minimum energy method assumes an initial polarisation parallel to the backazimuth. Your settings still estimate the polaristion. Are you sure you want to continue?',...
         'Minimum Energy?','Ooops, I better check my settings', 'I know what I am doing', 'Ooops, I better check my settings');
     if strcmp(answ, 'Ooops, I better check my settings')
         return
@@ -24,14 +23,14 @@ if  strcmp('Minimum Energy', config.splitoption) &&  strcmp('estimated', config.
 end
 
 if diff(thiseq.Spick) < 1.2*config.maxSplitTime
-    answ =questdlg(['Your picked S-window is rather short (' num2str(diff(thiseq.Spick)) 'sec) compared to maximum delay time (' num2str(config.maxSplitTime)  'sec). Are you sure you want to continue?'],...
+    answ = questdlg(['Your picked S-window is rather short (' num2str(diff(thiseq.Spick)) 'sec) compared to maximum delay time (' num2str(config.maxSplitTime)  'sec). Are you sure you want to continue?'],...
         'Too short...','Ooops, I better check my settings', 'I know what I am doing', 'Ooops, I better check my settings');
     if strcmp(answ, 'Ooops, I better check my settings')
         return
     end
 end
 if  strcmp('Minimum Energy', config.splitoption) && isempty(strfind(thiseq.SplitPhase,'KS'))
-    answ =questdlg({'Eigenvalue methods for non-core-refracted waves (*KS) do only work if the S-polarisation is estimated from the S-Waveform. Are you sure you want to continue?',...
+    answ = questdlg({'Eigenvalue methods for non-core-refracted waves (*KS) do only work if the S-polarisation is estimated from the S-Waveform. Are you sure you want to continue?',...
         ' ' ,['You currently have the "' thiseq.SplitPhase '" phase selected.']},...
         'Minimum Energy?','Ooops, I better check my settings', 'I know what I am doing', 'Ooops, I better check my settings');
     if strcmp(answ, 'Ooops, I better check my settings')
@@ -39,22 +38,21 @@ if  strcmp('Minimum Energy', config.splitoption) && isempty(strfind(thiseq.Split
     end
 end
 
-
 fprintf(' %s -- Estimating event  %s:%4.0f.%03.0f (%.0f/%.0f) --',...
     datestr(now,13) , config.stnname, thiseq.date(1), thiseq.date(7),config.db_index, length(eq));
 
 
 %% stacking
-n         = 0;
-Qmax      = -inf;
-Qsum      = 0;
+n    = 0;
+Qmax = -inf;
+Qsum = 0;
 if isBatchMode
-    teststring =sprintf('%1d %1d',config.batch.useFilterInBatch,  config.batch.useWindowsInBatch);
+    teststring =sprintf('%1d %1d',config.batch.useFilterInBatch, config.batch.useWindowsInBatch);
     switch teststring %switch does not take arrays, so use this workaround ;-)
         case '1 1'
             nmax = sum(config.filterset(:,5)) *  config.batch.nStartWin * config.batch.nStopWin;
         case '1 0'
-            nmax = sum(config.filterset(:,5)) ;
+            nmax = sum(config.filterset(:,5));
         case '0 1'
             nmax = config.batch.nStartWin * config.batch.nStopWin;
         case '0 0'
@@ -72,7 +70,6 @@ if isBatchMode && config.batch.useFilterInBatch
     f1     = config.filterset(idx,2);
     f2     = config.filterset(idx,3);
     npoles = config.filterset(idx,4);
-    
 else %use current filter
     f1     = thiseq.filter(1);
     f2     = thiseq.filter(2);
@@ -81,28 +78,28 @@ end
 
 
 %% Start the loops for Filter, Start- and End-Window
-%  these as all set to one for non-bath mode...
+%  these as all set to one for non-batch mode...
 
 ttime = now;
 sbar=findobj('Tag','Statusbar');
+
 for ii=1:length(f1)
     
-    %% Get Seismograms....
-    [tmp_SG, tmp_SH,extime,winStartVec,winStopVec]= localGetFilteredSeismograms(isBatchMode, f1(ii), f2(ii), npoles(ii));
-    %%
+    % Get Seismograms....
+    [tmp_SG, tmp_SH, extime, winStartVec, winStopVec] = localGetFilteredSeismograms(isBatchMode, f1(ii), f2(ii), npoles(ii));
     
     if isBatchMode && config.batch.useFilterInBatch
-        set(sbar,'String',sprintf('Status: Batch mode using filter  %.3f -- %.3f Hz',f1(ii),f2(ii) ));drawnow;
+        set(sbar, 'String', sprintf('Status: Batch mode using filter  %.3f -- %.3f Hz', f1(ii), f2(ii))); drawnow;
     end
-    count=0;
-    countmax=length(winStartVec)*length(winStopVec);
+    count    = 0;
+    countmax = length(winStartVec)*length(winStopVec);
     
     for kk = 1:length(winStartVec)
         for jj = 1:length(winStopVec)
-            count=count+1;
-            n=n+1;
-            t1 = winStartVec(end) - winStartVec(kk) ;
-            t2 = winStopVec(jj)   - winStartVec(kk) ;
+            count = count+1;
+            n  = n+1;
+            t1 = winStartVec(end) - winStartVec(kk);
+            t2 = winStopVec(jj)   - winStartVec(kk);
  
             i1 = round((extime-t1) / thiseq.dt);
             i2 = i1 + round(t2 / thiseq.dt);
@@ -114,65 +111,62 @@ for ii=1:length(f1)
             if isBatchMode
                 set(hsplit, 'Xdata', xx(:), 'FaceColor', config.Colors.SselectionColor.*[1 1 .6])
             end
-%             figure(99)
-%             plot(tmp_SH)
-%             pause
-            %**************************************************************
-            % SPLITTING METHODS
-            if ~isBatchMode;     set(sbar,'String',['Status: Calculating ' config.splitoption ' Method']);drawnow;            end
-            [tmp_phiSC, tmp_dtSC, tmp_phiEV, tmp_dtEV,  Ematrix, tmp_FSsc, tmp_SG_SH_corSC, tmp_Eresult, tmp_gamma] = ...
-                splitSilverChan(...
-                tmp_SG,...
-                tmp_SH,...
-                w,...
-                thiseq.dt,....
-                config.maxSplitTime, ...
-                config.splitoption,...
-                isBatchMode,...
-                config.StepsPhi,...
-                config.StepsDT);
             
+            % Splitting methods
+            if ~isBatchMode
+                set(sbar,'String',['Status: Calculating ' config.splitoption ' Method'])
+                drawnow;
+            end
+            [tmp_phiSC, tmp_dtSC, tmp_phiEV, tmp_dtEV,  Ematrix, tmp_FSsc, tmp_SG_SH_corSC, tmp_Eresult, tmp_gamma] = ...
+                splitSilverChan(tmp_SG,...
+                                tmp_SH,...
+                                w,...
+                                thiseq.dt,....
+                                config.maxSplitTime, ...
+                                config.splitoption,...
+                                isBatchMode,...
+                                config.StepsPhi,...
+                                config.StepsDT);
+
             if strcmp(config.inipoloption, 'fixed')
                 tmp_gamma=0;
             end
-            if ~isBatchMode;     set(sbar,'String','Status: Calculating with Rotation-Correlation method');drawnow;            end
-            [tmp_phiRC, tmp_dtRC, Cmap, tmp_FSrc, tmp_SG_SH_corRC, tmp_Cresult] = ...
-                splitRotCorr(...
-                tmp_SG,...
-                tmp_SH,...
-                w,...
-                config.maxSplitTime,...
-                thiseq.dt,...
-                isBatchMode, ...
-                config.StepsPhi,...
-                config.isWeiredMAC);
-            
-            if strcmp(config.studytype,'Teleseismic')
-                %%% CHEVROT's Splitting Intensity:
-                %  For real data, the user should choose a deconvolution window in each
-                %  data. The deconvolution window should contain the SK(K)S phase.
-                reg = 0.5; % regularization parameter for deconvolution;
-                [RadialDeconv,TransverseDeconv]...
-                    = Deconvolue(tmp_SG', tmp_SH', w(1),w(end),reg);
-                
-                %  Wiener filter:
-                m   = 2^max((nextpow2(length(RadialDeconv)) - 1), 12);
-                Y   = fft(RadialDeconv, m);
-                Pyy = Y.* conj(Y) / m;
-                [~, ind]     = max(Pyy(1:m/2));
-                domfreq = 1/thiseq.dt*(ind)/m;
-                
-                regw = 0.0001;  % regularization parameter
-                tau  = 2/domfreq; % dominant period = tau/2
-                [RadialWiener,TransverseWiener] ...
-                    = WienerFilter(RadialDeconv, TransverseDeconv, thiseq.dt, tau, regw, w(1), w(end));
-                
-                % splitting intensity analysis
-                %  [splitting_intensity    error_on_splitting_intensity]
-                splitIntens(n,1:2) = splitting_intensity(RadialWiener, TransverseWiener, thiseq.dt);
-            end
 
-            % put values in temporary variables ...
+            if ~isBatchMode
+                set(sbar,'String','Status: Calculating with Rotation-Correlation method')
+                drawnow;
+            end
+            [tmp_phiRC, tmp_dtRC, Cmap, tmp_FSrc, tmp_SG_SH_corRC, tmp_Cresult] = ...
+                splitRotCorr(tmp_SG,...
+                             tmp_SH,...
+                             w,...
+                             config.maxSplitTime,...
+                             thiseq.dt,...
+                             isBatchMode, ...
+                             config.StepsPhi,...
+                             config.isWeiredMAC);
+           
+           if strcmp(config.studytype,'Teleseismic')
+               if isfield(thiseq,'Spick')
+                   T0 = thiseq.Spick(1);
+                   T1 = thiseq.Spick(2);
+               else % compatibility with old SplitLab format
+                   T0 = thiseq.a;
+                   T1 = thiseq.f;
+               end
+               
+               splitIntens = splitChevrot(thiseq.Amp.North,...
+                                          thiseq.Amp.East,...
+                                          thiseq.bazi,...
+                                          thiseq.dt,...
+                                          thiseq.Amp.time,...
+                                          T0,...
+                                          T1,...
+                                          thiseq.filter);
+           end
+           
+           
+           %% put values in temporary variables ...
             switch config.splitoption
                 case 'Minimum Energy'
                     Q = NullCriterion(tmp_phiSC(1), tmp_phiRC(1), tmp_dtSC(1), tmp_dtRC(1));
@@ -185,9 +179,8 @@ for ii=1:length(f1)
             Qmean = Qsum/n;
             if Q > Qmax;
             end
-            allFasts(n,1:3)  = [ tmp_phiRC   tmp_phiSC   tmp_phiEV];
-            allDelays(n,1:3) = [ tmp_dtRC    tmp_dtSC    tmp_dtEV];
-            
+            allFasts(n,1:3)  = [ tmp_phiRC   tmp_phiSC   tmp_phiEV]; %#ok
+            allDelays(n,1:3) = [ tmp_dtRC    tmp_dtSC    tmp_dtEV]; %#ok
             
             if ~isBatchMode
                 useThis=1;
@@ -212,20 +205,11 @@ for ii=1:length(f1)
                             EmapStack(:,:,1) = EmapStack(:,:,1) + Ematrix(:,:,1) / tmp_Eresult(1);
                             EmapStack(:,:,2) = EmapStack(:,:,2) + Ematrix(:,:,2) / tmp_Eresult(2) * sign(tmp_Eresult(2));
                         end
-                        param(n,:)= [i1 i2 f1(ii), f2(ii), npoles(ii)];
+                        param(n,:)= [i1 i2 f1(ii), f2(ii), npoles(ii)]; %#ok
                     case 6 %cluster analysis                        
                         useThis=0;
-                        param(n,:)= [i1 i2 f1(ii), f2(ii), npoles(ii)];
-                        thispick(n,:) = [winStartVec(kk) winStopVec(jj)];
-
-%                         if n==1
-%                             tmpMapArray = zeros (size(Cmap,1), size(Cmap,2), nmax,3);
-%                         end
-%                         %save the error surface in temparray,later use that
-%                         %one closest to the cluster mean
-%                         tmpMapArray(:,:,n,1)= Cmap;
-%                         tmpMapArray(:,:,n,2)= Ematrix(:,:,2);
-%                         tmpMapArray(:,:,n,3)= Ematrix(:,:,2);
+                        param(n,:)= [i1 i2 f1(ii), f2(ii), npoles(ii)]; %#ok
+                        thispick(n,:) = [winStartVec(kk) winStopVec(jj)]; %#ok
                 end
             end
             
@@ -234,6 +218,8 @@ for ii=1:length(f1)
                 dtRC        = tmp_dtRC  ;
                 FSrc        = tmp_FSrc;
                 SG_SH_corRC = tmp_SG_SH_corRC;
+                
+                SI          = splitIntens;
                 
                 phiEV       = tmp_phiEV;
                 dtEV        = tmp_dtEV  ;
@@ -326,7 +312,6 @@ if  isBatchMode && config.batch.bestMesurementMethod > 4
     [~,closest] = min(dis);
 %     SpickBest = [winStartVec(closest(3)) winStopVec(jj)];
     
-    
     switch config.splitoption
         case 'Minimum Energy'
             Qmax = NullCriterion(phiSC(1), phiRC(1), dtSC(1), dtRC(1));
@@ -345,10 +330,9 @@ if  isBatchMode && config.batch.bestMesurementMethod > 4
     wbestXC      = bestparaXC(1):bestparaXC(2);
     wbest        = bestpara(1):bestpara(2);
     
-    %   redo splitting with best parameter set
-    [SG, SH] = localGetFilteredSeismograms (true, bestfilter(1), bestfilter(2) , bestpara(5));
-    
-    
+    % redo splitting with best parameter set
+    [SG, SH] = localGetFilteredSeismograms(true, bestfilter(1), bestfilter(2) , bestpara(5));
+
     
     %**************************************************************
     % SPLITTING METHODS
@@ -361,12 +345,10 @@ if  isBatchMode && config.batch.bestMesurementMethod > 4
         gamma=0;
     end
     if  config.batch.bestMesurementMethod==6
-        [tmp_SG, tmp_SH]   = localGetFilteredSeismograms(true, bestfilterXC(1), bestfilterXC(2) , bestparaXC(5));
+        [tmp_SG, tmp_SH] = localGetFilteredSeismograms(true, bestfilterXC(1), bestfilterXC(2) , bestparaXC(5));
     end
     [~, ~, CmapStack, FSrc, SG_SH_corRC, Cresult] = ...
         splitRotCorr(tmp_SG, tmp_SH, wbestXC,config.maxSplitTime, thiseq.dt, false, config.StepsPhi,config.isWeiredMAC);
-
-    
     
     if  config.batch.bestMesurementMethod==6
         EmapStack = Ematrix;
@@ -378,9 +360,7 @@ if  isBatchMode && config.batch.bestMesurementMethod > 4
         end
     end
     
-    
 end
-
 
 %weighting of quality
 if config.batch.bestMesurementMethod==3 || config.batch.bestMesurementMethod ==4 || config.batch.bestMesurementMethod ==6
@@ -395,10 +375,8 @@ set(hsplit, 'Xdata', xx(:), 'FaceColor',config.Colors.SselectionColor)
 set(gcbf,'Pointer','crosshair')
 
 
-
 %**************************************************************
 %% PostProcessing and Graphics preparation
-
 
 %gamma is matematically positive from SG towards SH...
 M = [ cosd(gamma)  sind(gamma);
@@ -414,16 +392,12 @@ FSrc = detrend(FSrc,'linear');        FSrc    = detrend(FSrc,'constant');
 FSsc = detrend(FSsc,'linear');        FSsc    = detrend(FSsc,'constant');
 
 
-
-
-
 %% **************************************************************
 %Signal-To-Noise ratio
 SNR  = [...
     max(abs(QTcorRC(:,1))) / (2*std(QTcorRC(:,2)));   %SNR_QT on same window after correction (like Restivo & Helffrich,1998)
     max(abs(QTcorSC(:,1))) / (2*std(QTcorSC(:,2)))... %SNR_QT on same window after correction (like Restivo & Helffrich,1998)
     ];
-
 
 % dominant frequency:
 m   = 2^max((nextpow2(1/thiseq.dt) - 1), 12);
@@ -447,8 +421,8 @@ dtSC    = [dtSC    errbar_tSC(1)  ];
 phiEV   = [phiEV   errbar_phiEV(1)];
 dtEV    = [dtEV    errbar_tEV(1)  ];
 
-fprintf(' Phi = %5.1f; %5.1f; %5.1f    dt = %.1f; %.1f; %.1f\n', ...
-    phiRC(1),phiSC(1),phiEV(1), dtRC(1),dtSC(1), dtEV(1));
+fprintf(' Phi = %5.1f; %5.1f; %5.1f    dt = %.1f; %.1f; %.1f    SI = %4.1f ± %3.1f\n', ...
+    phiRC(1),phiSC(1),phiEV(1), dtRC(1),dtSC(1), dtEV(1), SI(1), SI(2));
 
 caltime = (now - ttime)*24*3600;
 
@@ -465,7 +439,6 @@ thiseq.inipol = abc2enz(...
     thiseq.selectedpol, ...
     thiseq.selectedinc, ...
     gamma);
-
 
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -499,14 +472,12 @@ if strcmpi(config.studytype,'Teleseismic')
     end
     allFasts(allFasts>90) = allFasts(allFasts>90)-180;
     
-    
     steps             = floor(mod(rota, 180)/config.StepsPhi) ;
     CmapStack         = circshift(CmapStack, steps);
     EmapStack(:,:,2)  = circshift(EmapStack(:,:,2), steps);
     
     steps             = floor(mod(thiseq.bazi, 180)/config.StepsPhi) ;
     EmapStack(:,:,1)  = circshift(EmapStack(:,:,1), steps);
-
 
     phiRC(1) = mod(phiRC(1)+rota,180);
     phiSC(1) = mod(phiSC(1)+rota,180);
@@ -515,14 +486,7 @@ if strcmpi(config.studytype,'Teleseismic')
     if phiRC(1)>90, phiRC(1)=phiRC(1)-180;end
     if phiSC(1)>90, phiSC(1)=phiSC(1)-180;end
     if phiEV(1)>90, phiEV(1)=phiEV(1)-180;end
-
 end   
-
-
-
-
-
-
 
 
 %% Assign results field to global variable
@@ -538,7 +502,7 @@ thiseq.tmpresult.dtSC    = dtSC;
 thiseq.tmpresult.phiEV   = phiEV;
 thiseq.tmpresult.dtEV    = dtEV;
 
-thiseq.tmpresult.splitIntens = splitIntens;
+thiseq.tmpresult.SI      = splitIntens;
 
 thiseq.tmpresult.inipol  = thiseq.inipol;
 thiseq.tmpresult.SNR     = SNR;
@@ -547,10 +511,12 @@ thiseq.tmpresult.domfreq = thiseq.domfreq;
 thiseq.tmpresult.Spick   = SpickBest;
 
 thiseq.tmpresult.remark  = '';  %default remark
+
 if config.saveErrorSurface
     thiseq.tmpresult.ErrorSurface = Ematrix;
     thiseq.tmpresult.ndfSC = ndfSC;
 end
+
 
 %% diagnostic plot
 ttime=now;
@@ -574,10 +540,7 @@ drawtime=(now-ttime)*24*3600;
 
 %% finishing  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 set(sbar,'String',['Status:  calculation time: ' num2str(caltime,4) ' seconds;     drawing time: ' num2str(drawtime,4) 'sec'])
-drawnow
-
-
-
+drawnow;
 
 
 %% Log file; saving all different results
@@ -587,26 +550,11 @@ if log
 end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [SG,SH,extime,winStartVec,winStopVec] = localGetFilteredSeismograms(isBatchMode,f1,f2,npoles)
 global config thiseq
 
-
-%% extend selection window
+% extend selection window
 extime    = config.maxSplitTime * 2 ;%extend to both sides
 o         = thiseq.Amp.time(1); %common offset of all files after hypotime
 
@@ -649,14 +597,12 @@ if isBatchMode
         winStartVec = thiseq.Spick(1);
         winStopVec  = thiseq.Spick(2);
     end
-    
-    
+      
     % indices of selection window relative to extended window
     extbegin  = round( (thiseq.Spick(1)  - extime + minWin - o) / thiseq.dt) + 1;
     extfinish = round( (thiseq.Spick(2)  + extime + maxWin - o) / thiseq.dt) + 1;
     extIndex  = extbegin:extfinish;
-    
-    
+      
 else
     winStartVec = thiseq.Spick(1);
     winStopVec  = thiseq.Spick(2);
@@ -670,8 +616,7 @@ if extbegin <1
     return
 end
 
-
-%%
+%
 if strcmp(thiseq.SplitPhase, 'none')
     SH= thiseq.Amp.North(:);
     SG = -thiseq.Amp.East(:);
@@ -680,26 +625,22 @@ else
     SH = thiseq.Amp.SH(:);
 end
 
-
-%% DeTrend & DeMean
+% DeTrend & DeMean
 SG = detrend(SG,'linear');SG = detrend(SG,'constant');
 SH = detrend(SH,'linear');SH = detrend(SH,'constant');
 
-
-%% Cosine Taper
+% Cosine Taper
 len   = length(SG); %taper length is 2% of total seismogram length
 taper = tukeywin(len, config.filter.taperlength/100);        
 SG = SG .* taper;    
 SH = SH .* taper;  
 
-
-%% Filtering
+% Filtering
 % the seismogram components are not yet filtered
 % define your filter here.
 % the selected corner frequencies are stored in the varialbe "thiseq.filter"
 %
 ny  = 1/(2*thiseq.dt);%nyquist freqency of seismogramm
-
 
 if f1==0 && f2==inf %no filter
     % do nothing
@@ -720,24 +661,20 @@ else
         [b,a]  = butter(npoles, [-f2 -f1]/ny, 'stop');
     end
     SG = filtfilt(b,a,SG); %Radial     (Q) component in extended time window
-    SH = filtfilt(b,a,SH); %Transverse (T) component in extended time window
-    
+    SH = filtfilt(b,a,SH); %Transverse (T) component in extended time window 
 end
-%% Cut to extended window
+
+% Cut to extended window
 SG = SG(extIndex);
 SH = SH(extIndex);
 
 
-
-
-
-%% 
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function  [phi, dt]  = localGetMinimum(mapStack)
 
 global thiseq config
 [~, ind]           = min(mapStack(:));
 [indexPhi, indexDt]   = ind2sub(size(mapStack), ind);
-
 
 shift  = (indexDt-1)*config.StepsDT;    % samples
 dt     = shift * thiseq.dt;         % seconds
@@ -747,5 +684,3 @@ phi          = mod(phi_test_min,  180);
 if phi>90
     phi = phi-180; %put in -90:90
 end
-
-

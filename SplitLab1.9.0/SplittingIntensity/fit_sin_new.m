@@ -1,5 +1,5 @@
 function [ap,dt,phi,ddt,dphi,cov,rms] = fit_sin_new(pol,azi,sigma)
-%sigma=sigma/10;
+
 npt = length(azi);
 deg2rad = pi/180;
 if npt < 2;
@@ -27,32 +27,12 @@ A(:,2) = x2(:)./sigma(:);
 b = zeros(1,length(pol));
 b(:) = pol(:)./sigma(:);
 b=b';
-% size(A)
-% size(b)
-ap=inv(A'*A)*A'*b;
+
+ap=(A'*A)\A'*b;
 cov=inv(A'*A);
-% % Decomposition en valeurs singulieres de
-% % la matrice A
-% [U,S,V] = svd(A);
-% 
-% % Determination des parametres
-% %ap = zeros(1,4);
-% ap = zeros(1,2);
-% for j = 1:2
-%   u = U(:,j);
-%   v = V(:,j);
-%   ap = ap+((b*u)/S(j,j))*v';
-% end 
-% 
-% for j = 1:2
-%   W(:,j) = V(:,j)/S(j,j);
-% end
-% 
-% cov = W*W';
 
 % Calcul des parametres de splitting
 dt(1) = sqrt(ap(1)^2+ap(2)^2);
-%phi(1) = 0.5*asin(-ap(1)/dt(1))/deg2rad;
 phi(1) = 0.5*atan2(-ap(1)/dt(1),ap(2)/dt(1))/deg2rad;
 
 %Calcul des erreurs
