@@ -1,7 +1,7 @@
 function [axH, axRC, axSC, axSeis] = splitdiagnosticLayout(Synfig)
 
-set(Synfig,'KeypressFcn', @DiagnosticKeyPress)
 
+set(Synfig,'KeypressFcn', @DiagnosticKeyPress)
 
 m1 = uimenu(Synfig,'Label', 'Quality');
 q(1) = uimenu(m1, 'Label', 'Good    ', 'Callback', @q_callback);
@@ -15,7 +15,7 @@ m2 = uimenu(Synfig,'Label', 'Result');
 n(1) = uimenu(m2, 'Label', 'Save',       'Accelerator', 's', 'Callback', 'saveresult;');
 n(2) = uimenu(m2, 'Label', 'Discard',    'Accelerator', 'd', 'Callback', 'close(gcbf)');
 n(3) = uimenu(m2, 'Label', 'Add remark', 'Accelerator', 'r', 'Callback', ...
-    'n=thiseq.resultnumber; thiseq.tmpresult.remark = char(inputdlg(''Enter a remark to this result'', ''Remark'',1,{thiseq.tmpresult.remark})); clear n;');
+    'n = thiseq.resultnumber; thiseq.tmpresult.remark = char(inputdlg(''Enter a remark to this result'', ''Remark'',1,{thiseq.tmpresult.remark})); clear n;');
 set(n(1:2), 'Userdata', n(1:2))
 
 m3 = uimenu(Synfig, 'Label', 'Figure');
@@ -104,14 +104,12 @@ exportfiguredlg(gcbf, [defaultname defaultextension],config.savedir,config.expor
 %% xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 function DiagnosticKeyPress(src,evnt)
 global thiseq
-hndl  = get(src,'UserData'); %handles to menu entries
-hndl  = hndl{2};
-if strcmp(evnt.Key,'home')||strcmp(evnt.Key,'escape')||strcmp(evnt.Key,'delete')
+
+hndl = get(src,'UserData'); % handles to menu entries
+hndl = hndl{2};
+if strcmp(evnt.Key,'home') || strcmp(evnt.Key,'escape') || strcmp(evnt.Key,'delete')
     close(gcbf);
     return;
-% elseif strcmp(evnt.Key,'return')
-%     saveresult;
-%     return;
 end 
 
 switch evnt.Character

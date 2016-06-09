@@ -2,11 +2,11 @@ function SL_updatefiltered(seis)
 % update the 3 component display after filtering
 
 global thiseq  config eq
+
+
 ny = round(1 / thiseq.dt / 2); %nyquist frequency
 f1 = thiseq.filter(1);
 f2 = thiseq.filter(2);
-
-
 
 if length(thiseq.filter)<3 %version compatibility
     norder = 3;

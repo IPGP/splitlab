@@ -1,33 +1,34 @@
 function splitdiagnosticplot(SG, SH, QT, ...
-    extime,...
-    w,...
-    incli,...
-    strikes,...
-    sampling,...
-    gamma,...  %angle between SG and Initial polarisation
-    phiRC, dtRC, Cmatrix, corFSrc, QTcorRC,SG_SH_corRC,...
-    phiSC, dtSC, Ematrix, corFSsc, QTcorSC,SG_SH_corSC,...
-    phiEV, dtEV,...
-    LevelSC, LevelRC, LevelEV,...
-    splitoption, Qvector, bestfilter,...
-    allFasts,allDelays)
-
+                             extime,...
+                             w,...
+                             incli,...
+                             strikes,...
+                             sampling,...
+                             gamma,...  %angle between SG and Initial polarisation
+                             phiRC, dtRC, Cmatrix, corFSrc, QTcorRC,SG_SH_corRC,...
+                             phiSC, dtSC, Ematrix, corFSsc, QTcorSC,SG_SH_corSC,...
+                             phiEV, dtEV,...
+                             LevelSC, LevelRC, LevelEV,...
+                             splitoption, Qvector, bestfilter,...
+                             allFasts,allDelays)
 
 global thiseq config
 
+
 maxtime = (size(Ematrix,2)-1) * config.StepsDT * thiseq.dt;
-Synfig = findobj('Name', 'Diagnostic Viewer','Type','figure');
+Synfig  = findobj('Name', 'Diagnostic Viewer','Type','figure');
+
 if isempty(Synfig)
     S = get(0,'Screensize');
     Synfig = figure('Name', 'Diagnostic Viewer',...
-        'Renderer',        'painters',...
-        'Color',           'w',...
-        'NumberTitle',     'off',...
-        'MenuBar',         'none',...
-        'PaperType',       config.PaperType,...
-        'PaperOrientation','landscape',...
-        'PaperUnits',      'centimeter',...
-        'Position',        [.01*S(3) .1*S(4) .98*S(3) .75*S(4)]);
+                    'Renderer',        'painters',...
+                    'Color',           'w',...
+                    'NumberTitle',     'off',...
+                    'MenuBar',         'none',...
+                    'PaperType',       config.PaperType,...
+                    'PaperOrientation','landscape',...
+                    'PaperUnits',      'centimeter',...
+                    'Position',        [.01*S(3) .1*S(4) .98*S(3) .75*S(4)]);
 else
     figure(Synfig)
     clf
@@ -45,42 +46,42 @@ titlefontsize = fontsize+2;
 %%
 switch splitoption
     case 'Minimum Energy'
-        Ematrix = Ematrix(:,:,1);
+        Ematrix   = Ematrix(:,:,1);
         optionstr ='Minimum Energy';
         phi = phiSC(1);
         dt  = dtSC(1);
-        Level = LevelSC;
+        Level    = LevelSC;
         Maptitle = 'Energy Map of T';
         allFasts  = allFasts(:,[1 2]);
         allDelays = allDelays(:,[1 2]);
 
     case 'Eigenvalue: min(lambda1 * lambda2)'
-        Ematrix = Ematrix(:,:,2);
+        Ematrix   = Ematrix(:,:,2);
         optionstr ='Minimum \lambda1 * \lambda2';
         phi = phiEV(1);
         dt  = dtEV(1);
-        Level =LevelEV;
-        Maptitle = 'Map of Eigenvalues \lambda1 * \lambda2';
+        Level = LevelEV;
+        Maptitle  = 'Map of Eigenvalues \lambda1 * \lambda2';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
 
     case 'Eigenvalue: min(lambda2 / lambda1)'
-        Ematrix = Ematrix(:,:,2);
+        Ematrix   = Ematrix(:,:,2);
         optionstr ='Minimum   \lambda2 / \lambda1';
         phi = phiEV(1);
         dt  = dtEV(1);
-        Level =LevelEV;
-        Maptitle = 'Map of Eigenvalues \lambda2 / \lambda1';
+        Level = LevelEV;
+        Maptitle  = 'Map of Eigenvalues \lambda2 / \lambda1';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
         
     case 'Eigenvalue: max(lambda1 / lambda2)'
-        Ematrix = Ematrix(:,:,2);
+        Ematrix   = Ematrix(:,:,2);
         optionstr ='Maximum   \lambda1 / \lambda2';
         phi = phiEV(1);
         dt  = dtEV(1);
-        Level =LevelEV;
-        Maptitle = 'Map of Eigenvalues \lambda1 / \lambda2';
+        Level = LevelEV;
+        Maptitle  = 'Map of Eigenvalues \lambda1 / \lambda2';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
  
@@ -90,25 +91,24 @@ switch splitoption
         phi = phiEV(1);
         dt  = dtEV(1);
         Level =LevelEV;
-        Maptitle = 'Map of Eigenvalue \lambda2';
+        Maptitle  = 'Map of Eigenvalue \lambda2';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
 
     case 'Eigenvalue: max(lambda1)'
-        Ematrix = Ematrix(:,:,2);
+        Ematrix   = Ematrix(:,:,2);
         optionstr ='Maximum  \lambda1';
         phi = phiEV(1);
         dt  = dtEV(1);
         Level =LevelEV;
-        Maptitle = 'Map of Eigenvalue \lambda1';
+        Maptitle  = 'Map of Eigenvalue \lambda1';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
 end
 
-
 if strcmpi(config.studytype,'Teleseismic')
     yystr= {'E ', 'N '}; 
-    if strcmp(config.inipoloption, 'fixed')
+    if strcmp(config.inipoloption,'fixed')
         B = mod(thiseq.bazi,90);     %backazimuth lines
     else
         B = mod(thiseq.inipol,90);   %backazimuth lines
@@ -127,14 +127,15 @@ end
 %%
 [axH, axRC, axSC, axSeis] = splitdiagnosticLayout(Synfig);
 splitdiagnosticSetHeader(axH, ...
-    phiRC, dtRC, phiSC, dtSC, phiEV, dtEV,...
-    strikes, thiseq.inipol,incli,...
-    splitoption,bestfilter,gamma);
+                         phiRC, dtRC, phiSC, dtSC, phiEV, dtEV,...
+                         strikes, thiseq.inipol,incli,...
+                         splitoption,bestfilter,gamma);
 
 
 %% x-values for seismogram plots
 s = size(QTcorRC, 1);     %selection length
 t = (0:(s-1))*sampling;
+
 
 %%  Rotation-Correlation Method  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % fast/slow seismograms

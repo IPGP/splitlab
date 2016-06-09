@@ -194,12 +194,12 @@ global thiseq
     
 %%    
 function changelockstate(src,event)
-seis  = findobj('Tag','seismo');
+seis = findobj('Tag','seismo');
 
 switch get(src,'State')
     case 'on'%lock to common Y-limits
         for k=1:3
-            yyy(k,:)   =get(get(seis(k),'Parent'),'YLim');
+            yyy(k,:) = get(get(seis(k),'Parent'),'YLim');
         end
         yyy =[min(yyy(:,1)) max(yyy(:,2))];
         for k=1:3
@@ -212,6 +212,8 @@ switch get(src,'State')
         end
         set(src,'Cdata',getfield(get(src,'UserData'),'unlocked'))
 end
+
+
 %% ------------------------------------------------------------------
 function playseismo(a,b)
 global thiseq
@@ -237,6 +239,7 @@ s     = sign(y);
 music = abs(y(:,1)).^.5 .* s(:,1); %amplify small amplitudes
 
 sound(music, 1000)%shift it in audible frequencies
+
 
 %% ------------------------------------------------------------------
 function exportsac(src,event,seis)
