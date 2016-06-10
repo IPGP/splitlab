@@ -41,7 +41,7 @@ thiseq.Qstr = '        ' ;
 str ={['\rm  Event: \bf' ...
     sprintf('%s (%03.0f) %02.0f:%02.0f  %6.2fN %6.2fE  %.0f%c%c  \\rmMw=\\bf%3.1f',thiseq.dstr, thiseq.date([7 4 5]) ,thiseq.lat, thiseq.long, thiseq.depth,depthunit, thiseq.Mw) ];
     [' \rmStation: \bf' strrep(config.stnname, '_','\_') '   \rmBackazimuth: \bf' sprintf('%5.1f',thiseq.bazi) '\circ   \rmDistance: \bf' sprintf('%.2f',thiseq.geodis3D) depthunit] ;
-    ['\rminit.Pol.:  \bf' sprintf('%5.1f',pol)   '\circ    \rmInclination: \bf' sprintf('%5.1f', inc)  '\circ   \rmFilter: \bf' sprintf('%.3fHz - %.2fHz',bestfilter) ];
+    ['\rminit.Pol.:  \bf' sprintf('%5.1f',pol)   '\circ    \rmInclination: \bf' sprintf('%5.1f', inc)  '\circ   \rmFilter: \bf' sprintf('%.3fHz - %.2fHz',bestfilter(1:2)) ];
     [' \rm     \Psi =  ' sprintf('%5.1f' ,gamma) '\circ    strike   (fast)          delay   '];
     ['\rmRotation Correlation:  ' str11 '   ' str21];
     ['\rm      Minimum Energy:  ' str12 '   ' str22];
