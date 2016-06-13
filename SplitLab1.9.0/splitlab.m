@@ -1,26 +1,26 @@
-
 function splitlab
 % Main window of the SplitLab toolbox, configure the parameters and projects
 % creating the configuration figure of Splitlab
 
 global config 
 
+
 ok = checkmattaupclass;
-if ok==0;    warning('Troubles loading matTaup') ;  end
+if ok==0; warning('Troubles loading matTaup'); end
 
 SL_checkversion
 config.version='SplitLab1.9.0';
-config.saveErrorSurface=1;
+config.saveErrorSurface = 1;
 
 [p,f] = fileparts(mfilename('fullpath'));  % directory of Splitlab
-set(0,'DefaultFigurecolor', [224   223   227]/255 ,...
-      'DefaultFigureWindowStyle','normal',...
-      'DefaultUIControlBackgroundColor', [224   223   227]/255) 
-close(findobj('Type','Figure',  'Name', 'Database Viewer'));
-close(findobj('Type','Figure',  'Tag',  'EarthView'));  
-close(findobj('Type','Figure',  'Tag',  'SeismoFigure'));  
+set(0, 'DefaultFigurecolor', [224   223   227]/255 ,...
+       'DefaultFigureWindowStyle', 'normal',...
+       'DefaultUIControlBackgroundColor', [224   223   227]/255) 
+close(findobj('Type', 'Figure', 'Name', 'Database Viewer'));
+close(findobj('Type', 'Figure', 'Tag',  'EarthView'));  
+close(findobj('Type', 'Figure', 'Tag',  'SeismoFigure'));  
   
-cfig=findobj('type','Figure','name',['Configure ' config.version]);
+cfig = findobj('type', 'Figure', 'name', ['Configure ' config.version]);
 
 %% try several fonts for best display of text and uicontrols
 % set(0,'screenPixelsPerInch', 96); %This is the default Windows DPI. we need to fix this for portability reasons! 
@@ -29,12 +29,12 @@ list = listfonts;
 %change to your needs and computer...
 preffont={'M Sans Serif', 'Tahoma', 'Arial','Helvetica','Lucida Sans Unicode'};
 
-for  k=1:length(preffont);
-    font=preffont(k);
+for k=1:length(preffont);
+    font = preffont(k);
     if sum(strcmpi(font,list))==1
-        set(0,'DefaultUIcontrolFontUnits','pixel')
-        set(0,'DefaultUIcontrolFontName',  char(font),...            'DefaultAxesFontName',         char(font), ...
-            'DefaultUIcontrolFontSize',10 );         %,...            'DefaultAxesFontSize',         8 ,...
+        set(0, 'DefaultUIcontrolFontUnits', 'pixel')
+        set(0, 'DefaultUIcontrolFontName', char(font),...            'DefaultAxesFontName',         char(font), ...
+               'DefaultUIcontrolFontSize', 10 );         %,...            'DefaultAxesFontSize',         8 ,...
         break
     end
     if k==length(preffont)
@@ -49,12 +49,22 @@ for  k=1:length(preffont);
     end
 end
 
+%% Load last opened project if it exists
+ pjtlist = getpref('Splitlab','History');
+ if ~isempty(pjtlist)
+     load('-mat',pjtlist{1});
+ else
+     % do nothing
+ end
+ 
+
 %%
 if isempty(cfig)
-    cfig=figure('name',['Configure ' config.version],...
-        'Menubar','none',...
-        'NumberTitle','off','units','pixel');%,...        'CloseRequestFcn',@myclosereq);  
+    cfig = figure('name',['Configure ' config.version],...
+                  'Menubar','none',...
+                  'NumberTitle','off','units','pixel');
 end
+
 figure(cfig)
 clf
 
@@ -63,7 +73,9 @@ clf
 h.menu = uibuttongroup('visible','on','units','pixel','Position',[5 5 120 410],...
     'BackgroundColor','w','HighlightColor',[1 1 1]*.3,...
     'BorderWidth',1,'BorderType','beveledin' );
-drawnow
+drawnow;
+
+
 %% Main Panels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 load icon.mat ;
 
@@ -79,7 +91,6 @@ configpanelSEARCHWIN;
 configpanelUSER;
 configpanelFINDFILE;
 configpanelSPLITOPTION;
-
 
 set(h.panel(2:end), 'Visible','off');
 
@@ -121,6 +132,7 @@ h.menu(7) = uicontrol(...
     'pos',[10 200 100 30],'parent',h.menu(1),'HandleVisibility','off',...
     'Userdata',h.panel(11));
 
+
 %% Side panel: push buttons
 uicontrol('parent',h.menu(1),...
     'Units','pixel',...
@@ -130,12 +142,14 @@ uicontrol('parent',h.menu(1),...
     'Tooltip',' See help documents',...
     'Callback','open SplitLabPro_TheUserGuide.pdf' );
 %-------------------------------------------------------------------------
-pjtlist = getpref('Splitlab','History');
+%pjtlist = getpref('Splitlab','History');
+
 files   = {};
 for k =1:length(pjtlist);
     [pp,name,ext] = fileparts(pjtlist{k});
     files{k}=[name ext];
 end
+
 loadstr={'    Load Project','    Browse...', files{:}};
 
 h.menu(8) = uicontrol(...
@@ -184,7 +198,7 @@ set(h.menu(1),'Visible','on');
 
 figure(cfig)
 
-
+load('-mat',pjtlist{1});
 
 % intrestingly, at startup the first value of the random gegenator is often 0.9501
 % so, generate first dum dummy random numbers, and than in a new round take 
@@ -195,8 +209,6 @@ R = rand(1,2);
  %if R(1)>.92,    postcardware,      end %Delete this line, if you have already sent a PostCard
  %if R(2)>.92,    acknowledgement,   end
 end
-
-
 
 
 
@@ -226,7 +238,7 @@ elseif  val == 2 %Browse...
     pjtlist = getpref('Splitlab','History');
     
    [tmp1,pathstr] = uigetfile( str ,'Project file', [config.projectdir, filesep]) ; 
-    if isstr(pathstr) %user did not cancle
+    if isstr(pathstr) %user did not cancel
         load('-mat',fullfile(pathstr,tmp1))
         newfile = fullfile(pathstr,tmp1);
         match = find(strcmp(newfile, pjtlist));
@@ -243,14 +255,14 @@ elseif  val == 2 %Browse...
             new     = [match setdiff(L,match)];
             pjtlist = pjtlist(new);
         end
-      else %user did cancle
-          return
+    else %user did cancel
+        return
     end
 
 else
     pjtlist = getpref('Splitlab','History');
     %moving recently loaded to top of list
-    n        = val-2; %data does not contain the "Load" and "browse" entries
+    n       = val-2; %data does not contain the "Load" and "browse" entries
     L       = 1:length(pjtlist);
     new     = [n setdiff(L,n)];
     pjtlist = pjtlist(new);

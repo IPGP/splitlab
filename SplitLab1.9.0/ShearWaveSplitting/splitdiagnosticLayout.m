@@ -1,7 +1,7 @@
 function [axH, axRC, axSC, axSeis] = splitdiagnosticLayout(Synfig)
 
-set(Synfig,'KeypressFcn', @DiagnosticKeyPress)
 
+set(Synfig,'KeypressFcn', @DiagnosticKeyPress)
 
 m1 = uimenu(Synfig,'Label', 'Quality');
 q(1) = uimenu(m1, 'Label', 'Good    ', 'Callback', @q_callback);
@@ -15,14 +15,14 @@ m2 = uimenu(Synfig,'Label', 'Result');
 n(1) = uimenu(m2, 'Label', 'Save',       'Accelerator', 's', 'Callback', 'saveresult;');
 n(2) = uimenu(m2, 'Label', 'Discard',    'Accelerator', 'd', 'Callback', 'close(gcbf)');
 n(3) = uimenu(m2, 'Label', 'Add remark', 'Accelerator', 'r', 'Callback', ...
-    'n=thiseq.resultnumber; thiseq.tmpresult.remark = char(inputdlg(''Enter a remark to this result'', ''Remark'',1,{thiseq.tmpresult.remark})); clear n;');
+    'n = thiseq.resultnumber; thiseq.tmpresult.remark = char(inputdlg(''Enter a remark to this result'', ''Remark'',1,{thiseq.tmpresult.remark})); clear n;');
 set(n(1:2), 'Userdata', n(1:2))
 
 m3 = uimenu(Synfig, 'Label', 'Figure');
 uimenu(m3, 'Label', 'Save current figure',  'Accelerator','z', 'Callback', @localSavePicture);
 uimenu(m3, 'Label', 'Print current figure', 'Accelerator','p', 'Callback', 'printdlg(gcbf)');
 uimenu(m3, 'Label', 'Close (Esc)',          'Accelerator','q', 'Separator', 'on', 'Callback', 'close(gcbf)');
-uimenu(m3, 'Label', 'Page setup',           'Callback', 'pagesetupdlg(gcbf)');
+%uimenu(m3, 'Label', 'Page setup',           'Callback', 'pagesetupdlg(gcbf)');
 uimenu(m3, 'Label', 'Print preview',        'Callback', 'printpreview(gcbf)');
 
 set(Synfig,'UserData',{n,q});
@@ -76,22 +76,22 @@ set(tmp1,'String',tmp2);
 
 
 %% ---------------------------------
-function n_callback(src,~)
+%function n_callback(src,~)
 %null menu callback
-global thiseq
+%global thiseq
 % 1) set menu markers
-tmp1 = get(src,'Userdata');
-set(tmp1(tmp1~=gcbo),'Checked','off');
-set(gcbo,'Checked','on')
-thiseq.AnisoNull=get(gcbo,'Label');
+%tmp1 = get(src,'Userdata');
+%set(tmp1(tmp1~=gcbo),'Checked','off');
+%set(gcbo,'Checked','on')
+%thiseq.AnisoNull=get(gcbo,'Label');
 
 % 2) set figure header entries
-tmp1 = findobj('Tag','FigureHeader');
-tmp2 = get(tmp1,'String');
-tmp3 = tmp2{end};
-tmp3(52:54) = thiseq.AnisoNull;
-tmp2(end) = {tmp3};
-set(tmp1,'String',tmp2);
+%tmp1 = findobj('Tag','FigureHeader');
+%tmp2 = get(tmp1,'String');
+%tmp3 = tmp2{end};
+%tmp3(52:54) = thiseq.AnisoNull;
+%tmp2(end) = {tmp3};
+%set(tmp1,'String',tmp2);
 
 %% xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 function localSavePicture(hFig,evt)
@@ -104,15 +104,13 @@ exportfiguredlg(gcbf, [defaultname defaultextension],config.savedir,config.expor
 %% xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 function DiagnosticKeyPress(src,evnt)
 global thiseq
-hndl  = get(src,'UserData'); %handles to menu entries
-hndl  = hndl{2};
-if strcmp(evnt.Key,'home')||strcmp(evnt.Key,'escape')||strcmp(evnt.Key,'delete')
-    close(gcbf);
-    return;
-% elseif strcmp(evnt.Key,'return')
-%     saveresult;
-%     return;
-end 
+
+hndl = get(src,'UserData'); % handles to menu entries
+hndl = hndl{2};
+%if strcmp(evnt.Key,'home') || strcmp(evnt.Key,'escape') || strcmp(evnt.Key,'delete')
+%    close(gcbf);
+%    return;
+%end 
 
 switch evnt.Character
     case 'g'
@@ -143,6 +141,7 @@ switch evnt.Character
     otherwise
         return
 end
+
 q_callback(h,[])
 
 % % 2) set figure header entries

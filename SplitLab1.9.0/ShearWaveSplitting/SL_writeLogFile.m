@@ -5,8 +5,6 @@ function SL_writeLogFile(option, config, thiseq)
 
 
 
-
-
     DATE  = sprintf('%4.0f.%03.0f',thiseq.date(1),thiseq.date(7));
     switch upper(option)
         case 'LOG'
