@@ -52,11 +52,12 @@ end
 %% Load last opened project if it exists
  pjtlist = getpref('Splitlab','History');
  if ~isempty(pjtlist)
-    try                   %JRS, 28/6/2016
+    try
         load('-mat',pjtlist{1});
     catch
-        message = sprintf('\n\nCouldn''t load:\n%s\n\nPlease load another project!\n',pjtlist{1});
-        warning( message );
+        message = sprintf('Couldnt load: %s',name,age);
+        disp('Couldnt load');
+        disp('No project loaded ');
     end
  else
      % do nothing
@@ -203,7 +204,7 @@ set(h.menu(1),'Visible','on');
 
 figure(cfig)
 
-% load('-mat',pjtlist{1}); %JRS, 28/6/2016
+load('-mat',pjtlist{1});
 
 % intrestingly, at startup the first value of the random gegenator is often 0.9501
 % so, generate first dum dummy random numbers, and than in a new round take 

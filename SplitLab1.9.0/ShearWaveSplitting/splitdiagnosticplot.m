@@ -106,6 +106,7 @@ switch splitoption
         allDelays = allDelays(:,[1 3]);
 end
 
+
 if strcmpi(config.studytype,'Teleseismic')
     yystr= {'E ', 'N '}; 
     if strcmp(config.inipoloption,'fixed')
