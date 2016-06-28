@@ -58,6 +58,7 @@ end
     catch
         message = sprintf('\n%s\n\nnot loaded. Please load another project.\n',pjtlist{1});
         warning( message );
+        config.project = 'no project';
     end
  else
      % do nothing
