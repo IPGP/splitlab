@@ -52,7 +52,8 @@ end
 %% Load last opened project if it exists
  pjtlist = getpref('Splitlab','History');
  if ~isempty(pjtlist)
-    try                   %JRS, 28/6/2016
+    %JRS, 28/6/2016
+    try                   
         load('-mat',pjtlist{1});
     catch
         message = sprintf('\n%s\n\nnot loaded. Please load another project.\n',pjtlist{1});
