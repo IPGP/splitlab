@@ -55,7 +55,7 @@ end
     try                   %JRS, 28/6/2016
         load('-mat',pjtlist{1});
     catch
-        message = sprintf('\n\nCouldn''t load:\n%s\n\nPlease load another project!\n',pjtlist{1});
+        message = sprintf('\n%s\n\nnot loaded. Please load another project.\n',pjtlist{1});
         warning( message );
     end
  else
