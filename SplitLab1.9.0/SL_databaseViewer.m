@@ -72,7 +72,7 @@ uimenu(h.cmenu, 'Label', 'Delete','UserData',h.list,...
 
 
 %% result list
-header    = '  Phase  \Phi_{SC}   \Phi_{RC}  \deltat_{SC}  \deltat_{RC}  Quality   Null   Filter      Remark';
+header    = '  Phase  \Phi_{SC}   \Phi_{RC}  \deltat_{SC}  \deltat_{RC}  Q\_str     Q\_fac  Filter      Remark';
 h.info(1) = uipanel('parent',h.dlg, 'units','pixel', 'Position',[40 40 ext(3)+17 100],'tag','ResultsPanel');
 h.info(4) = axes('parent',h.info(1), 'units','pixel', 'Position',[2 78 ext(3)+11 18]);
 axis off
@@ -272,7 +272,7 @@ set(l,'Position',[lold(1:3) figpos(4)-179]);
 
 
 %% This program is part of SplitLab
-% © 2006 Andreas Wüstefeld, Université de Montpellier, France
+% ? 2006 Andreas W?stefeld, Universit? de Montpellier, France
 %
 % DISCLAIMER:
 %

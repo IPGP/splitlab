@@ -44,8 +44,8 @@ switch option
             tmp2 = [tmp, newidx];
             set(r_box,'String',newstr, 'Userdata',tmp2, 'Value',rval-1);
 
-            %%%%% result strings for later - JRS 1/7/2016
-            %disp( old_result );
+            %%%%% result strings for later
+            disp( old_result );
             date_compare = sprintf('%04d-%02d-%02d %02d:%02d:', eq(num).date(1),eq(num).date(2),eq(num).date(3),eq(num).date(4),eq(num).date(5) ); % for later
             pha     = old_result.SplitPhase;
             q_fac   = sprintf('%0.4f',old_result.Q);
@@ -56,13 +56,11 @@ switch option
             save(filename,'eq','config');
             %helpdlg('Result files might still be in the output directory')
             
-            %%%%% delete corresponding '*eps' result image in
-            %%%%% 'config.projectdir'  - JRS 1/7/2016
+            %%%%% delete corresponding '*eps' result file in 'config.projectdir'
             filename_eps = old_result.resultplot; 
             fullname_eps = fullfile( config.projectdir,filename_eps );
             
-            %case not found, catch warning
-            s = warning('error', 'MATLAB:DELETE:FileNotFound');    
+            s = warning('error', 'MATLAB:DELETE:FileNotFound');     %case not found, catch warning
             try
                 delete( fullname_eps );
                 mess = sprintf('Deleted result image:\n%s\n', fullname_eps);
@@ -73,8 +71,7 @@ switch option
             end
             warning(s);
 
-            %%%%% delete corresponding line in 'splitresults*_STAT.dat'
-            %%%%% file in 'config.projectdir' - JRS 1/7/2016
+            %%%%% delete corresponding line in 'splitresults*_STAT.dat' file in 'config.projectdir'
             % if Null or none Null measurement
             if ~isempty( strfind(q_str,'Null') )      
                 filename_dat = sprintf('splitresultsNULL_%s.dat', config.stnname);
@@ -87,23 +84,22 @@ switch option
             fileID = fopen( fullname_dat );
             file = textscan(fileID,'%s', 'Delimiter','\n', 'HeaderLines',0);
             fclose( fileID );
-            [nn,m] = size( file{1} );   %nn = #rows of cell array 'file'
+            [nn,m] = size( file{1} );   %nn = #rows of 'file' cell array
             
             % open 'fullname_dat' and write all lines but the one to delete
             fileID = fopen(fullname_dat,'w');
             mess = sprintf('Following measurements deleted in ''%s'':', filename_dat );
             disp( mess );
             
-            % loop over measurements in file, disp line to delete, print to
-            % file all others
+            % loop over measurements in file
             for line_index = 1:nn
-                line      = file{1}{line_index};    % get 'q_comare' in file and round
+                line      = file{1}{line_index};
                 string    = strsplit( line );
                 q_compare = sprintf('%0.4f', round( str2double( string(35) ),4));
                 if ~isempty(strfind(line,date_compare)) && ~isempty(strfind(line,pha)) ...
                         && ~isempty(strfind(line,q_str)) && ~isempty(strfind(q_compare,q_fac)) 
                     disp( line );
-                    break;      % case more than 2 identical lines, only one deleted
+                    break;
                 else
                     fprintf(fileID,'%s\n', line);
                 end
