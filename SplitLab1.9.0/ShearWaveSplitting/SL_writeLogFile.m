@@ -1,8 +1,7 @@
 function SL_writeLogFile(option, config, thiseq)
-% OPTION='LOG'  writes the constant logfile for every atemptped splitting measurement
+% OPTION='LOG'  writes the constant logfile for every attempted splitting measurement
 % OPTION='DATA' writes the datafile for accepted measurements
 % see ./saveresults
-
 
 
     DATE  = sprintf('%4.0f.%03.0f',thiseq.date(1),thiseq.date(7));
@@ -20,62 +19,110 @@ function SL_writeLogFile(option, config, thiseq)
     end
             
     
-    xst   = exist(fname, 'file');
-    fid   = fopen(fname,'a');
-    if fid ==-1
+    xst    = exist(fname, 'file');
+    fid    = fopen(fname,'r');
+    if fid == -1
         errordlg ({'Problems while opening logfile:',fname,' ', 'Please check output directory'})
     else
 %         if ~xst;
 %             fprintf(fid,'Splitting results' );
 %             fprintf(fid,'\ndate     sta  phase  geobaz    baz   inc    filter    RC                       dtRC             SC                       dtSC             EV                       dtEV            autoQ\n' );
 %         end
+        firstLine = fgetl( fid );
+        fclose( fid );
+        fid   = fopen(fname,'a');
         fseek(fid, 0, 'eof'); %go to end of file
   
-       fields = {...
-           sprintf( '%s', datestr(thiseq.date(1:6),31)   )   ...    1    Date
-           sprintf( '%s', config.stnname                 )   ...    2    StationName
-           sprintf( '%f', config.slat                    )   ...    3
-           sprintf( '%f', config.slong                   )   ...    4
-           sprintf( '%f', config.selev                   )   ...    5
-           sprintf( '%f', thiseq.lat                     )   ...    6
-           sprintf( '%f', thiseq.long                    )   ...    7
-           sprintf( '%f', thiseq.depth                   )   ...    8
-           sprintf( '%f', thiseq.dis                     )   ...    9
-           sprintf( '%f', thiseq.Mw                      )   ...   10
+        header = {...
+           sprintf( '%20s','EQ_Date_Time'          )   ...
+           sprintf( '%11s','Station'               )   ...
+           sprintf( '%15s','sLat'                  )   ...
+           sprintf( '%15s','sLon'                  )   ...
+           sprintf( '%15s','sEle'                  )   ...
+           sprintf( '%15s','eLat'                  )   ...
+           sprintf( '%15s','eLon'                  )   ...
+           sprintf( '%15s','eDep'                  )   ...
+           sprintf( '%15s','eDis'                  )   ...
+           sprintf( '%14s','eMw'                   )   ...
+            ...
+           sprintf( '%15s', 'geoinc'               )   ...                                              
+           sprintf( '%15s', 'geobazi'              )   ...
+           sprintf( '%15s', 'bazi'                 )   ...
+           sprintf( '%15s', 'geodis3D'             )   ...
+           sprintf( '%15s', 'SplitPhase'           )   ...
+           sprintf( '%15s', 'selectedpol'          )   ...
+           sprintf( '%15s', 'selectedinc'          )   ...
+           sprintf( '%15s', 'filter(1)'            )   ...
+           sprintf( '%15s', 'filter(2)'            )   ...
+            ...
+           sprintf( '%15s', 'phiRC(1)'             )   ...
+           sprintf( '%15s', 'phiRC(2)'             )   ...
+           sprintf( '%15s', 'dtRC(1)'              )   ...
+           sprintf( '%15s', 'dtRC(2)'              )   ...
+           sprintf( '%15s', 'phiEV(1)'             )   ...
+           sprintf( '%15s', 'phiEV(2)'             )   ...
+           sprintf( '%15s', 'dtEV(1)'              )   ...
+           sprintf( '%15s', 'dtEV(2)'              )   ...
+           sprintf( '%15s', 'RC_strike'            )   ...
+           sprintf( '%15s', 'EV_strike'            )   ...
+            ...
+           sprintf( '%20s', 'RC_dips'              )   ...
+           sprintf( '%20s', 'EV_dips'              )   ...
+           sprintf( '%20s', 'init_pol'             )   ...
+           sprintf( '%18s', 'SNR(2)'               )   ...
+           sprintf( '%12s', 'Q_auto'               )   ...
+           sprintf( '%12s', 'Q_manu'               )   ...
+           sprintf( '%21s', 'dom_freq_EV_Q-comp'   )   ...
+            } ; 
+
+
+        fields = {...
+           sprintf( '%20s', datestr(thiseq.date(1:6),31)     )   ...    1    Date
+           sprintf( '%11s', config.stnname                   )   ...    2    StationName
+           sprintf( '%15.4f', config.slat                    )   ...    3
+           sprintf( '%15.4f', config.slong                   )   ...    4
+           sprintf( '%15.2f', config.selev                   )   ...    5
+           sprintf( '%15.4f', thiseq.lat                     )   ...    6
+           sprintf( '%15.4f', thiseq.long                    )   ...    7
+           sprintf( '%15.2f', thiseq.depth                   )   ...    8
+           sprintf( '%15.4f', thiseq.dis                     )   ...    9
+           sprintf( '%14.2f', thiseq.Mw                      )   ...   10
             ...            
-           sprintf( '%f', thiseq.geoinc                  )   ...   12                                              
-           sprintf( '%f', thiseq.geobazi                 )   ...   13
-           sprintf( '%f', thiseq.bazi                    )   ...   14
-           sprintf( '%f', thiseq.geodis3D                )   ...   15
-           sprintf( '%s', thiseq.SplitPhase              )   ...   16
-           sprintf( '%f', thiseq.selectedpol             )   ...   17
-           sprintf( '%f', thiseq.selectedinc             )   ...   18
-           sprintf( '%f', thiseq.filter(1)               )   ...   19            
-           sprintf( '%f', thiseq.filter(2)               )   ...   20
+           sprintf( '%15.4f', thiseq.geoinc                  )   ...   12                                              
+           sprintf( '%15.4f', thiseq.geobazi                 )   ...   13
+           sprintf( '%15.4f', thiseq.bazi                    )   ...   14
+           sprintf( '%15.4f', thiseq.geodis3D                )   ...   15
+           sprintf( '%15s',   thiseq.SplitPhase              )   ...   16
+           sprintf( '%15.4f', thiseq.selectedpol             )   ...   17
+           sprintf( '%15.4f', thiseq.selectedinc             )   ...   18
+           sprintf( '%15.4f', thiseq.filter(1)               )   ...   19            
+           sprintf( '%15.4f', thiseq.filter(2)               )   ...   20
             ...
-           sprintf( '%f', thiseq.tmpresult.phiRC(1)      )   ...   21
-           sprintf( '%f', thiseq.tmpresult.phiRC(2)      )   ...   22
-           sprintf( '%f', thiseq.tmpresult.dtRC(1)       )   ...   23
-           sprintf( '%f', thiseq.tmpresult.dtRC(2)       )   ...   24
-           sprintf( '%f', thiseq.tmpresult.phiEV(1)      )   ...   25
-           sprintf( '%f', thiseq.tmpresult.phiEV(2)      )   ...   26 
-           sprintf( '%f', thiseq.tmpresult.dtEV(1)       )   ...   27
-           sprintf( '%f', thiseq.tmpresult.dtEV(2)       )   ...   28
-           sprintf( '%f', thiseq.tmpresult.strikes(1)    )   ...   29 RC strike
-           sprintf( '%f', thiseq.tmpresult.strikes(3)    )   ...   30 EV strike
+           sprintf( '%15.6f', thiseq.tmpresult.phiRC(1)      )   ...   21
+           sprintf( '%15.6f', thiseq.tmpresult.phiRC(2)      )   ...   22
+           sprintf( '%15.6f', thiseq.tmpresult.dtRC(1)       )   ...   23
+           sprintf( '%15.6f', thiseq.tmpresult.dtRC(2)       )   ...   24
+           sprintf( '%15.6f', thiseq.tmpresult.phiEV(1)      )   ...   25
+           sprintf( '%15.6f', thiseq.tmpresult.phiEV(2)      )   ...   26 
+           sprintf( '%15.6f', thiseq.tmpresult.dtEV(1)       )   ...   27
+           sprintf( '%15.6f', thiseq.tmpresult.dtEV(2)       )   ...   28
+           sprintf( '%15.6f', thiseq.tmpresult.strikes(1)    )   ...   29 RC strike
+           sprintf( '%15.6f', thiseq.tmpresult.strikes(3)    )   ...   30 EV strike
             ...
-           sprintf( '%f', thiseq.tmpresult.dips(1)       )   ...   31
-           sprintf( '%f', thiseq.tmpresult.dips(3)       )   ...   32
-           sprintf( '%f', thiseq.tmpresult.inipol        )   ...   33
-           sprintf( '%f', thiseq.tmpresult.SNR(2)        )   ...   34
-           sprintf( '%f', thiseq.Q                       )   ...   35 Automatic quality
-           sprintf( '%s', thiseq.Qstr                    )   ...   36 Manual quality
-           sprintf( '%s', thiseq.tmpresult.domfreq       )   ...   37 Dominant frequency on EV-corrected Q-component
+           sprintf( '%20.6f', thiseq.tmpresult.dips(1)       )   ...   31
+           sprintf( '%20.6f', thiseq.tmpresult.dips(3)       )   ...   32
+           sprintf( '%20.6f', thiseq.tmpresult.inipol        )   ...   33
+           sprintf( '%18.6f', thiseq.tmpresult.SNR(2)        )   ...   34
+           sprintf( '%12.6f', thiseq.Q                       )   ...   35 Automatic quality
+           sprintf( '%12s', strtrim(thiseq.Qstr)             )   ...   36 Manual quality
+           sprintf( '%21.10f',thiseq.tmpresult.domfreq       )   ...   37 Dominant frequency on EV-corrected Q-component
             } ;
         
-        
-        fprintf(fid, '%s\t', fields{1:end-1});
-        fprintf(fid, '%s', fields{end}); %no "tab" at last entry
+        if firstLine == -1      % if there is already a line, no header
+            fprintf(fid, '%s', header{1:end});
+            fprintf(fid, '\n');
+        end
+        fprintf(fid, '%s', fields{1:end});
         fprintf(fid, '\n');
         fclose(fid);
     end

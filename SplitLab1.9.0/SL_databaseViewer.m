@@ -72,7 +72,7 @@ uimenu(h.cmenu, 'Label', 'Delete','UserData',h.list,...
 
 
 %% result list
-header    = '  Phase  \Phi_{SC}   \Phi_{RC}  \deltat_{SC}  \deltat_{RC}  Q\_str     Q\_fac  Filter      Remark';
+header    = ' Phase   \Phi_{SC}   \Phi_{RC}  \deltat_{SC}  \deltat_{RC}  Q\_manu   Q\_auto  Filter      Remark';
 h.info(1) = uipanel('parent',h.dlg, 'units','pixel', 'Position',[40 40 ext(3)+17 100],'tag','ResultsPanel');
 h.info(4) = axes('parent',h.info(1), 'units','pixel', 'Position',[2 78 ext(3)+11 18]);
 axis off

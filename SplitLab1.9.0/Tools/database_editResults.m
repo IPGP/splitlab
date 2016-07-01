@@ -48,8 +48,8 @@ switch option
             %disp( old_result );
             date_compare = sprintf('%04d-%02d-%02d %02d:%02d:', eq(num).date(1),eq(num).date(2),eq(num).date(3),eq(num).date(4),eq(num).date(5) ); % for later
             pha     = old_result.SplitPhase;
-            q_fac   = sprintf('%0.4f',old_result.Q);
-            q_str   = old_result.Qstr;
+            q_auto  = sprintf('%0.4f',old_result.Q);
+            q_manu  = old_result.Qstr;
 
             %%%%% save project with updated results
             filename    = fullfile( config.projectdir,config.project );
@@ -76,12 +76,12 @@ switch option
             %%%%% delete corresponding line in 'splitresults*_STAT.dat'
             %%%%% file in 'config.projectdir' - JRS 1/7/2016
             % if Null or none Null measurement
-            if ~isempty( strfind(q_str,'Null') )      
-                filename_dat = sprintf('splitresultsNULL_%s.dat', config.stnname);
+            if ~isempty( strfind(q_manu,'Null') )      
+                fname = sprintf('splitresultsNULL_%s.dat', config.stnname);
             else
-                filename_dat = sprintf('splitresults_%s.dat', config.stnname);
+                fname = sprintf('splitresults_%s.dat', config.stnname);
             end
-            fullname_dat = fullfile(config.projectdir,filename_dat);
+            fullname_dat = fullfile(config.projectdir,fname);
 
             % read 'fullname_dat' file
             fileID = fopen( fullname_dat );
@@ -91,7 +91,7 @@ switch option
             
             % open 'fullname_dat' and write all lines but the one to delete
             fileID = fopen(fullname_dat,'w');
-            mess = sprintf('Following measurements deleted in ''%s'':', filename_dat );
+            mess = sprintf('Following measurements deleted in ''%s'':', fname);
             disp( mess );
             
             % loop over measurements in file, disp line to delete, print to
@@ -101,7 +101,7 @@ switch option
                 string    = strsplit( line );
                 q_compare = sprintf('%0.4f', round( str2double( string(35) ),4));
                 if ~isempty(strfind(line,date_compare)) && ~isempty(strfind(line,pha)) ...
-                        && ~isempty(strfind(line,q_str)) && ~isempty(strfind(q_compare,q_fac)) 
+                        && ~isempty(strfind(line,q_manu)) && ~isempty(strfind(q_compare,q_auto)) 
                     disp( line );
                     break;      % case more than 2 identical lines, only one deleted
                 else
