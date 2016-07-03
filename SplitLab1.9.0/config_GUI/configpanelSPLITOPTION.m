@@ -39,7 +39,7 @@ b(:,:,1) = repmat(a,19,1)';
 b(:,:,2) = repmat(a,19,1);
 b(:,:,3) = repmat(flipdim(a,2),19,1);
 
-hc = uipanel('Units','pixel','visible','on','Position',[275 280  130 100], 'BackgroundColor', [224   223   227]/255, 'parent',h.panel(11),'Title','Colours');
+hc = uipanel('Units','pixel','visible','on','Position',[275 280  130 100], 'BackgroundColor', [224   223   227]/255, 'parent',h.panel(11),'Title','Colors');
 
 hh(1)=uicontrol('Style','pushbutton', 'String', 'Pwin',...
     'pos',[20 60 40 18],'HandleVisibility','off',...

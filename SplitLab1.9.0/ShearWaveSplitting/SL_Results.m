@@ -179,7 +179,7 @@ handles.color = uicontrol('Units','pixel', 'Style','pushbutton','Parent',HP,'Cal
     'Position',[10 10 70 20], 'String', 'Line Color',  'UserData', defcol);
 
 handles.style = uicontrol('Units','pixel', 'Style','popupmenu','Parent',HP,'Callback', @LocalSetLineStyle,...
-    'Position',[79 10 55 20],'BackgroundColor','w', 'String', { '.' '-' '--' ':'}, 'UserData', defstyle );
+    'Position',[78 10 57 20],'BackgroundColor','w', 'String', { '.' '-' '--' ':'}, 'UserData', defstyle );
 
 handles.width = uicontrol('Units','pixel', 'Style','popupmenu','Parent',HP,'Callback', @LocalSetLinewidth,...
     'Position',[126 10 65 20], 'BackgroundColor','w','String', {'0.5' '1' '1.5' '2'}, 'UserData', defwidth );

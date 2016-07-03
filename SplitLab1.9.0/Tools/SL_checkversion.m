@@ -1,26 +1,28 @@
 %SL_checkversion
 global config
-if not(ispref('Splitlab'))
-    SL_preferences([])
+
+% set pref 'Splitlab' to as in 'SL_defaultconfig'
+if ~ispref('Splitlab')
+    SL_preferences([])    
     SplitlabConfiguration = getpref('Splitlab','Configuration');
     SplitlabAssociations  = getpref('Splitlab','Associations');
     SplitlabHistory       = getpref('Splitlab','History');
-    disp(' **** Splitlab Preferences sucessfully created ****')
+    disp(' **** Splitlab Configurations set to default ****')
 end
 
-if isempty(config)
-    evalin('base','global eq thiseq config');
-    config = getpref('Splitlab', 'Configuration');   
-    d=datevec(now);
-    config.twin = [3 1 1976 d([3 2 1])];
-end
+%% 'config' is never emtpy, as in 'splitlab' the version is already set
+% if isempty(config)
+%     evalin('base','global eq thiseq config');
+%     config = getpref('Splitlab', 'Configuration');   
+%     d=datevec(now);
+%     config.twin = [3 1 1976 d([3 2 1])];
+% end
 
-
-
-default  = SL_defaultconfig;
-N    = fieldnames(default) ;
+default = SL_defaultconfig;
+N       = fieldnames(default) ;
 
 updated=struct([]);
+
 %% set non existing fields to default values
 for k = 1:length(N)
     thisfield = N{k};
@@ -51,21 +53,20 @@ end
 
     
 %%    
-    
-if size(config.filterset,2)==4;               config.filterset(:,5)=1;          end
-
+if size(config.filterset,2)==4
+    config.filterset(:,5)=1;
+end
 
 if ~isempty(updated)
     disp(' ')
-    disp('Project version does not match the current splitlab version!')
-    disp('The following fields are added to or updated in your configuration:')
+    disp('The following fields are added to or updated in your project:')
     disp(' ')
     disp('  config')
     strucdisp(updated,2,1,7)
 end
 
 %% check preferences
-% this is necessary on multiuser environments. 
+%  this is necessary on multiuser environments. 
 if ~ispref('Splitlab')
     SL_preferences(SL_defaultconfig)
 end
@@ -75,7 +76,6 @@ end
 
 
 %% check for weired xcorr error on MAC
-
 z1 = [0 0 1 0 0];
 z2 = [0 1 0 0 0];
 C = xcorr(z1,z2, 'coeff');

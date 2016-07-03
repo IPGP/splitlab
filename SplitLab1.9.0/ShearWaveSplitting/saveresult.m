@@ -121,7 +121,7 @@ close(gcbf)
 SL_SeismoViewer(thiseq.index)
 
 %% This program is part of SplitLab
-% © 2006 Andreas Wüstefeld, Université de Montpellier, France
+%  2006 Andreas Wuestefeld, Universite de Montpellier, France
 %
 % DISCLAIMER:
 % 
@@ -133,9 +133,9 @@ SL_SeismoViewer(thiseq.index)
 % 2) LICENSE:
 % SplitLab is free software; you can redistribute it and/or modifyit under the
 % terms of the GNU General Public License as published by the Free Software 
-% Foundation; either version 2 of the License, or(at your option) any later 
+% Foundation; either version 2 of the License, or (at your option) any later 
 % version.
 % This program is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
-% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for 
+% FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
 % more details.

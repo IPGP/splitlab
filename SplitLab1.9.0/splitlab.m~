@@ -2,7 +2,7 @@ function splitlab
 % Main window of the SplitLab toolbox, configure the parameters and projects
 % creating the configuration figure of Splitlab
 
-clearvars -global config eq thiseq
+clearvars -global config eq this
 global config 
 
 config.version='SplitLab1.9.0';

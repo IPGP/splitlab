@@ -11,28 +11,22 @@ def  = SL_defaultconfig;
 if isempty(config)
     config=def;
 end
-conf = rmfield(config,{'version'});  
 
 
-
-%% ========================================================================
+%% set preferences of 'Splitlab'
 if ~ispref('Splitlab')
-   addpref('Splitlab','Configuration', conf)
+   addpref('Splitlab','Configuration', config)
 else
-   setpref('Splitlab','Configuration', conf); 
+   setpref('Splitlab','Configuration', config); 
 end
- 
-
-
 
 if ~ispref('Splitlab','History')
    addpref('Splitlab','History', {})
 end
 
 
-
-%second row is only for non-PCs
-%on PCs files are opened with Matlabs "winopen" function
+%% second row is only for non-PCs
+%on PCs, files are opened with Matlabs "winopen" function
 if ~ispref('Splitlab','Associations')
     example = [matlabroot filesep 'bin' filesep 'matlab -r $1'];
     addpref('Splitlab','Associations',...
@@ -53,10 +47,11 @@ end
 
 
 
-disp('<a href="matlab:getpref(''Splitlab'',''Associations''),SplitLabPreferences=getpref(''Splitlab'',''Configuration''), ">Show SplitLabPreferences</a>') 
+disp('<a href="matlab:SplitLabAssociations=getpref(''Splitlab'',''Associations''),SplitLabPreferences=getpref(''Splitlab'',''Configuration''), ">Show SplitLabPreferences</a>') 
+
 
 %% This program is part of SplitLab
-% © 2006 Andreas Wüstefeld, Université de Montpellier, France
+%  2006 Andreas Wuestefeld, Universite de Montpellier, France
 %
 % DISCLAIMER:
 % 
@@ -68,9 +63,9 @@ disp('<a href="matlab:getpref(''Splitlab'',''Associations''),SplitLabPreferences
 % 2) LICENSE:
 % SplitLab is free software; you can redistribute it and/or modifyit under the
 % terms of the GNU General Public License as published by the Free Software 
-% Foundation; either version 2 of the License, or(at your option) any later 
+% Foundation; either version 2 of the License, or (at your option) any later 
 % version.
 % This program is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
-% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for 
+% FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
 % more details.

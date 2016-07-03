@@ -189,7 +189,7 @@ for kk=1:length(sub);
             [sub(kk).name  filesep  Zname]};
         
         
-        if ~exist(fullfile(dname, fname{2}) , 'file')  || ~exist(fullfile(dname, fname{3}),  'file')
+        if ~exist(fullfile(dname, fname{2}) , 'file') || ~exist(fullfile(dname, fname{3}),  'file')
             continue
         end
         xxx =findstr(dname,filesep);
