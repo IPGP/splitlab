@@ -105,7 +105,7 @@ config.request.password = 'uufoh4ooK';   % user authentication for restricted da
 config.request.institut = 'IPGP';
 config.request.phone    = '';
 config.request.adress   = 'Champ de Mars, 5 Avenue Anatole France, Paris'; %breqfast request required
-config.request.usermail = 'scholz@ipgp.fr' %[config.request.user '@'];
+config.request.usermail = 'scholz@ipgp.fr'; %[config.request.user '@'];
 
 % add or delete datacenters as cell entries: they will be displayed in selection menu
 config.request.DataCenters ={'netdc@fdsn.org';'netdc@ipgp.jussieu.fr';'netdc@knmi.nl';'netdc@iris.washington.edu';'breq_fast@gfz-potsdam.de';'breq_fast@iris.washington.edu';'breq_fast@knmi.nl';'autodrm@iris.washington.edu'};
