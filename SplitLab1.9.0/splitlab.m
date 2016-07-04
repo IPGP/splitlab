@@ -10,10 +10,9 @@ config.saveErrorSurface = 1;
 
 %% Load last opened project if it exists and check version
 %  if button 'New Project' is pressed (see configpanelGENERAL.m), the entry 
-%  "new_project.pjt" is PREPENDED to 'Splitlab','History'. This allows to 
-%  create an if-statement which will run 'SL_checkversion' thereby openening 
-%  splitlab with the default settings which serve as template for the new
-%  project.
+%  "new_project.pjt" is PREPENDED to pref 'Splitlab','History'. This allows to 
+%  create an if-statement which will run splitlab with the default settings
+%  which serve as template for the new project.
 pjtlist = getpref('Splitlab','History');
 if strcmp( pjtlist{1},'new_project.pjt' )                   
     setpref( 'Splitlab','History', {pjtlist{2:end}} );      %rm first entry of 'Splitlab','History'
@@ -41,7 +40,6 @@ set(0, 'DefaultFigurecolor', [224   223   227]/255 ,...
 close(findobj('Type', 'Figure', 'Name', 'Database Viewer'));
 close(findobj('Type', 'Figure', 'Tag',  'EarthView'));  
 close(findobj('Type', 'Figure', 'Tag',  'SeismoFigure'));  
-  
 cfig = findobj('type', 'Figure', 'name', ['Configure ' config.version]);
 
 
@@ -56,8 +54,8 @@ for k=1:length(preffont);
     font = preffont(k);
     if sum(strcmpi(font,list))==1
         set(0, 'DefaultUIcontrolFontUnits', 'pixel')
-        set(0, 'DefaultUIcontrolFontName', char(font),...            'DefaultAxesFontName',         char(font), ...
-               'DefaultUIcontrolFontSize', 10 );         %,...            'DefaultAxesFontSize',         8 ,...
+        set(0, 'DefaultUIcontrolFontName', char(font),...          'DefaultAxesFontName',         char(font), ...
+               'DefaultUIcontrolFontSize', 10 );         %,...     'DefaultAxesFontSize',         8 ,...
         break
     end
     if k==length(preffont)

@@ -11,7 +11,7 @@ rval = get(r_box,'Value');
 
 L = get(r_box,'Userdata'); %get displayed results sturcture
 switch option
-    case 'del'
+    case 'Del'
         button = questdlg({'Do you want to delete this result from database?';'(Also eps image and line in ''splitresults*_STAT.dat''-file)'},'Confirm delete','Yes','No','Yes');
         if strcmp(button,'Yes')
             seisfig = findobj('Tag','SeismoFigure');
@@ -28,7 +28,7 @@ switch option
             val  = rval - tmp(end);                 %index of result of eq(num)
             val2 = 1:length(eq(num).results);
             new  = setdiff(val2, val);              %result index different from selected one
-            old_result = eq(num).results(val)       %assigned to use later
+            old_result = eq(num).results(val);       %assigned to use later
             if isempty(new)
                 eq(num).results=[];
             else
@@ -59,7 +59,7 @@ switch option
             %%%%% delete corresponding '*eps' result image in
             %%%%% 'config.projectdir'  - JRS 1/7/2016
             filename_eps = old_result.resultplot; 
-            fullname_eps = fullfile( config.projectdir,filename_eps );
+            fullname_eps = fullfile( config.savedir,filename_eps );
             
             %case not found, catch warning
             s = warning('error', 'MATLAB:DELETE:FileNotFound');    
@@ -81,7 +81,7 @@ switch option
             else
                 fname = sprintf('splitresults_%s.dat', config.stnname);
             end
-            fullname_dat = fullfile(config.projectdir,fname);
+            fullname_dat = fullfile(config.savedir,fname);
 
             % read 'fullname_dat' file
             fileID = fopen( fullname_dat );
@@ -116,11 +116,9 @@ switch option
         if isempty(tmp); return; end %nothing selected
         num = lval(length(tmp)); %to retrieve index of eq
         val = rval - tmp(end);   %index of result of eq(num)
-
         openvar(['eq(' num2str(num) ').results(' num2str(val) ')'])
 
-
-    case 'select'
+    case 'Select'
         if any(rval == L)
             set(rbut,'Enable','off');
         else
@@ -130,16 +128,17 @@ switch option
     case 'View'
         tmp = L(L<rval);
         if isempty(tmp); return; end %nothing selected
-        num = lval(length(tmp)); %to retrieve index of eq
-        val = rval - tmp(end);   %index of result of eq(num)
-        resplot =fullfile(config.savedir, eq(num).results(val).resultplot);
+        num     = lval(length(tmp)); %to retrieve index of eq
+        val     = rval - tmp(end);   %index of result of eq(num)
+        resplot = fullfile(config.savedir, eq(num).results(val).resultplot);
+
         if ispc
             try
                 winopen(resplot);
             catch
 
                 e=errordlg({resplot,' ' , lasterr,'',...
-                    'Project has been processed one the Computer named',...
+                    'Project has been processed on the Computer named',...
                     [config.host ' by ' config.request.user],...
                     ['Data request timstamp: ' config.request.timestamp],' ',lasterr },...
                     'Error opening file');
@@ -155,32 +154,16 @@ switch option
                 end
             end
         else %UNIX, LINUX or MACINTOSH
-            asso      = getpref('Splitlab', 'Associations');
-            [p,f,ext] = fileparts(resplot);
-            found     = strfind(asso(:,1),ext);
-            index     = find(~cellfun('isempty',found));
-            if strcmp (ext, '.fig');
-                commandline = 'open($1);';
-            else
-                commandline   = ['!' asso{index, 2}];
-            end
-
-            commandstring = strrep(commandline, '$1', resplot);
-            if strncmp(computer,'MAC',3)
-                errordlg('Does not yet work for MACINTOSH... sorry')
-                return;
-                %need of OSAscript on MACINTOSH:
-                commandstring = strrep(commandstring, '!', '!osascript');
-            end
-
-
-
-
-
+            asso          = getpref('Splitlab','Associations');
+            [p,f,ext]     = fileparts(resplot);
+            found         = strfind(asso(:,1),ext);
+            index         = find(~cellfun('isempty',found));
+            commandstring = sprintf('!%s %s', asso{index, 2}, resplot);
+            
             try
                 eval(commandstring)
             catch
-                e=errordlg({ 'Could not run ', commandstring(2:end),' ',lasterr});
+                e=warndlg( {lasterr} );
                 waitfor(e)
                 web(resplot, '-browser')
             end
@@ -189,12 +172,11 @@ switch option
 
 
         %% ========================================================================
-    case 'cleanup'
+    case 'Cleanup'
         for i = 1 : length(eq)
             x(i)=~isempty(eq(i).results);
         end
         res = find(x==1) ;
-
 
         button = questdlg({'All earthquakes with no results will be removed from database!',...
             ['  ' num2str(length(res)) '   earthquakes with result'],...

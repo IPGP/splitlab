@@ -9,7 +9,7 @@ if isempty(eq)
 end
 %the next lines indicate the order in which columns are sorted when
 %specific button was pressed.
-sortorder = [ 3  2  1  4 %date:  day month year
+sortorder = [ 5  3  2  1 %date:  day month year
               4  1  2  3 %julian day
               5  6  7  1 %time
               8  9 10  3 %lat
@@ -29,7 +29,6 @@ names    = {'Date','JDay','Time','lat','long','depth','Mw','back-azi','distance'
 
 figpos = get(0,'ScreenSize');
 width  = 365*1.5;
-height = 180*1.5;
 xpos   = figpos(3)- figpos(1) - width*2.22;
 ypos   = 70;
 figpos = [xpos ypos width 270];
@@ -71,6 +70,26 @@ uimenu(h.cmenu, 'Label', 'Delete','UserData',h.list,...
        'set(tmpobj,''value'',[],''string'',tmp3(tmp2,:)); clear tmp*']);
 
 
+%% Header Buttons
+x=0; %offset of first button
+for i=2:length(strlen)
+    set(tmp,'string',repmat('_',1,strlen(i)))
+    xy = get(tmp,'extent');
+    h.head(i)=uicontrol(h.dlg, 'style','pushbutton', 'FontWeight','bold',...
+        'tag','TableButton', 'string',names(i-1), 'position',[40+x figpos(4)-30 xy(3:4)],...
+        'callback',{@sorttable,sortorder(i-1,:),h.list, i-1});
+%set(h.head(i),'callback','');
+    x = xy(3)+ x - 4;
+end
+
+delete(tmp)
+set(h.dlg, 'ResizeFcn',@localResizeFcn)
+
+%% Default list display:
+col = config.tablesortcolumn;
+sorttable([],[],sortorder(col,:), h.list, col);
+
+
 %% result list
 header    = ' Phase   \Phi_{SC}   \Phi_{RC}  \deltat_{SC}  \deltat_{RC}  Q\_manu   Q\_auto  Filter      Remark';
 h.info(1) = uipanel('parent',h.dlg, 'units','pixel', 'Position',[40 40 ext(3)+17 100],'tag','ResultsPanel');
@@ -83,7 +102,7 @@ h.info(2) = text(0,0,header,'HorizontalAlignment','left','VerticalAlignment','bo
 h.info(3) = uicontrol('parent',h.info(1),'style','listbox','max',0, 'value',1,'Position',[1 1 ext(3)+12 80],...
                       'tag','ResultsBox','string',[],'Backgroundcolor','w','fontname','fixedWidth',...
                       'fontunits','pixel','fontsize',fontsize,'HorizontalAlignment','left',...
-                      'Callback','database_editResults(''select'')','BusyAction','Cancel');
+                      'Callback','database_editResults(''Select'')','BusyAction','Cancel');
 
 load icon;
 
@@ -91,7 +110,7 @@ h.button  = uicontrol(h.dlg,'style','pushbutton','Position',[40 8 50 25],...
                       'string','View','Callback','SL_SeismoViewer(get(findobj(''Tag'',''TableList''),''Value''))');
 h.button2 = uicontrol(h.dlg,'style','pushbutton','Position',[100 8 50 25],...
                       'Tooltipstring','Remove earthquakes with no result from database',...
-                      'string','CleanUp','Callback','database_editResults(''cleanup'')');
+                      'string','CleanUp','Callback','database_editResults(''Cleanup'')');
 h.button5 = uicontrol('style','pushbutton','Position',[160 8 60 25],...
                       'string','       Export','Tag','ExportButton','Cdata',icon.excel,...
                       'Tooltipstring','Export tabel to Excel worksheet',...
@@ -103,7 +122,7 @@ h.button6 = uicontrol('style','pushbutton','Position',[230 8 60 25],...
 h.button3 = uicontrol(h.dlg,'style','pushbutton','Position',[ext(3)-60 8 60 25],...
                       'string','Remove','Enable','off','Tag','ResultsButton',...
                       'Tooltipstring','Remove result from database',...
-                      'Callback','database_editResults(''del'')');
+                      'Callback','database_editResults(''Del'')');
 h.button4 = uicontrol(h.dlg, 'style','pushbutton', 'Position',[ext(3)+7 8 50 25],...
                       'string','Edit','Enable','off','Tag','ResultsButton', ...
                       'Tooltipstring', 'Edit values ...',...
@@ -113,27 +132,7 @@ h.button4 = uicontrol(h.dlg, 'style','pushbutton', 'Position',[ext(3)-117 8 50 2
                       'Cdata', icon.presentation,'Tooltipstring', 'View resultfiles',...
                       'Callback','database_editResults(''View'')');
 
-%% Default list display:
-col = config.tablesortcolumn;
-sorttable([],[],sortorder(col,:),[],h.list, col);
-
-
-%% Header Buttons
-x=0; %offset of first button
-for i=2:length(strlen)
-    set(tmp,'string',repmat('_',1,strlen(i)))
-    xy = get(tmp,'extent');
-    h.head(i)=uicontrol(h.dlg, 'style','pushbutton', 'FontWeight','bold',...
-        'tag','TableButton', 'string',names(i-1), 'position',[40+x figpos(4)-30 xy(3:4)],...
-        'callback',{@sorttable,sortorder(i-1,:),[],h.list, i-1});
-%set(h.head(i),'callback','');
-    x = xy(3)+ x - 4;
-end
-
-delete(tmp)
-set(h.dlg, 'ResizeFcn',@localResizeFcn)
-
-
+                  
 %% Map
 SL_Earthview([],[],[],[],datevec(now));
 
@@ -198,10 +197,10 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function  sorttable(src,evt,order,indat,h_list, button)
+function sorttable(src,evt,order,h_list, button)
 global eq config
 
-config.tablesortcolumn= button;
+config.tablesortcolumn = button;
 
 dvec=reshape([eq(:).date], 7, [])';
 
@@ -211,7 +210,8 @@ listdata  = [dvec(:,[ 3 2 1 7 4 5 6])...  day month year Julian_day hour minute 
             [eq(:).dis]'   (1:size(dvec,1))'];%
 listdata(listdata == -12345) = 0;
 
-%order is passed by correspondng button button
+
+%order is passed by corresponding button
 %initial sort order is by date
 [sdat,idx]  = sortrows(listdata, order);
 if strcmp(config.studytype,'Reservoir')
@@ -221,6 +221,7 @@ else
     unit =char(186);
     unit2= 'km';
 end
+
 %format strings
 datum = '%02.0f.%02.0f.%04.0f %03.0f';
 hms   = ' %02.0f:%02.0f:%02.0f';
@@ -234,12 +235,11 @@ sdat = sdat(:,1:14);
 format = [datum hms param geom qual];
 
 %format string produces line of match characters....
-
 tmpstr = cell(size(sdat,1),1);
 for k=1:size(sdat,1)
     tmpstr{k} = sprintf(format,sdat(k,:) );
 end
-outstr=deblank(strvcat(tmpstr));
+outstr=deblank(char(tmpstr));
 clear tmpstr
 
 set(h_list,...
@@ -272,7 +272,7 @@ set(l,'Position',[lold(1:3) figpos(4)-179]);
 
 
 %% This program is part of SplitLab
-% ? 2006 Andreas W?stefeld, Universit? de Montpellier, France
+%  2006 Andreas Wuestefeld, Universite de Montpellier, France
 %
 % DISCLAIMER:
 %
@@ -284,9 +284,9 @@ set(l,'Position',[lold(1:3) figpos(4)-179]);
 % 2) LICENSE:
 % SplitLab is free software; you can redistribute it and/or modifyit under the
 % terms of the GNU General Public License as published by the Free Software
-% Foundation; either version 2 of the License, or(at your option) any later
+% Foundation; either version 2 of the License, or (at your option) any later
 % version.
 % This program is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+% FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
 % more details.
