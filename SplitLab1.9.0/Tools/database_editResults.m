@@ -12,7 +12,7 @@ rval = get(r_box,'Value');
 L = get(r_box,'Userdata'); %get displayed results sturcture
 switch option
     case 'Del'
-        button = questdlg({'Do you want to delete this result from database?';'(Also eps image and line in ''splitresults*_STAT.dat''-file)'},'Confirm delete','Yes','No','Yes');
+        button = questdlg({'Do you want to delete this result from database?';'(Also result image and line in ''splitresults*_STAT.dat''-file)'},'Confirm delete','Yes','No','Yes');
         if strcmp(button,'Yes')
             seisfig = findobj('Tag','SeismoFigure');
             if ~isempty(seisfig)
@@ -44,7 +44,7 @@ switch option
             tmp2 = [tmp, newidx];
             set(r_box,'String',newstr, 'Userdata',tmp2, 'Value',rval-1);
 
-            %%%%% result strings for later - JRS 1/7/2016
+            %%%%% result strings for later
             %disp( old_result );
             date_compare = sprintf('%04d-%02d-%02d %02d:%02d:', eq(num).date(1),eq(num).date(2),eq(num).date(3),eq(num).date(4),eq(num).date(5) ); % for later
             pha     = old_result.SplitPhase;
