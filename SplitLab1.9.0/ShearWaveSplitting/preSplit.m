@@ -451,7 +451,7 @@ phiEV   = [phiEV   errbar_phiEV(1)];
 dtEV    = [dtEV    errbar_tEV(1)  ];
 
 fprintf(' Phi = %5.1f; %5.1f; %5.1f    dt = %.1f; %.1f; %.1f\n', ...
-    phiRC(1),phiSC(1),phiEV(1), dtRC(1),dtSC(1), dtEV(1));
+    phiRC(1), phiSC(1), phiEV(1), dtRC(1), dtSC(1), dtEV(1));
 
 caltime = (now - ttime)*24*3600;
 
@@ -459,10 +459,19 @@ caltime = (now - ttime)*24*3600;
 %% 3D correction: project to geographical system
 %initial polarisation as the strike...
 
-[thiseq.tmpresult.strikes, thiseq.tmpresult.dips ]= abc2enz(...
+
+%disp(thiseq.inipol);
+disp(thiseq.selectedpol);
+disp(thiseq.selectedinc);
+disp([phiRC(1) phiSC(1) phiEV(1)]);
+
+[thiseq.tmpresult.strikes, thiseq.tmpresult.dips ] = abc2enz(...
     thiseq.selectedpol, ...
     thiseq.selectedinc, ...
     [phiRC(1) phiSC(1) phiEV(1)]);
+
+disp(thiseq.tmpresult.strikes);
+disp(thiseq.tmpresult.dips);
 
 thiseq.inipol = abc2enz(...
     thiseq.selectedpol, ...
@@ -472,7 +481,7 @@ thiseq.inipol = abc2enz(...
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Correction to rotate into semi-geographical coordinates 
-% Note, that this does not accounts for dip!
+% Note, that this does not account for dips!
 
 if strcmpi(config.studytype,'Teleseismic') 
     %rotate into geographical coordinates
