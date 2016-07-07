@@ -42,7 +42,14 @@ colormap(gray)
 fontsize = get(gcf,'FactoryAxesFontsize')-1;
 titlefontsize = fontsize+2;
 
-
+%%
+[axH, axRC, axSC, axSeis] = splitdiagnosticLayout(Synfig);
+splitdiagnosticSetHeader(axH, ...
+                         phiRC, dtRC, phiSC, dtSC, phiEV, dtEV,...
+                         strikes, thiseq.inipol,incli,...
+                         splitoption,bestfilter,gamma);
+                    
+                     
 %%
 switch splitoption
     case 'Minimum Energy'
@@ -110,9 +117,17 @@ end
 if strcmpi(config.studytype,'Teleseismic')
     yystr= {'E ', 'N '}; 
     if strcmp(config.inipoloption,'fixed')
-        B = mod(thiseq.bazi,90);     %backazimuth lines
-    else
-        B = mod(thiseq.inipol,90);   %backazimuth lines
+        B        = mod(           thiseq.bazi,  90);  % backazimuth lines
+        phi      = mod(phi      + thiseq.bazi, 180);
+        phiRC(1) = mod(phiRC(1) + thiseq.bazi, 180);
+        phiSC(1) = mod(phiSC(1) + thiseq.bazi, 180);
+        phiEV(1) = mod(phiEV(1) + thiseq.bazi, 180);
+	else
+        B        = mod(           thiseq.inipol, 90); % backazimuth lines
+        phi      = mod(phi      + thiseq.inipol, 180);
+        phiRC(1) = mod(phiRC(1) + thiseq.inipol, 180);
+        phiSC(1) = mod(phiSC(1) + thiseq.inipol, 180);
+        phiEV(1) = mod(phiEV(1) + thiseq.inipol, 180);
     end
 else
     if strcmp(config.inipoloption, 'fixed')
@@ -123,14 +138,6 @@ else
         yystr = {'SH', 'SG'};
     end
 end
-
-
-%%
-[axH, axRC, axSC, axSeis] = splitdiagnosticLayout(Synfig);
-splitdiagnosticSetHeader(axH, ...
-                         phiRC, dtRC, phiSC, dtSC, phiEV, dtEV,...
-                         strikes, thiseq.inipol,incli,...
-                         splitoption,bestfilter,gamma);
 
 
 %% x-values for seismogram plots

@@ -103,12 +103,9 @@ eq(num).results(n).resultplot = fname;
 
 
 %% SAVE DATABASE ===========================================================
-if config.autosave
-    filename    = fullfile(config.projectdir,config.project);
-    config.db_index = thiseq.index;
-    save(filename,'eq','config');
-end
-
+filename    = fullfile(config.projectdir,config.project);
+config.db_index = thiseq.index;
+save(filename,'eq','config');
 
 clear num filename
 thiseq.resultnumber = thiseq.resultnumber+1;

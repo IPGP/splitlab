@@ -18,8 +18,6 @@
 %    correctFS_RC = vector of corrected components:
 %                   first column:  Fast
 %                   second column: Slow
-% Andreas Wüstefeld 12.03.06
-
 
 maxlags = ceil(maxtime/sampling); %only +-4 seconds relevant
 zerolag = length(pickwin);
@@ -111,7 +109,7 @@ shift             = shiftidx-maxlags-1;      % shift samples relative to zerolag
 S = sign(Cmatrix(idx));%negative means Fast and slow are anti-correlated
 
 if shift<0
-    % fast-axis arrives after slow-axis; %substracting 90°
+    % fast-axis arrives after slow-axis; %substracting 90?
     dtRC    = -shift*sampling;
     phiRC   = mod(phiRC, 180);
     Cmap    = fliplr(Cmatrix(:, 1:(maxlags+1))); %only use left side on map

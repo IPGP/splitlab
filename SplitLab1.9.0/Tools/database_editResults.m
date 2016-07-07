@@ -65,7 +65,7 @@ switch option
             s = warning('error', 'MATLAB:DELETE:FileNotFound');    
             try
                 delete( fullname_eps );
-                mess = sprintf('Deleted result image:\n%s\n', fullname_eps);
+                mess = sprintf('\nDeleted result image:\n%s\n', fullname_eps);
                 disp( mess );
             catch
                 mess = sprintf('Result image to delete not found:\n%s\n', fullname_eps);

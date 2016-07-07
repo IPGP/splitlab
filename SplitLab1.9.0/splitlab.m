@@ -170,7 +170,7 @@ h.menu(8) = uicontrol(...
     'String',loadstr,...
     'UserData',pjtlist,...
     'BackgroundColor','w',...
-    'pos',[10 130 100 25],'parent',h.menu(1),'HandleVisibility','off',...
+    'pos',[6 128 110 25],'parent',h.menu(1),'HandleVisibility','off',...
     'Callback',@loadcallback);
 %-------------------------------------------------------------------------
 h.menu(7) = uicontrol(...
@@ -244,7 +244,7 @@ if  val ==1;
     %"Load" string... do nothing!
     return
 elseif  val == 2 %Browse...
-    str ={'*.pjt', '*.pjt - SplitLab projects files';
+    str ={'*.pjt', '*.pjt - SplitLab project files';
         '*.mat', '*.mat - MatLab files';
         '*.*',     '* - All files'};
     pjtlist = getpref('Splitlab','History');
@@ -303,13 +303,14 @@ splitlab
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function savecallback(src,e)
 global config eq
-str ={'*.pjt', '*.pjt - SplitLab projects files';
+
+str ={'*.pjt', '*.pjt - SplitLab project files';
     '*.mat', '*.mat - MatLab files';
     '*.*',     '* - All files'};
 [tmp1,tmp2]=uiputfile( str ,'Project file', ...
     [config.projectdir, filesep, config.project]);
 
-if isstr(tmp2)
+if ischar(tmp2)
     oldpjt = config.project ;
     config.projectdir = tmp2;
     config.project    = tmp1;
@@ -346,25 +347,8 @@ if isstr(tmp2)
     set(pjtfield,'String',config.project)
     
 end
-
 clear tmp*
 
-
-
-%%
-function myclosereq(thisfig,dummy) 
-% User-defined close request function
-% to display a question dialog box
-
-selection = questdlg('Do You really want to close the Configuration Window?',...
-                     'Close Request Function',...
-                     'Yes','No','Yes');
-switch selection,
-   case 'Yes',
-     delete(thisfig)
-   case 'No'
-     return
-end
 
 %% This program is part of SplitLab
 %  2006 Andreas Wuestefeld, Universite de Montpellier, France

@@ -1,12 +1,10 @@
 function varargout=SL_cmtread(default_file)
-%Read earthquake database from Harvard-CMT catalogue and saves in SplitLab
+% Read earthquake database from Harvard-CMT catalogue and saves in SplitLab
 % format. You can either create a new catalogue from a local ".ndk"-file
-%    or 
-% update an existing catalogue, chosen in SpliLab's  catalogue panel
+% or update an existing catalogue, chosen in SpliLab's  catalogue panel
 %
 
-
-%The format is ASCII and uses five 80-character lines per earthquake.
+% The format is ASCII and uses five 80-character lines per earthquake.
 % PDE  2005/07/01 03:48:28.7  36.57   71.32  63.1 5.4 0.0 AFGHANISTAN-TAJIKISTAN B
 % C200507010348A   B: 61  119  40 S: 63  132  50 M:  0    0   0 CMT: 1 TRIHD:  1.5
 % CENTROID:      8.6 0.2  36.79 0.02   71.06 0.02 100.1  1.5 FREE S-20050916103315
@@ -53,10 +51,7 @@ switch Answer
         dstr=datestr([cmt.year(end) cmt.month(end) cmt.day(end) cmt.hour(end) cmt.minute(end) cmt.sec(end)]);
             workbar(.5, ['Last earthquake in database:  ' dstr])
             pause(2)
-            
-            
-            
-            
+                   
     case 'Local file'
         answer = questdlg('Do you want to create a new catalogue or update the current catalogue?', 'Catalogue', 'New','Update','Cancel','Update');
         switch answer
@@ -85,6 +80,7 @@ switch Answer
 
         workbar(.3, [num2str(L) ' earthquakes in the Quick CMT file...'])
         pause(1)
+        
     otherwise
         return
 end

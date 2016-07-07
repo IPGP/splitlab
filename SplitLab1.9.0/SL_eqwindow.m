@@ -149,11 +149,11 @@ end
 
 
 z_win=config.z_win;
-if ~strcmp(config.studytype,'Reservoir')
+if ~strcmp(config.studytype,'Reservoir') %Regional or Teleseismic
     [dis, range, azi,bazi] = sphere_dist( cmt.lat, cmt.long, config.slat,config.slong );
     azi      = mod(azi,  360);
     bazi      = mod(bazi, 360);
-else
+else 
     z = (  cmt.depth + config.selev); % elevation is positiv upwards, eventdepth positive downwards
     % this assumes an backazimuth from station to event, positive clockwise
     % from North and Inclination positive from vertical down (==0deg)
@@ -162,8 +162,10 @@ else
     hdis       = sqrt(dx.^2 + dy.^2);%in horizontal distance
 
     dis        = sqrt(hdis.^2  + z.^2);%in 3D
-    bazi       = mod(atan2(dx,dy)  * 180/pi, 360);
+    bazi       = mod(atan2(dx,dy) * 180/pi, 360);
     azi        = mod(bazi+180  , 360);
+    disp(azi);
+    disp(bazi);
     SKSwin = [min(dis) max(dis)];
     z_win=config.z_win*1000;
 end
@@ -188,18 +190,13 @@ dstr = datestr(eventid(sks),1);
 
 for i=1:length(sks)
     out(i).date     = [cmt.year(sks(i)) cmt.month(sks(i)) cmt.day(sks(i)) cmt.hour(sks(i)) cmt.minute(sks(i)) cmt.sec(sks(i)) cmt.jjj(sks(i))];
-    out(i).dstr     = dstr(i,:);
-    
+    out(i).dstr     = dstr(i,:);  
     out(i).lat      = cmt.lat(sks(i));
     out(i).long     = cmt.long(sks(i));
     out(i).depth    = cmt.depth(sks(i));
     out(i).azi      = azi(sks(i));
     out(i).bazi     = bazi(sks(i));
     out(i).dis      = dis(sks(i));
-    
-    
-    
-    
     out(i).Mw       = cmt.Mw(sks(i));
     
     if strcmp(config.catformat,'CMT')
@@ -215,10 +212,8 @@ for i=1:length(sks)
     out(i).phase.rayparam    = [];
     out(i).phase.ttimes      = [];
     out(i).phase.inclination = [];
-    out(i).phase.takeoff     = [];
-    
-    out(i).energy      = nan; %for SKS energy
-    
+    out(i).phase.takeoff     = [];  
+    out(i).energy      = nan; %for SKS energy   
     out(i).results  = []; %initilize as empty variable
 end
 % close(h)
@@ -227,7 +222,7 @@ if exist('e','var')
 end
 
 %% This program is part of SplitLab
-% © 2006 Andreas Wüstefeld, Université de Montpellier, France
+%  2006 Andreas Wuestefeld, Universite de Montpellier, France
 %
 % DISCLAIMER:
 %
@@ -239,9 +234,9 @@ end
 % 2) LICENSE:
 % SplitLab is free software; you can redistribute it and/or modifyit under the
 % terms of the GNU General Public License as published by the Free Software
-% Foundation; either version 2 of the License, or(at your option) any later
+% Foundation; either version 2 of the License, or (at your option) any later
 % version.
 % This program is distributed in the hope that it will be useful, but WITHOUT
 % ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+% FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
 % more details.

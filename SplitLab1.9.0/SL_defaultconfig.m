@@ -20,7 +20,7 @@ config.project     = 'default_project.pjt';
 config.datadir     = '/Users/john/Dropbox/JOHNS_WORK/';  %home;
 config.projectdir  = '/Users/john/Dropbox/JOHNS_WORK/';  %home;
 config.savedir     = '/Users/john/Dropbox/JOHNS_WORK/';  %home;
-config.autosave    = true;
+config.showearth   = true;
 config.isWeiredMAC = false;
 
 config.studytype='Teleseismic';

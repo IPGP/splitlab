@@ -460,18 +460,17 @@ caltime = (now - ttime)*24*3600;
 %initial polarisation as the strike...
 
 
-%disp(thiseq.inipol);
-disp(thiseq.selectedpol);
-disp(thiseq.selectedinc);
-disp([phiRC(1) phiSC(1) phiEV(1)]);
+% disp(thiseq.inipol);
+% disp(thiseq.selectedpol);
+% disp(thiseq.selectedinc);
+% disp([phiRC(1) phiSC(1) phiEV(1)]);
 
 [thiseq.tmpresult.strikes, thiseq.tmpresult.dips ] = abc2enz(...
     thiseq.selectedpol, ...
     thiseq.selectedinc, ...
     [phiRC(1) phiSC(1) phiEV(1)]);
 
-disp(thiseq.tmpresult.strikes);
-disp(thiseq.tmpresult.dips);
+% disp(thiseq.tmpresult.strikes);
 
 thiseq.inipol = abc2enz(...
     thiseq.selectedpol, ...
@@ -502,11 +501,12 @@ if strcmpi(config.studytype,'Teleseismic')
 
     if strcmp(config.inipoloption, 'fixed')
         rota     = thiseq.bazi;
-        gamma    = gamma    + thiseq.bazi;
+        %gamma    = gamma    + thiseq.bazi;
+        thiseq.inipol = thiseq.bazi;
         allFasts = mod(allFasts + thiseq.bazi,180);
     else
         rota     = thiseq.inipol;
-        gamma    = gamma    + thiseq.inipol;
+        %gamma    = gamma    + thiseq.inipol;
         allFasts = mod(allFasts + thiseq.inipol,180);
     end
 
@@ -519,9 +519,9 @@ if strcmpi(config.studytype,'Teleseismic')
     steps             = floor(mod(thiseq.bazi, 180)/config.StepsPhi) ;
     EmapStack(:,:,1)  = circshift(EmapStack(:,:,1), steps);
 
-    phiRC(1) = mod(phiRC(1)+rota,180);
-    phiSC(1) = mod(phiSC(1)+rota,180);
-    phiEV(1) = mod(phiEV(1)+rota,180);
+%     phiRC(1) = mod(phiRC(1)+rota,180);    %if uncommented, phi is like srike
+%     phiSC(1) = mod(phiSC(1)+rota,180);    %if uncommented, must adabt results plot
+%     phiEV(1) = mod(phiEV(1)+rota,180);
     
     if phiRC(1)>90, phiRC(1)=phiRC(1)-180;end
     if phiSC(1)>90, phiSC(1)=phiSC(1)-180;end
@@ -542,15 +542,11 @@ thiseq.tmpresult.phiSC = phiSC;
 thiseq.tmpresult.dtSC  = dtSC;
 thiseq.tmpresult.phiEV = phiEV;
 thiseq.tmpresult.dtEV  = dtEV;
-
 thiseq.tmpresult.splitIntens = splitIntens;
-
 thiseq.tmpresult.inipol  = thiseq.inipol;
 thiseq.tmpresult.SNR     = SNR;
 thiseq.tmpresult.domfreq = thiseq.domfreq;
-
 thiseq.tmpresult.Spick   = SpickBest;
-
 thiseq.tmpresult.remark  = '';  %default remark
 if config.saveErrorSurface
     thiseq.tmpresult.ErrorSurface = Ematrix;
@@ -587,8 +583,6 @@ log = 1; % option for future versions
 if log
     SL_writeLogFile('LOG',config, thiseq)
 end
-
-
 
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

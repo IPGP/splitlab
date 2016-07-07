@@ -11,9 +11,9 @@ global thiseq config
 
 axes(axH);
 
-str11 = sprintf('%4.0f\\circ   (%4.0f\\circ) \\pm%2.0f', strikes(1), phiRC);
-str12 = sprintf('%4.0f\\circ   (%4.0f\\circ) \\pm%2.0f', strikes(2), phiSC);
-str13 = sprintf('%4.0f\\circ   (%4.0f\\circ) \\pm%2.0f', strikes(3), phiEV);
+str11 = sprintf('%4.0f\\circ  (%4.0f\\circ) \\pm%2.0f', strikes(1), phiRC);
+str12 = sprintf('%4.0f\\circ  (%4.0f\\circ) \\pm%2.0f', strikes(2), phiSC);
+str13 = sprintf('%4.0f\\circ  (%4.0f\\circ) \\pm%2.0f', strikes(3), phiEV);
 if config.maxSplitTime>=.1
     str21 = sprintf('%5.2f \\pm%5.2fs', dtRC);
     str22 = sprintf('%5.2f \\pm%5.2fs', dtSC);
@@ -41,11 +41,11 @@ thiseq.Qstr = '        ' ;
 str ={['\rm  Event: \bf' ...
     sprintf('%s (%03.0f) %02.0f:%02.0f  %6.2fN %6.2fE  %.0f%c%c  \\rmMw=\\bf%3.1f',thiseq.dstr, thiseq.date([7 4 5]) ,thiseq.lat, thiseq.long, thiseq.depth,depthunit, thiseq.Mw) ];
     [' \rmStation: \bf' strrep(config.stnname, '_','\_') '   \rmBackazimuth: \bf' sprintf('%5.1f',thiseq.bazi) '\circ   \rmDistance: \bf' sprintf('%.2f',thiseq.geodis3D) depthunit] ;
-    ['\rminit.Pol.:  \bf' sprintf('%5.1f',pol)   '\circ    \rmInclination: \bf' sprintf('%5.1f', inc)  '\circ   \rmFilter: \bf' sprintf('%.3fHz - %.2fHz',bestfilter(1:2)) ];
-    [' \rm     \Psi =  ' sprintf('%5.1f' ,gamma) '\circ    strike   (fast)          delay   '];
-    ['\rmRotation Correlation:  ' str11 '   ' str21];
-    ['\rm      Minimum Energy:  ' str12 '   ' str22];
-    ['\rm          Eigenvalue:  ' str13 '   ' str23];
+    ['\rminit.Pol.:  \bf' sprintf('%5.1f',pol)   '\circ    \rmInclination \Theta: \bf' sprintf('%4.1f', inc)  '\circ   \rmFilter: \bf' sprintf('%.3fHz - %.2fHz',bestfilter(1:2)) ];
+    [' \rm      \gamma =  ' sprintf('%5.1f' ,gamma) '\circ   strike \Psi  (\Phi \angleSG,fast)  delay   '];
+    ['\rmRotation Correlation:    ' str11 '   ' str21];
+    ['\rm      Minimum Energy:    ' str12 '   ' str22];
+    ['\rm          Eigenvalue:    ' str13 '   ' str23];
     ['             \rmQuality: \bf'  sprintf('%05.3f',thiseq.Q)  '   ' thiseq.Qstr '\rm    Phase: \bf' thiseq.SplitPhase '        ' SNRstr;] };
 
 if config.calcphase

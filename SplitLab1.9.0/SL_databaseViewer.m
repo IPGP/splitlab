@@ -21,10 +21,9 @@ sortorder = [ 5  3  2  1 %date:  day month year
               1  1  2  3]; % Energy
 
 
-%%
+%% Database box
 strlen   = [ 0 12  5 11  9 9 9 6  10 10 4];
 fontsize = 12; %pixel
-
 names    = {'Date','JDay','Time','lat','long','depth','Mw','back-azi','distance','ID'};
 
 figpos = get(0,'ScreenSize');
@@ -58,9 +57,11 @@ end
 h.cmenu = uicontextmenu;
 h.list = uicontrol(h.dlg, 'style','listbox','Position',[40 150 ext(3)+17 figpos(4)-180],...
                    'tag','TableList','string',[],'fontname','fixedWidth','fontunits','pixel','fontsize',fontsize,...
-                   'Backgroundcolor','w','max',999,'Callback',@getThisLineData,'BusyAction','cancel',...
+                   'Backgroundcolor','w','max',999,'Callback', @getThisLineData,'BusyAction','cancel',...
                    'Tooltipstring','Double-click to open',...
                    'UIContextMenu',h.cmenu,'value',val);
+
+% right-click in database box
 uimenu(h.cmenu, 'Label', 'Delete','UserData',h.list,...
        'Callback', ['tmpobj = get(gcbo,''UserData'');'...
        'tmp1 = get(tmpobj,''val'');'...
@@ -85,13 +86,14 @@ end
 delete(tmp)
 set(h.dlg, 'ResizeFcn',@localResizeFcn)
 
-%% Default list display:
+
+%% Default List display:
 col = config.tablesortcolumn;
 sorttable([],[],sortorder(col,:), h.list, col);
 
 
-%% result list
-header    = ' Phase   \Phi_{SC}   \Phi_{RC}  \deltat_{SC}  \deltat_{RC}  Q\_manu   Q\_auto  Filter      Remark';
+%% Result list
+header    = ' Phase   \Psi_{RC}    \Psi_{SC}   \deltat_{RC}  \deltat_{SC} Q\_manu  Q\_auto   Filter       Remark';
 h.info(1) = uipanel('parent',h.dlg, 'units','pixel', 'Position',[40 40 ext(3)+17 100],'tag','ResultsPanel');
 h.info(4) = axes('parent',h.info(1), 'units','pixel', 'Position',[2 78 ext(3)+11 18]);
 axis off
@@ -106,36 +108,42 @@ h.info(3) = uicontrol('parent',h.info(1),'style','listbox','max',0, 'value',1,'P
 
 load icon;
 
-h.button  = uicontrol(h.dlg,'style','pushbutton','Position',[40 8 50 25],...
+h.button1  = uicontrol(h.dlg,'style','pushbutton','Position',[40 8 50 25],...
                       'string','View','Callback','SL_SeismoViewer(get(findobj(''Tag'',''TableList''),''Value''))');
 h.button2 = uicontrol(h.dlg,'style','pushbutton','Position',[100 8 50 25],...
                       'Tooltipstring','Remove earthquakes with no result from database',...
                       'string','CleanUp','Callback','database_editResults(''Cleanup'')');
-h.button5 = uicontrol('style','pushbutton','Position',[160 8 60 25],...
+h.button3 = uicontrol('style','pushbutton','Position',[160 8 60 25],...
                       'string','       Export','Tag','ExportButton','Cdata',icon.excel,...
                       'Tooltipstring','Export tabel to Excel worksheet',...
                       'Callback','pjt2xls');
-h.button6 = uicontrol('style','pushbutton','Position',[230 8 60 25],...
+h.button4 = uicontrol('style','pushbutton','Position',[230 8 50 25],...
                       'string','Statistic',...
                       'Tooltipstring', 'Show statistics plot',...
                       'Callback','SL_showeqstats');
-h.button3 = uicontrol(h.dlg,'style','pushbutton','Position',[ext(3)-60 8 60 25],...
+h.button5 = uicontrol('Style','checkbox','String','EarthViewer',...
+                      'pos',[285 8 80 25],'value', config.showearth,...
+                      'Callback','config.showearth = get(gcbo,''Value''); filename = fullfile(config.projectdir,config.project); save(filename,''eq'',''config''); SL_databaseViewer;');          
+
+% for single result
+h.button6 = uicontrol(h.dlg,'style','pushbutton','Position',[ext(3)-60 8 60 25],...
                       'string','Remove','Enable','off','Tag','ResultsButton',...
                       'Tooltipstring','Remove result from database',...
                       'Callback','database_editResults(''Del'')');
-h.button4 = uicontrol(h.dlg, 'style','pushbutton', 'Position',[ext(3)+7 8 50 25],...
+h.button7 = uicontrol(h.dlg, 'style','pushbutton', 'Position',[ext(3)+7 8 50 25],...
                       'string','Edit','Enable','off','Tag','ResultsButton', ...
                       'Tooltipstring', 'Edit values ...',...
                       'Callback','database_editResults(''Edit'')');
-h.button4 = uicontrol(h.dlg, 'style','pushbutton', 'Position',[ext(3)-117 8 50 25],...
+h.button8 = uicontrol(h.dlg, 'style','pushbutton', 'Position',[ext(3)-117 8 50 25],...
                       'string','','Enable','of','Tag','ResultsButton', ...
                       'Cdata', icon.presentation,'Tooltipstring', 'View resultfiles',...
                       'Callback','database_editResults(''View'')');
 
                   
-%% Map
-SL_Earthview([],[],[],[],datevec(now));
-
+getThisLineData(h.list);  % show results of EQ directly, no need to click first 
+if ~config.showearth      % close EarthView window if not wanted and still open
+     close(findobj('Type', 'Figure', 'Tag',  'EarthView'));  
+end
 %END OF PROGRAMM
 
 
@@ -151,11 +159,13 @@ if strcmp(get(h_dlg,'SelectionType'),'open')
     SL_SeismoViewer(val);
 else
     %%single click
-    h_ax  = findobj('Tag','EQmap');
-    mark  = findobj('Tag','thisEQMarker');
-    val   = get(h_list,'Value');
-    r_box = findobj('tag','ResultsBox');
-
+    h_ax            = findobj('Tag','EQmap');
+    mark            = findobj('Tag','thisEQMarker');
+    val             = get(h_list,'Value');
+    r_box           = findobj('Tag','ResultsBox');
+    config.db_index = val;   % if EQ clicked in table, assign config.de_index
+                             % as this is used to show next time this last 
+    
     if ~isempty(mark),  delete(mark); end
     % set figure UserData to selection index!
     set(h_dlg,'Userdata',val(1)); %for use with split button
@@ -164,7 +174,7 @@ else
     outstr = [];
     for j = 1:length(val)
         R = eq(val(j)).results;
-        outstr = strvcat(outstr,['------------------------------------- ' eq(val(j)).dstr ' -----------------------']);
+        outstr = char(['-------------------------------- ' eq(val(j)).dstr ' ---------------------------']);
         if ~isempty(R)
             if strcmp(config.studytype,'Reservoir')
                 unit = 'm';
@@ -175,25 +185,29 @@ else
                 P = R(k).SplitPhase;
                 Q = R(k).Q;%automatic Quality
                 M = R(k).Qstr;%Manual Quality
-                phis = [R(k).phiSC(1) R(k).phiRC(1)];
-                dts  = [R(k).dtSC(1)  R(k).dtRC(1)];
-                o = sprintf(['%6s %4.0f' unit ' %4.0f' unit '  %3.1fs  %3.1fs %8s %5.2f   [%4.3f %4.2f] %s'],...
-                            P, phis,dts, M, Q, R(k).filter(1:2),  R(k).remark);
-                outstr = strvcat(outstr,o);
+                %phis = [R(k).phiSC(1) R(k).phiRC(1)];
+                strikes = [R(k).strikes(1) R(k).strikes(2)];
+                dts  = [R(k).dtRC(1)  R(k).dtSC(1)];
+                o = sprintf(['%6s %5.1f' unit ' %5.1f' unit '  %3.1fs  %3.1fs %9s %4.2f   [%4.3f %4.2f] %s'],...
+                            P, strikes,dts, M, Q, R(k).filter(1:2),  R(k).remark);
+                outstr = char(outstr,o);
             end
         end
-        L(j) = length(R);%numbers of results per earthquake
+        L(j) = length(R); %numbers of results per earthquake
     end
-
     L = cumsum([1 L+1]); %separation lines
-    set(r_box,'String',outstr, 'value', 1,'UserData',L)
+    set(r_box, 'String',outstr, 'value',1, 'UserData',L)
 
 
-    %% Map
+    %% EarthMap of EQ
     Mw=round([eq(val).Mw]*10)/10;
-    SL_Earthview([eq(val).lat],[eq(val).long],Mw,[eq(val).depth],reshape([eq(val).date],7,[])');
-
+    if config.showearth
+        SL_Earthview([eq(val).lat],[eq(val).long],Mw,[eq(val).depth],reshape([eq(val).date],7,[])');
+    end
 end
+filename = fullfile(config.projectdir,config.project);   
+save(filename,'eq','config');  %save pjt when clicking through lines (because of config_db.index)
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,7 +259,6 @@ clear tmpstr
 set(h_list,...
     'String',outstr,...
     'UserData',idx) %update display, Userdata are sort order incices
-
 eq=eq(idx);
 
 
