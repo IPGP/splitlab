@@ -93,7 +93,7 @@ sorttable([],[],sortorder(col,:), h.list, col);
 
 
 %% Result list
-header    = ' Phase   \Psi_{RC}    \Psi_{SC}   \deltat_{RC}  \deltat_{SC} Q\_manu  Q\_auto   Filter       Remark';
+header    = ' Phase   \Psi_{RC}    \Psi_{EV}   \deltat_{RC}  \deltat_{EV} Q\_manu  Q\_auto   Filter       Remark';
 h.info(1) = uipanel('parent',h.dlg, 'units','pixel', 'Position',[40 40 ext(3)+17 100],'tag','ResultsPanel');
 h.info(4) = axes('parent',h.info(1), 'units','pixel', 'Position',[2 78 ext(3)+11 18]);
 axis off
@@ -186,8 +186,8 @@ else
                 Q = R(k).Q;%automatic Quality
                 M = R(k).Qstr;%Manual Quality
                 %phis = [R(k).phiSC(1) R(k).phiRC(1)];
-                strikes = [R(k).strikes(1) R(k).strikes(2)];
-                dts  = [R(k).dtRC(1)  R(k).dtSC(1)];
+                strikes = [R(k).strikes(1) R(k).strikes(3)];
+                dts  = [R(k).dtRC(1)  R(k).dtEV(1)];
                 o = sprintf(['%6s %5.1f' unit ' %5.1f' unit '  %3.1fs  %3.1fs %9s %4.2f   [%4.3f %4.2f] %s'],...
                             P, strikes,dts, M, Q, R(k).filter(1:2),  R(k).remark);
                 outstr = char(outstr,o);
