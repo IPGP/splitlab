@@ -137,7 +137,6 @@ for ii=1:length(f1)
                                 isBatchMode,...
                                 config.StepsPhi,...
                                 config.StepsDT);
-            
             if strcmp(config.inipoloption, 'fixed')
                 tmp_gamma=0;
             end
@@ -406,7 +405,7 @@ set(gcbf,'Pointer','crosshair')
 %**************************************************************
 %% PostProcessing and Graphics preparation
 
-%gamma is matematically positive from SG towards SH...
+%gamma is mathematically positive from SG towards SH...
 M = [ cosd(gamma)  sind(gamma);
     -sind(gamma)  cosd(gamma)   ];
 
@@ -459,18 +458,10 @@ caltime = (now - ttime)*24*3600;
 %% 3D correction: project to geographical system
 %initial polarisation as the strike...
 
-
-% disp(thiseq.inipol);
-% disp(thiseq.selectedpol);
-% disp(thiseq.selectedinc);
-% disp([phiRC(1) phiSC(1) phiEV(1)]);
-
 [thiseq.tmpresult.strikes, thiseq.tmpresult.dips ] = abc2enz(...
     thiseq.selectedpol, ...
     thiseq.selectedinc, ...
     [phiRC(1) phiSC(1) phiEV(1)]);
-
-% disp(thiseq.tmpresult.strikes);
 
 thiseq.inipol = abc2enz(...
     thiseq.selectedpol, ...

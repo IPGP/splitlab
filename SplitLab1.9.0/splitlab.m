@@ -2,8 +2,8 @@ function splitlab
 % Main window of the SplitLab toolbox, configure the parameters and projects
 % creating the configuration figure of Splitlab
 
-clearvars -global config eq thiseq
-global config 
+clearvars -global config eq thiseq h
+global config h
 
 config.version='SplitLab1.9.0';
 config.saveErrorSurface = 1;
@@ -38,16 +38,15 @@ set(0, 'DefaultFigurecolor', [224   223   227]/255 ,...
        'DefaultFigureWindowStyle', 'normal',...
        'DefaultUIControlBackgroundColor', [224   223   227]/255) 
 close(findobj('Type', 'Figure', 'Name', 'Database Viewer'));
-close(findobj('Type', 'Figure', 'Tag',  'EarthView'));  
-close(findobj('Type', 'Figure', 'Tag',  'SeismoFigure'));  
-cfig = findobj('type', 'Figure', 'name', ['Configure ' config.version]);
+close(findobj('Type', 'Figure', 'Tag', 'EarthView'));  
+close(findobj('Type', 'Figure', 'Tag', 'SeismoFigure'));  
+cfig =findobj('type', 'Figure', 'Tag', 'ConfigViewer','name', ['Configure ' config.version]);
 
 
 %% try several fonts for best display of text and uicontrols
 % set(0,'screenPixelsPerInch', 96); %This is the default Windows DPI. we need to fix this for portability reasons! 
 
 list = listfonts;
-%change to your needs and computer...
 preffont={'M Sans Serif', 'Tahoma', 'Arial','Helvetica','Lucida Sans Unicode'};
 
 for k=1:length(preffont);
@@ -74,18 +73,17 @@ end
 %%
 if isempty(cfig)
     cfig = figure('name',['Configure ' config.version],...
+                  'Tag', 'ConfigViewer',...
                   'Menubar','none',...
                   'NumberTitle','off','units','pixel');
 end
-
-figure(cfig)
-clf
 
 
 %% Side panel: radio buttons
 h.menu = uibuttongroup('visible','on','units','pixel','Position',[5 5 120 410],...
     'BackgroundColor','w','HighlightColor',[1 1 1]*.3,...
-    'BorderWidth',1,'BorderType','beveledin' );
+    'BorderWidth',1,'BorderType','beveledin',...
+    'SelectionChangedFcn', @selcbk);
 drawnow;
 
 
@@ -104,8 +102,6 @@ configpanelSEARCHWIN;
 configpanelREQUEST;
 configpanelFINDFILE;
 configpanelSPLITOPTION;
-
-set(h.panel(2:end), 'Visible','off');
 
 
 %% Fill the side panel
@@ -173,7 +169,7 @@ h.menu(8) = uicontrol(...
     'pos',[6 128 110 25],'parent',h.menu(1),'HandleVisibility','off',...
     'Callback',@loadcallback);
 %-------------------------------------------------------------------------
-h.menu(7) = uicontrol(...
+h.menu(88) = uicontrol(...
     'Style','pushbutton',...
     'String','Save Project As',...
     'pos',[10 100 100 25],'parent',h.menu(1),'HandleVisibility','off',...
@@ -203,14 +199,9 @@ h.menu(99) = uicontrol(...
     'pos',[7 380 106 22],'parent',h.menu(1),'HandleVisibility','off',...
     'Callback','SL_preferences(config);  helpdlg(''Preferences saved to MatLab Preferences!'',''Preferences'')');
 
-
-set(h.menu(1),'SelectionChangeFcn',@selcbk);
-set(h.menu(1),'SelectedObject',[h.menu(2)]);
+set(h.menu(1),'SelectedObject',h.menu(2));
 set(h.panel([6 8]),'Visible','on');
 set(h.menu(1),'Visible','on');
-
-figure(cfig)
-
 
 % intrestingly, at startup the first value of the random gegenator is often 0.9501
 % so, generate first dum dummy random numbers, and than in a new round take 
@@ -229,6 +220,7 @@ end
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function selcbk(source,eventdata)
 %set selected menu panel visible, others are made invisible
+
 old = get(eventdata.OldValue,'Userdata');
 new = get(eventdata.NewValue,'Userdata');
 

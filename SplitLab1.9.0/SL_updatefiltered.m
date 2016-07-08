@@ -19,7 +19,7 @@ ya= findobj('Tag','TTimeAxesLable');
 
 if f1==0 & f2==inf
     %no filter
-    txt = sprintf('SeismoViewer(%.0f/%.0f): unfiltered', config.db_index, length(eq));
+    txt = sprintf('SeismoViewer (%.0f/%.0f): unfiltered', config.db_index, length(eq));
     if thiseq.system=='ENV'
         set(seis(1), 'Ydata',thiseq.Amp.East)
         set(seis(2), 'Ydata',thiseq.Amp.North)
@@ -138,7 +138,7 @@ end
 
 set(get(subax{1},'Parent'), 'name', txt);
 %% This program is part of SplitLab
-% © 2006 Andreas Wüstefeld, Université de Montpellier, France
+% ? 2006 Andreas W?stefeld, Universit? de Montpellier, France
 %
 % DISCLAIMER:
 %

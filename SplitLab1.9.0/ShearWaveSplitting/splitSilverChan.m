@@ -1,7 +1,7 @@
 function [phiSC, dtSC, phiEV, dtEV,  Emap, correctFastSlow, corrected_SG_SH, Eresult, gamma] =...
     splitSilverChan(SG, SH, pickwin, sampling, maxtime, option, isBatch, StepsPhi, StepsDT)
 
-% Andreas Wüstefeld 12.03.06
+% Andreas Wuestefeld 12.03.06
 % updated 20.02.09 to allow SG-SH input.
 
 % test rotations are counter-clockwise rotation of SG-SH

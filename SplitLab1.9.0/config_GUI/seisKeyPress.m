@@ -147,7 +147,6 @@ elseif strcmp(evnt.Key,'delete')
     trashfunction = @localTrash;
     trashfunction(gcbf,evnt);
     
-    
 else
     switch evnt.Character
         case 'a'
@@ -179,6 +178,18 @@ else
 %             else
 %                 helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
 %             end
+        case 'o'
+            global h
+            k=findobj('Tag','ConfigViewer'); 
+            if ishandle(k); uistack(k,'top')
+                set( h.menu(1),'SelectedObject',h.menu(7));
+                disp('dsqdf');
+                set( h.panel(11),'Visible','on');
+            else
+                mess = sprintf( '\nMain Splitlab Figure closed. Cannott show splitting options.');
+                warning( mess );
+            end
+            
         case 'j'
             if  sum(thiseq.Ppick ~=0)
                 dummy = SL_calcP_pol('single','Jurkewicz','P');

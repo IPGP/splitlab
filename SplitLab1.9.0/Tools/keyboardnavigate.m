@@ -44,7 +44,7 @@ function keyboardnavigate(option)
 %   axis vis3d
 %   keyboardnavigate on
 
-% By A. Wüstefeld, Nov. 2008
+% By A. Wuestefeld, Nov. 2008
 % splitlab@gmx.net
 
 

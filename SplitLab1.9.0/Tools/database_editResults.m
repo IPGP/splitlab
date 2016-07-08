@@ -14,15 +14,15 @@ switch option
     case 'Del'
         button = questdlg({'Do you want to delete this result from database?';'(Also result image and line in ''splitresults*_STAT.dat''-file)'},'Confirm delete','Yes','No','Yes');
         if strcmp(button,'Yes')
-            seisfig = findobj('Tag','SeismoFigure');
-            if ~isempty(seisfig)
+            seisfig = findobj('Type','Figure', 'Tag','SeismoFigure');
+            if ishandle(seisfig)
+                close(seisfig)
                 warndlg(...
-                    {'Please close the SeismoViewer to perfom this operation!',...
-                    'An open SeismoViewer may cause database conflicts.',...
-                    'Please excuse this inconvenience'},...
-                    'Close SeismoViewer!');
-                return
+                    {'We will close and reopen the SeismoViewer to perfom',...
+                     'this operation! An open SeismoViewer may cause database',...
+                     'conflicts. Please excuse this inconvenience!'});
             end
+            SL_SeismoViewer(config.db_index)
             tmp  = L(L<=rval);                      %substract header lines from list index
             num  = lval(length(tmp));               %to retrieve index of eq
             val  = rval - tmp(end);                 %index of result of eq(num)

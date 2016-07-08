@@ -123,7 +123,7 @@ if strcmpi(config.studytype,'Teleseismic')
         phiSC(1) = mod(phiSC(1) + thiseq.bazi, 180);
         phiEV(1) = mod(phiEV(1) + thiseq.bazi, 180);
 	else
-        B        = mod(           thiseq.inipol, 90); % backazimuth lines
+        B        = mod(           thiseq.inipol, 90); 
         phi      = mod(phi      + thiseq.inipol, 180);
         phiRC(1) = mod(phiRC(1) + thiseq.inipol, 180);
         phiSC(1) = mod(phiSC(1) + thiseq.inipol, 180);
@@ -240,7 +240,7 @@ title('Map of Correlation Coefficient', 'FontSize', titlefontsize);
 set(gca, 'xMinorTick', 'on','yminorTick', 'on')
 axis([0 config.maxSplitTime -90 90])
 xlabel('dt [s]', 'Fontsize',fontsize-1);
-ylabel('fast axis', 'Fontsize',fontsize-1)
+ylabel('\Phi + init.Pol. \sim Strike', 'Fontsize',fontsize-1)
 set(h,'FaceColor', [1 1 1]*.90, 'EdgeColor', 'k', 'linestyle', '-', 'linewidth', 1)
 hold off
 
@@ -344,7 +344,7 @@ hold off
 axis([0 config.maxSplitTime -90 90])
 set(gca, 'xMinorTick', 'on', 'yminorTick', 'on')
 xlabel('dt [s]', 'FontSize', fontsize-1);
-ylabel('fast axis', 'FontSize', fontsize-1)
+ylabel('\Phi + init.Pol. \sim Strike', 'FontSize', fontsize-1)
 title(Maptitle,'FontSize', titlefontsize);
 set(h,'FaceColor',[1 1 1]*.90,'EdgeColor','k','linestyle','-','linewidth',1)
 

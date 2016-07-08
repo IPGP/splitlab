@@ -86,7 +86,7 @@ end
 
 %% Figure initalisation
 seisfig = findobj('Tag', 'SeismoFigure');
-figname = sprintf('SeismoViewer(%.0f/%.0f): start= %.3fHz  stop= %0.2f Hz  Order: %d', config.db_index, length(eq), thiseq.filter);
+figname = sprintf('SeismoViewer (%.0f/%.0f): start= %.3fHz  stop= %0.2f Hz  Order: %d', config.db_index, length(eq), thiseq.filter);
 
 if isempty(seisfig)
     pos     = get(0, 'ScreenSize');
