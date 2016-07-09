@@ -13,21 +13,11 @@ function SL_Earthview(lat, long, mag, depth, datum)
 
 %% location
 
-global eq config
+global config eq
 fig=gcf;
-
-if ~isfield(config,'showPiercePoints')
-    config.showPiercePoints=[1 1];%this is no standard option so create it if needed
-end
-if numel(config.showPiercePoints)==1; config.showPiercePoints(2)=1;end
-if ~isfield(config,'showGCarc')
-    config.showGCarc=1;%this is no standard option so create it if needed
-end
-
 
 
 isMapToolbox = license('checkout', 'MAP_Toolbox');
-
 month  = datum(:,2);
 inputs = {lat, long, mag, depth, datum};
 earth  = findobj('type','figure', 'tag','EarthView','NumberTitle','off');
@@ -56,34 +46,38 @@ if isempty(earth)
         magstr = sprintf('%3.1f',mag);
     end
     earth = figure( 'tag','EarthView','NumberTitle','off',...
-        'name',sprintf('World Viewer  Mw: %s   Depth: %s', magstr, depthstr),...
+        'CloseRequestFcn',@my_closereq,...
+        'name',sprintf('Earth Viewer:  Mw: %s   Depth: %s', magstr, depthstr),...
         'MenuBar','None','Position', pos);
     
     
-    
-    
     if strcmpi(config.studytype,'Teleseismic')
-        m1 = uimenu(earth,'Label',   'Style');
-        q(1) = uimenu(m1,'Label',  'Monthly Modis', 'Callback',@q_callback, 'Checked','On' );
+        m1 = uimenu(earth,'Label', 'Style');
+        q(1) = uimenu(m1,'Label',  'Monthly Modis', 'Callback',@q_callback, 'Checked','On' );   %standard
         q(2) = uimenu(m1,'Label',  'Natural Earth', 'Callback',@q_callback, 'Checked','Off');
         q(3) = uimenu(m1,'Label',  'Topography',    'Callback',@q_callback, 'Checked','Off');
         q(4) = uimenu(m1,'Label',  'Bathymetry',    'Callback',@q_callback, 'Checked','Off');
         q(5) = uimenu(m1,'Label',  'City Night',    'Callback',@q_callback, 'Checked','Off');
         q(6) = uimenu(m1,'Label',  'Mars Surface',  'Callback',@q_callback, 'Checked','Off');
         q(7) = uimenu(m1,'Label',  'Moon Albedo',   'Callback',@q_callback, 'Checked','Off');
+        set(q(config.mapstyle),'Checked','on');         % set mapstyle according to default
+        set(q(q~=q(config.mapstyle)),'Checked','off');
         set(q,'Userdata',{q; inputs})
-        
-        m2 = uimenu(earth,'Label',   'Night');
+
+        m2 = uimenu(earth,'Label',  'Night');
         qq(1) = uimenu(m2,'Label',  'City Nights', 'Checked','Off','Callback',@q_callback);
         qq(2) = uimenu(m2,'Label',  'shaded', 'Checked','On','Callback',@q_callback);
-        qq(3) = uimenu(m2,'Label',  'none', 'Checked','Off','Callback',@q_callback);
+        qq(3) = uimenu(m2,'Label',  'none', 'Checked','Off','Callback', @q_callback);
+        set(qq(config.nightstyle),'Checked','on');      % set nightstyle according to default
+        set(qq(qq~=qq(config.nightstyle)),'Checked','off');        
         set(qq,'Userdata',{qq; inputs})
+
+        m3 = uimenu(earth, 'Label', 'Options');
+        qqq(1) = uimenu(m3,'Label', 'Show CMB pierce points of SKS',  'Checked','Off','Callback',@cmbCallback);
+        qqq(2) = uimenu(m3,'Label', 'Show CMB pierce points of SKKS', 'Checked','Off','Callback',@cmbCallback);
+        qqq(3) = uimenu(m3,'Label', 'Show Great Circle Path',         'Checked','Off','Callback',@gcarcCallback);
         
-        m3 = uimenu(earth,'Label',   'Options');
-        qqq(1) = uimenu(m3,'Label',  'Show CMB pierce points of SKS',  'Checked','Off','Callback',@cmbCallback);
-        qqq(2) = uimenu(m3,'Label',  'Show CMB pierce points of SKKS', 'Checked','Off','Callback',@cmbCallback);
-        qqq(3) = uimenu(m3,'Label',  'Show Great Circle Path', 'Checked','Off','Callback',@gcarcCallback);
-        if config.showPiercePoints(1)
+        if config.showPiercePoints(1)                   % set options according to default
             set(qqq(1),'Checked','On')
         else
             set(qqq(1),'Checked','Off')
@@ -93,16 +87,14 @@ if isempty(earth)
         else
             set(qqq(2),'Checked','Off')
         end
-        
         if config.showGCarc
             set(qqq(3),'Checked','On')
         else
             set(qqq(3),'Checked','Off')
         end
-        
+        set(qqq,'Userdata',{qqq; inputs})     
     end
 
-    %     if config.isLocationUnitMeters
     if ~strcmp(config.studytype,'Teleseismic')
         ax=axes;
         plot3([eq(:).long], [eq(:).lat],[eq(:).depth],'Marker','.','LineStyle','None','Color',[1 .5 0]);%[1 1 1]*0.5
@@ -149,30 +141,62 @@ if isempty(earth)
     end
     
     
-    
-    
-    
 else
     figure(earth)
-    set(earth,'name',['World Viewer  Magnitude: ' num2str(mag,'%.1f') '    Depth: ' num2str(depth) 'km'])
+    set(earth,'name',['Earth Viewer:  Magnitude: ' num2str(mag,'%.1f') '    Depth: ' num2str(depth) 'km'])
     delete(findobj('Tag','EQMarkerEarth'))
     delete(findobj('Tag','SplittedMarker'))
     delete(findobj('Tag','Sun'))
+    
     if strcmp(config.studytype,'Teleseismic')
         zoom(earth,'out')
-        
+
         men=findobj('parent',earth,'type','uimenu');
-        q  = get(men(1),'children');
-        qq = get(men(2),'children');
-        set(q ,'Userdata',{q ; inputs});
-        set(qq,'Userdata',{qq; inputs})
+        q   = get(men(3),'children');   %maps
+        qq  = get(men(2),'children');   %nights
+        qqq = get(men(1),'children');   %options
+        
+        if config.showPiercePoints(1)   %set to make correct checks
+            set(qqq(3),'Checked','On')
+        else
+            set(qqq(3),'Checked','Off')
+        end
+        if config.showPiercePoints(2)
+            set(qqq(2),'Checked','On')
+        else
+            set(qqq(2),'Checked','Off')
+        end
+        if config.showGCarc
+            set(qqq(1),'Checked','On')
+        else
+            set(qqq(1),'Checked','Off')
+        end     
+        set(q , 'Userdata',{q ; inputs});
+        set(qq, 'Userdata',{qq; inputs});
+        set(qqq,'Userdata',{qqq; inputs});
     end
-    
 end
 
 
+%% set config.mapstyle & config.nightsyle according to latest button clicked
+menu = findobj(earth,'type','uimenu');
+menu_night = menu(7:9);
 
-%% Update plot
+for k = 1:length( menu_night )
+    if strcmpi( menu_night(k).Checked, 'On' )
+        config.nightstyle = length( menu_night )-k+1;
+    end
+end
+
+menu_map = menu(10:end);
+for k = 1:length( menu_map )
+    if strcmpi( menu_map(k).Checked, 'On' )
+        config.mapstyle = length( menu_map )-k+1;
+    end
+end
+
+
+%% Update plot with Mapstyle, Nightsytle, Station symbol/name and Sun Zenit Position
 ax = findobj('Parent',earth, 'Type','Axes');
 if strcmp(config.studytype,'Teleseismic')
     mapstyle(1) = findobj('type',' uimenu','Label', 'Monthly Modis');
@@ -233,7 +257,6 @@ if strcmp(config.studytype,'Teleseismic')
     LATS   = linspace( -90,  90, size(ThisIm,1) );
     LONS   = linspace(-180, 180, size(ThisIm,2) );
     
-    
     shownight(1) = findobj('type',' uimenu','Label',  'City Nights');
     shownight(2) = findobj('type',' uimenu','Label',  'shaded');
     shownight(3) = findobj('type',' uimenu','Label',  'none');
@@ -272,8 +295,7 @@ if strcmp(config.studytype,'Teleseismic')
         for k = 1:length(XX);
             m = LATS>latc(k);
             logi(m,k,:) = 1;
-        end
-        
+        end 
         
         %check whether sun is above or below line
         i=floor((sunlon+180)/360*size(ThisIm,2)-1)+1;
@@ -311,10 +333,8 @@ if strcmp(config.studytype,'Teleseismic')
         set(obj,'Visible','on')
     end
     
-    
     %plot the new image
     set(findobj('parent',ax,'Type','Image','Tag','ModisMap'), 'Cdata',ThisIm)
-    
     
     %PlateBoundary and coast line
     obj = findobj('type','line','Tag','Terrestrial');
@@ -324,14 +344,11 @@ if strcmp(config.studytype,'Teleseismic')
         set(obj,'Visible','on')
     end
     
-    
 end
 
 
-
-
-
-%% locking for earthquakes already splitted, plot in green
+%% plot GCarc of EQ, SKS and SKKS piercingpoints (if wished and phase exists)
+%  earthquakes already splitted, plot in green 
 ind=[];
 for i=1:length(eq)
     if ~isempty(eq(i).results)
@@ -358,11 +375,21 @@ if ~strcmp(config.studytype,'Teleseismic')
     plot3([eq(ind).long], [eq(ind).lat], [eq(ind).depth],'Marker' ,'.','Color','g','LineStyle','None','Tag','SplittedMarker','Parent',ax);
     plot3(long, lat, depth, 'rp','MarkerFaceColor','y','Tag','EQMarkerEarth','Markersize',14,'Parent',ax);    %  Hypocenter
 else
-    plot([eq(:).long], -[eq(:).lat],'Marker','.','LineStyle','None','Color',[1 .5 0]);%[1 1 1]*0.5
-    plot([eq(ind).long], -[eq(ind).lat],'Marker','.','Color','g','LineStyle','None','Tag','SplittedMarker','Parent',ax);
+    %plot([eq(:).long], -[eq(:).lat],'Marker','.','LineStyle','None','Color',[1 .5 0]);%[1 1 1]*0.5
+    %plot([eq(ind).long], -[eq(ind).lat],'Marker','.','Color','g','LineStyle','None','Tag','SplittedMarker','Parent',ax);
     plot(long, -lat, 'rp','MarkerFaceColor','y','Tag','EQMarkerEarth','Markersize',14,'Parent',ax);    %  Hypocenter
-    
+
     for k =1:length(lat)
+        
+        % color for Symbols and GRarc, green if there is measurements, else
+        % red
+        results_EQ = eq(config.db_index).results;
+        if isempty(results_EQ)
+            color = 'r';        %red
+        else
+            color = 'g';        %green
+        end
+        
         if any(config.showPiercePoints==1)   
             if all(config.showPiercePoints==[1 1])
                 phasestr='SKS,SKKS';
@@ -387,23 +414,22 @@ else
                 cmblon=tt_pierce(kk).pierce.longitude(ff);
                 switch tt_pierce(kk).phaseName
                     case 'SKS'
-                        colors = 'w';
+                        mf_color = 'w';
                         mark='o';
                     case 'SKKS'
-                        colors = 'w';
+                        mf_color = 'w';
                         mark='d';
                         skksCount=skksCount+1;
                         if skksCount>1
                             continue%only use one SKKS phase
                         end
                     otherwise
-                        colors = 'c';
+                        mf_color = 'c';
                 end
-                plot(cmblon,-cmblat,['m' mark],  'MarkerFaceColor',colors,  'Tag','SplittedMarker')
+                plot(cmblon,-cmblat, [mark color],  'MarkerFaceColor',mf_color, 'Tag','SplittedMarker')
             end
+            
         end
-        
-        
         
         if config.showGCarc
             %GreatCricle Arc
@@ -414,17 +440,18 @@ else
                 gclon = [gclon(1:ff); 180*s;       nan; -180*s;      gclon(ff+1:end)];
                 gclat = [gclat(1:ff); gclat(ff); nan; gclat(ff); gclat(ff+1:end)];
             end
-            plot(gclon,  -gclat ,'-','Color','m','Tag','SplittedMarker','Parent',ax,'LineWidth',2)
+            plot(gclon,  -gclat ,'-','Color',color,'Tag','SplittedMarker','Parent',ax,'LineWidth',2)
         end
         
     end
 end
 hold off
 
+
+%% set final zooms and labels
 if strcmp(config.studytype,'Reservoir')
     rotate3d(earth, 'on')
     daspect(ax, [1 1 1])
-
     xlabel('Easting')
     ylabel('Northing')
     zlabel('Depth')
@@ -441,66 +468,84 @@ else
     ylabel('North [\circ]')
     zlabel('Depth [km]')
     grid on
-  
     daspect(ax, [1   1  111.1195])
 end
 
-%% give focus to previous figure
+
+%% save & give focus to previous figure (databaseViewer)
+filename = fullfile(config.projectdir,config.project); %to save preferences
+save(filename,'eq','config');
+
 figure(fig)
 
 
-
-
-
-
-    
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SUBFUNCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function q_callback(src,evt)
-% quality menu callback
-% 1) set menu markers
 ud   = get(src,'Userdata');
-tmp1  = ud{1};
-this = find(tmp1==src);
+tmp1 = ud{1};
+in   = ud{2};
 
 set(tmp1(tmp1~=src),'Checked','off');
 set(src,'Checked','on')
-
-in =ud{2};
-
 
 delete(findobj('Tag','landings'))
 SL_Earthview(in{1},in{2},in{3},in{4},in{5})
 
 
-% ThisIm = imread( char(ud{2}(this)) );
-% set(findobj('Type','Image','Tag','ModisMap'), 'Cdata',ThisIm)
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function cmbCallback(src,evt)
 global config
+ud    = get(src,'Userdata');
 lab=get(src,'Label');
+tmp1  = ud{1};
+set(tmp1(tmp1~=src),'Checked','off');
+set(src,'Checked','on')
+in =ud{2};
+delete(findobj('Tag','landings'))
+
 if strcmp(lab(end-3:end), 'SKKS')
     i=2;
 else
     i=1;
 end
 config.showPiercePoints(i) = mod(config.showPiercePoints(i)+1, 2);
-if config.showPiercePoints
-    set(src,'Checked','On')
+if config.showPiercePoints(i)
+    config.showPiercePoints(i) = 1;
+    set(src,'Checked','On');
 else
-    set(src,'Checked','Off')
+    config.showPiercePoints(i) = 0;
+    set(src,'Checked','Off');
 end
+SL_Earthview(in{1},in{2},in{3},in{4},in{5})
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function gcarcCallback(src,evt)
 global config
+ud = get(src,'Userdata');
+in = ud{2};
 
 config.showGCarc = mod(config.showGCarc+1, 2);
 if config.showGCarc
-    set(src,'Checked','On')
+    config.showGCarc = 1;
+    set(src,'Checked','On');
 else
-    set(src,'Checked','Off')
+    config.showGCarc = 0;
+    set(src,'Checked','Off');
 end
+SL_Earthview(in{1},in{2},in{3},in{4},in{5})
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function my_closereq(src,evt)
+global config
+    earth = findobj('type','figure', 'tag','EarthView');
+    delete(earth); 
+% if both lines uncommented, when EarthViewer is closed global option is
+% changed and dabaseViewer executed to display checkbox correctly
+    %config.showearth = false;  
+    %SL_databaseViewer;
 
 
 %% This program is part of SplitLab

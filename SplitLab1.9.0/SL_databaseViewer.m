@@ -35,6 +35,7 @@ figpos = [xpos ypos width 270];
 h.dlg = findobj('Type','Figure', 'Name','Database Viewer');
 if isempty(h.dlg)
     h.dlg = figure('Name','Database Viewer','color',get(0,'DefaultUIcontrolBackgroundColor'),...
+                   'CloseRequestFcn',@my_closereq,...
                    'Position',figpos,'Units','pixel','NumberTitle','off','MenuBar','none' );
 else
     clf(h.dlg)
@@ -147,24 +148,24 @@ end
 %END OF PROGRAMM
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% selection in list:
+%% SUBFUNCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function getThisLineData(h_list,evt)
 global eq config
 
 h_dlg = gcf;
+val   = get(h_list,'Value');
+
 if strcmp(get(h_dlg,'SelectionType'),'open')
     %double click
-    val   = get(h_list,'Value');
     SL_SeismoViewer(val);
 else
     %%single click
     h_ax            = findobj('Tag','EQmap');
     mark            = findobj('Tag','thisEQMarker');
-    val             = get(h_list,'Value');
     r_box           = findobj('Tag','ResultsBox');
     config.db_index = val;   % if EQ clicked in table, assign config.de_index
-                             % as this is used to show next time this last 
+                             % as this is used to show next time this last
     
     if ~isempty(mark),  delete(mark); end
     % set figure UserData to selection index!
@@ -209,8 +210,8 @@ filename = fullfile(config.projectdir,config.project);
 save(filename,'eq','config');  %save pjt when clicking through lines (because of config_db.index)
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SUBFUNCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function sorttable(src,evt,order,h_list, button)
 global eq config
 
@@ -262,7 +263,7 @@ set(h_list,...
 eq=eq(idx);
 
 
-%% ===================================================================
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function localResizeFcn(fig,evt)
 
 set(fig,'Units','pixels');
@@ -282,6 +283,18 @@ for i =u';
 end
 lold   = get(l,'Position');
 set(l,'Position',[lold(1:3) figpos(4)-179]);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function my_closereq(src,evt)
+    earth    = findobj('type','figure', 'Name','Database Viewer');
+    database = findobj('type','figure', 'tag','EarthView');
+    delete(earth);
+    delete(database);
+% if both lines uncommented, when EarthViewer is closed global option is
+% changed and dabaseViewer executed to display checkbox correctly
+    %config.showearth = false;  
+    %SL_databaseViewer;
 
 
 %% This program is part of SplitLab

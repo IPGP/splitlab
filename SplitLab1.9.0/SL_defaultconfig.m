@@ -20,10 +20,25 @@ config.project     = 'default_project.pjt';
 config.datadir     = '/Users/john/Dropbox/JOHNS_WORK/';  %home;
 config.projectdir  = '/Users/john/Dropbox/JOHNS_WORK/';  %home;
 config.savedir     = '/Users/john/Dropbox/JOHNS_WORK/';  %home;
-config.showearth   = true;
-config.isWeiredMAC = false;
 
-config.studytype='Teleseismic';
+%% default for EarthViewer available from DatabaseViewer
+config.showearth   = true;         % false;
+config.showPiercePoints = [1 0];   % EarthViewer show [SKS SKKS] Piercepoints
+config.showGCarc   = 1;            % EarthViewer show Great Circle path EQ
+config.mapstyle    = 4;            % 1 - 'Monthly Modis'
+                                   % 2 - 'Natural Earth'
+                                   % 3 - 'Topography'
+                                   % 4 - 'Bathymetry'
+                                   % 5 - 'City Night'
+                                   % 6 - 'Mars Surface'
+                                   % 7 - 'Moon Albedo'
+config.nightstyle  = 1;            % 1 - 'City Nights'
+                                   % 2 - 'shaded'
+                                   % 3 - 'None'                   
+
+%%
+config.isWeiredMAC = false;
+config.studytype   = 'Teleseismic';
 if strcmp(config.studytype,'Teleseismic');
 %GLOBAL
 config.filterset=[
@@ -40,14 +55,14 @@ config.filterset=[
 else
 % MICROSEISMIC
 config.filterset=[
-     0     0   Inf     3     1
-     1     0   150     3     0
+     0     0   Inf     3     0
+     1     0   150     3     1
      2     0   200     3     1
-     3     0   250     3     0
+     3     0   250     3     1
      4    20   150     3     1
-     5    20   300     3     0
+     5    20   300     3     1
      6    50   300     3     1
-     7    50   200     3     0
+     7    50   200     3     1
      8   -70   -50     3     1
      9    20   100     3     0];
 end
