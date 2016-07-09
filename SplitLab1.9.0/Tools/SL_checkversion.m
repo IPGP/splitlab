@@ -58,20 +58,21 @@ if size(config.filterset,2)==4
 end
 
 if ~isempty(updated)
-    disp(' ')
-    disp('The following fields are added to or updated in your project:')
-    disp(' ')
-    disp('  config')
-    strucdisp(updated,2,1,7)
+    disp(' ');
+    disp('-------------------------------------------------------------');
+    disp('The following fields are added to or updated in your project:');
+    disp(' ');
+    disp('  config');
+    strucdisp(updated,2,1,7);
 end
 
 %% check preferences
 %  this is necessary on multiuser environments. 
 if ~ispref('Splitlab')
-    SL_preferences(SL_defaultconfig)
+    SL_preferences(SL_defaultconfig);
 end
 if ~ispref('Splitlab','History')
-    addpref('Splitlab','History', {})
+    addpref('Splitlab','History', {});
 end
 
 

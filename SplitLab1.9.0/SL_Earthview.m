@@ -7,12 +7,6 @@ function SL_Earthview(lat, long, mag, depth, datum)
 % displayed. This is an integral view of the visible spectrum of satelite
 % images. choose month=0 for a seasonal-free representation
 
-% A. Wuestefeld;
-% Unversity Montpellier
-% Jan 2006
-
-%% location
-
 global config eq
 fig=gcf;
 
@@ -21,8 +15,6 @@ isMapToolbox = license('checkout', 'MAP_Toolbox');
 month  = datum(:,2);
 inputs = {lat, long, mag, depth, datum};
 earth  = findobj('type','figure', 'tag','EarthView','NumberTitle','off');
-
-
 ImageFnames={sprintf('world.topo.bathy.2004%02.0f.jpg',month(1));
     'world.natural.jpg';
     'world.Topography.jpg';
@@ -31,6 +23,8 @@ ImageFnames={sprintf('world.topo.bathy.2004%02.0f.jpg',month(1));
     'world.Mars.Surface.jpg';
     'world.Moon.Albedo.jpg'};
 
+
+%% EARTH FIGURE
 if isempty(earth)
     pos=get(0,'ScreenSize');
     width= 360*1.5; height=180*1.5;

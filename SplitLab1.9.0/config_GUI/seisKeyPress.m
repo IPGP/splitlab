@@ -22,6 +22,7 @@ if strcmp(evnt.Key,'return')
         preSplit(0)
     end
     %return
+    
 elseif (length(evnt.Key)>1) && (strcmp(evnt.Key(1),'f'))
     switch evnt.Key(2)
         case '1'
@@ -43,20 +44,6 @@ elseif (length(evnt.Key)>1) && (strcmp(evnt.Key(1),'f'))
     thiseq.Spick = tbase + twin;
     hfill        = findobj('Tag','SplitWindow');
     set(hfill,'Xdata',[thiseq.Spick(1); thiseq.Spick(1); thiseq.Spick(2);  thiseq.Spick(2)])
-
-%elseif strcmp(evnt.Key,'pause')
-%   selection =  menu('Choose a game',...
-%       'Black Jack',...
-%       'Tetris',...
-%       'Snake',...
-%       'Mastermind (4 colours)',...
-%       'Mastermind (6 colours)',...
-%       'Banana Kong')
-%   if selection~=0
-%       cmd={'mlblackjack','mtetris','snake','mastermind(4,4,12)','mastermind(6,4,12)','Urban_jungle'};
-%       eval(cmd{selection})
-%   end
-   
 
 elseif strcmp(evnt.Key,'home') || strcmp(evnt.Key,'escape')
     %jump close to selected phase

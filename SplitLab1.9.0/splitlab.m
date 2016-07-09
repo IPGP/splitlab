@@ -6,7 +6,7 @@ clearvars -global config eq thiseq h
 global config h
 
 config.version='SplitLab1.9.0';
-config.saveErrorSurface = 1;
+
 
 %% Load last opened project if it exists and check version
 %  if button 'New Project' is pressed (see configpanelGENERAL.m), the entry 
@@ -70,7 +70,7 @@ for k=1:length(preffont);
 end
 
 
-%%
+%% create MAIN FIGURE if empty
 if isempty(cfig)
     cfig = figure('name',['Configure ' config.version],...
                   'Tag', 'ConfigViewer',...
@@ -116,7 +116,7 @@ h.menu(4) = uicontrol(...
     'pos',[10 325 100 30],'parent',h.menu(1),'HandleVisibility','off',...
     'Userdata',h.panel(1 ));
 h.menu(4) = uicontrol(...
-    'Style','Radio','String','Event window',...
+    'Style','Radio','String','Event Window',...
     'BackgroundColor','w',...
     'pos',[10 300 100 30],'parent',h.menu(1),'HandleVisibility','off',...
     'Userdata',h.panel(3));
@@ -175,7 +175,6 @@ h.menu(88) = uicontrol(...
     'pos',[10 100 100 25],'parent',h.menu(1),'HandleVisibility','off',...
     'Callback',@savecallback,...
     'USERDATA', h.menu(8));
-
 h.menu(9) = uicontrol(...
     'Style','pushbutton',...
     'String','View Seismograms',...
@@ -214,10 +213,8 @@ R = rand(1,2);
 end
 
 
-
-%% S U B F U N C T I O N S %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SUBFUNCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function selcbk(source,eventdata)
 %set selected menu panel visible, others are made invisible
 
@@ -227,7 +224,8 @@ new = get(eventdata.NewValue,'Userdata');
 set (old, 'visible', 'off')
 set (new, 'visible', 'on')
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function loadcallback(source,eventdata)
 evalin('base','global eq thiseq config');
 global config eq
@@ -292,7 +290,7 @@ end
 splitlab
 
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function savecallback(src,e)
 global config eq
 
