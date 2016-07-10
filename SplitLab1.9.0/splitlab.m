@@ -8,22 +8,23 @@ global config
 config.version='SplitLab1.9.0';
 
 
-% %%
+%%
 % if nargin==1 %      There is 1 input argument, use function handle
-%     handle_radio_button  = var_SeismoViewer{1};
-%     val_new_radio_button = var_SeismoViewer{2};
-%     set(handle_radio_button, 'SelectedObject', handle_radio_button(7));
+%     val_new_radio_button = var_SeismoViewer{1};
+%     configViewer_handle=findobj('Tag','ConfigViewer'); 
+% 
+%     m=findobj('Tag','SplitOptions');
+%     disp(m);
+%     set(handle_radio_button, 'SelectedObject', m);
+%   
+%     if ishandle(configViewer_handle)
+%         uistack(configViewer_handle,'top')
+%     else 
+%         mess = sprintf( '\nMain Splitlab Figure closed. Cannot show splitting options.');
+%         warning( mess ); 
+%     end;
 %     
-%     %     handle_h_list      = var_SeismoViewer{1};
-% %     val_h_list         = get(handle_h_list,'Value');
-% %     if strcmp(pre_or_next_string,'previous')
-% %         new_value = val_h_list-1;
-% %         set(handle_h_list,'Value',new_value);
-% %     else
-% %         warning('Check ''seisfigbuttons.m'' & ''seisKeyPress.m'' for ''previous'' & ''next'' EQ buttons.');
-% %         return
-% %     end       
-%     @selcbk; % This only works in MATLAB 6.0 (R12) and above
+%     selcbk(handle_radio_button); % This only works in MATLAB 6.0 (R12) and above
 %     return
 % end
 
@@ -159,6 +160,7 @@ h.menu(7) = uicontrol(...
 h.menu(8) = uicontrol(...
     'Style','Radio','String','Split Options',...
     'BackgroundColor','w',...
+    'Tag','SplitOptions',...
     'pos',[10 200 100 30],'parent',h.menu(1),'HandleVisibility','off',...
     'Userdata',h.panel(11));
 

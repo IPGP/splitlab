@@ -25,12 +25,7 @@ if nargin==1
         new_value = val_h_list+1;
         set(handle_h_list,'Value',new_value);
     end       
-    @getThisLineData;
-    
-    %save project, like this last seen event is shown in Database next time
-    config.db_index = new_value;
-    filename = fullfile(config.projectdir,config.project);   
-    save(filename,'eq','config');
+    getThisLineData(handle_h_list);
     return
 end
 
