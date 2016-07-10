@@ -15,12 +15,7 @@ load('icon.mat');
 uipushtool(ht,'CData',icon.sac,...
     'TooltipString','Export current seismograms to SAC format',...
     'ClickedCallback', {@exportsac,seismo});
-% uipushtool(ht,'CData',icon.save,...
-%     'TooltipString',['Save project as  "' config.project '"'] ,...
-%     'ClickedCallback', 'suivant');
-% hpt(12) = uipushtool(ht,'CData',icon.axt,...
-%     'TooltipString','Split event',...
-%     'ClickedCallback','Aniso_Pre(filt)');
+
 uipushtool(ht,'CData',icon.open,...
     'TooltipString','Select earthquake from table' ,...
     'ClickedCallback', 'SL_databaseViewer');
@@ -51,7 +46,7 @@ uipushtool(ht,'CData',icon.xzoomOUT,...
 uipushtool(ht, 'CData', icon.back,...
     'separator', 'on',...
     'TooltipString', 'previous earthquake (PageUp key)',...
-    'ClickedCallback', 'idx = thiseq.index-1; if idx < 1; idx = length(eq); end; SL_SeismoViewer(idx); clear idx',...
+    'ClickedCallback', 'idx = thiseq.index-1; if idx < 1; idx = length(eq); end; h_list_handle=findobj(''tag'',''TableList''); SL_databaseViewer( {h_list_handle,''previous''} ); SL_SeismoViewer(idx)',...
     'BusyAction','Cancel' );
 
 uipushtool(ht,'CData',icon.reload,...
@@ -61,7 +56,7 @@ uipushtool(ht,'CData',icon.reload,...
 
 uipushtool(ht,'CData',icon.next,...
     'TooltipString','next earthquake (PageDown key)',...
-    'ClickedCallback','idx = thiseq.index+1; if idx > length(eq); idx =1 ;end; SL_SeismoViewer(idx); clear idx',...
+    'ClickedCallback','idx = thiseq.index+1; if idx > length(eq); idx =1 ;end; h_list_handle=findobj(''tag'',''TableList''); SL_databaseViewer( {h_list_handle,''next''} ); SL_SeismoViewer(idx)',...
     'BusyAction','Cancel');
 
 uipushtool(ht,'CData',icon.run,...
@@ -129,7 +124,7 @@ uipushtool(ht,'CData',icon.spect,...
 uipushtool(ht,'CData',icon.config,...
     'TooltipString','Set Splitting options',...
     'Tag', 'SplitOptionButton',...
-    'ClickedCallback',' global h, k=findobj(''Tag'',''ConfigViewer''); if ishandle(k); uistack(k,''top''); set( h.menu(1),''SelectedObject'',h.menu(7)); set(h.panel(11),''Visible'',''on''); else; mess = sprintf( ''\nMain Splitlab Figure closed. Cannot show splitting options.''); warning( mess ); end;',...
+    'ClickedCallback',' disp(''not yet defined.''); radio_button_handle=findobj(''Tag'',''radiobutton''); configViewer_handle=findobj(''Tag'',''ConfigViewer''); if ishandle(configViewer_handle); uistack(configViewer_handle,''top''); clear k; splitlab( {radio_button_handle, 7} ); else; mess = sprintf( ''\nMain Splitlab Figure closed. Cannot show splitting options.''); warning( mess ); end;',...
     'BusyAction','Cancel');
 
 uipushtool(ht,'CData',icon.trash,...
@@ -155,18 +150,17 @@ uipushtool(ht,'CData',icon.help,...
     'ClickedCallback',@localStructBox);
 
 
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
-%% S U B F U N C T I O N S                                            %%
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
+%% S U B F U N C T I O N S                                            
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function goHome(src,evt)
 global thiseq  
 %jump close to selected phase
     val  = get(findobj('Tag','PhaseSelector'),'Value');
     t_home = floor(thiseq.phase.ttimes(val)/10)*10 - 30; %~30 seconds before phase; at full 10 seconds
     xlim([t_home t_home+150]) % timewindow of 150 sec
+
     
-%%    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function changelockstate(src,event)
 seis = findobj('Tag','seismo');
 
@@ -188,7 +182,7 @@ switch get(src,'State')
 end
 
 
-%% ------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function playseismo(a,b)
 global thiseq
 
@@ -215,7 +209,7 @@ music = abs(y(:,1)).^.5 .* s(:,1); %amplify small amplitudes
 sound(music, 1000)%shift it in audible frequencies
 
 
-%% ------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function exportsac(src,event,seis)
 global thiseq config
 persistent exportdir %make it the same for subsequent calls during this matlab session
@@ -345,7 +339,7 @@ end
 helpdlg({'SAC files written to directory',exportdir, ' ', files})
 
 
-%% ------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function changesystem(src,event,seis,sys)
 global thiseq
 %change icon of button
@@ -360,19 +354,20 @@ end
 %plot new data:
 SL_updatefiltered(seis)
 
-%% -----------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function SL_localparticlemotion(src,evt,seis)
 SL_showparticlemotion(gcbf,seis,[nan nan], 'No pick' )
 
 
-%% ---------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function localSavePicture(hFig,evt)
 global config thiseq
 defaultname = sprintf('%s_%4.0f.%03.0f.%02.0f.%s.',config.stnname,thiseq.date([1 7 4]),thiseq.system);
 defaultextension = strrep(config.exportformat,'.','');
 exportfiguredlg(gcbf, [defaultname defaultextension],config.savedir,config.exportresolution)
 
-%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function xzoomON(src,evt,seismo)
 ud.down=get(gcbf,'WindowButtonDownFcn');
 ud.up  =get(gcbf,'WindowButtonUpFcn');
@@ -402,6 +397,8 @@ set(gcbf,...
     'WindowButtonMotionFcn','',...
     'Pointer','Custom','PointerShapeCData',pointer,'PointerShapeHotSpot',[7 7])
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function xzoomOFF(hFig,evt,seismo)
 ud=get(gcbo,'USERdata');
 set(gcbf,...
@@ -410,7 +407,8 @@ set(gcbf,...
     'WindowButtonMotionFcn',ud.motion,...
     'Pointer','crosshair')
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function xzoomOutON(src,evt,seismo)
 t   = get(seismo(2),'xData');
 x   = xlim;
@@ -423,9 +421,7 @@ subax=findobj('Type','Axes','Parent',gcbf);
 set(subax(4),'xlim', xxx)
 
 
-
-
-%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function localZoomSeismo(hFig,evt,fig,seismo)
 global thiseq
 point1 = get(gca,'CurrentPoint');    % button down detected
@@ -449,7 +445,7 @@ subax=findobj('Type','Axes','Parent',gcbf);
 set(subax(4),'xlim', round(x(1:2)))
 
    
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function localStructBox(src,evt)
 global thiseq
 %%

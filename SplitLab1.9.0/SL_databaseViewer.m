@@ -1,4 +1,4 @@
-function  SL_databaseViewer
+function SL_databaseViewer(var_SeismoViewer)
 % navigate within the SplitLab database
 
 global eq config
@@ -7,6 +7,33 @@ if isempty(eq)
     errordlg('No Earthquakes in database!')
     return
 end
+
+
+% If there is 1 input argument, use function handle for variable passed.
+% Like this, one can call 'getThisLineData' from 'seisKeypress.m' and
+% 'seisfigbuttons.m' in order to make databaseViewer show line
+% corresponding to EQ in SeismoViewer ...
+% var_SeismoViewer = {handle_h_list, 'previous'}
+if nargin==1
+    handle_h_list      = var_SeismoViewer{1};
+    pre_or_next_string = var_SeismoViewer{2};
+    val_h_list         = get(handle_h_list,'Value');
+    if strcmp(pre_or_next_string,'previous')
+        new_value = val_h_list-1;
+        set(handle_h_list,'Value',new_value);
+    elseif strcmp(pre_or_next_string,'next')
+        new_value = val_h_list+1;
+        set(handle_h_list,'Value',new_value);
+    end       
+    @getThisLineData;
+    
+    %save project, like this last seen event is shown in Database next time
+    config.db_index = new_value;
+    filename = fullfile(config.projectdir,config.project);   
+    save(filename,'eq','config');
+    return
+end
+
 %the next lines indicate the order in which columns are sorted when
 %specific button was pressed.
 sortorder = [ 5  3  2  1 %date:  day month year
@@ -139,9 +166,8 @@ h.button8 = uicontrol(h.dlg, 'style','pushbutton', 'Position',[ext(3)-117 8 50 2
                       'string','','Enable','of','Tag','ResultsButton', ...
                       'Cdata', icon.presentation,'Tooltipstring', 'View resultfiles',...
                       'Callback','database_editResults(''View'')');
-
-                  
-getThisLineData(h.list);  % show results of EQ directly, no need to click first 
+ 
+getThisLineData(h.list);  % show results of EQ directly, no need to click first                 
 if ~config.showearth      % close EarthView window if not wanted and still open
      close(findobj('Type', 'Figure', 'Tag',  'EarthView'));  
 end
@@ -210,7 +236,6 @@ filename = fullfile(config.projectdir,config.project);
 save(filename,'eq','config');  %save pjt when clicking through lines (because of config_db.index)
 
 
-%% SUBFUNCTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function sorttable(src,evt,order,h_list, button)
 global eq config

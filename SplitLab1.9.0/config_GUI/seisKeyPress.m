@@ -87,7 +87,6 @@ elseif strcmp(evnt.Key,'uparrow')%zoom in by 20%
     end
     xlim(limit) %zoom in by 20%
 
-
 elseif strcmp(evnt.Key,'downarrow') %zoom out by 20%
     xx = xlim;
     point = getCurrentPoint(seis(4));
@@ -116,16 +115,22 @@ elseif strcmp(evnt.Key,'pageup') || (strcmp(evnt.Key,'tab') && ~isempty(evnt.Mod
         if idx < 1;
             idx = length(eq);
         end;
+        h_list_handle = findobj('tag','TableList'); 
+        SL_databaseViewer( {h_list_handle,'next'} )
         SL_SeismoViewer(idx);
+        %clear idx
     end
+    
 elseif strcmp(evnt.Key,'pagedown') || strcmp(evnt.Key,'tab') && isempty(evnt.Modifier) %next event
     idx = thiseq.index+1;
     if idx > length(eq);
         idx = 1;
     end;
-    SL_SeismoViewer(idx);
-
-
+    h_list_handle = findobj('tag','TableList'); 
+    SL_databaseViewer( {h_list_handle,'next'} )
+    SL_SeismoViewer(idx); 
+    %clear idx
+    
 elseif strcmp(evnt.Key,'backspace')
     sa=findobj('Tag','seismo');
     set(sa,'LineStyle','-','Marker','none')
@@ -166,16 +171,7 @@ else
 %                 helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
 %             end
         case 'o'
-            global h
-            k=findobj('Tag','ConfigViewer'); 
-            if ishandle(k); uistack(k,'top')
-                set( h.menu(1),'SelectedObject',h.menu(7));
-                disp('dsqdf');
-                set( h.panel(11),'Visible','on');
-            else
-                mess = sprintf( '\nMain Splitlab Figure closed. Cannott show splitting options.');
-                warning( mess );
-            end
+            disp('not yet defined.');
             
         case 'j'
             if  sum(thiseq.Ppick ~=0)
