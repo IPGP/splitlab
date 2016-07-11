@@ -190,7 +190,7 @@ else
     
     if ~isempty(mark),  delete(mark); end
     % set figure UserData to selection index!
-    set(h_dlg,'Userdata',val(1)); %for use with split button
+    set(h_dlg,'Userdata',val); %for use with split button
 
     % Result display
     outstr = [];

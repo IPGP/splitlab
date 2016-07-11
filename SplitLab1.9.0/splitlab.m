@@ -8,27 +8,6 @@ global config
 config.version='SplitLab1.9.0';
 
 
-%%
-% if nargin==1 %      There is 1 input argument, use function handle
-%     val_new_radio_button = var_SeismoViewer{1};
-%     configViewer_handle=findobj('Tag','ConfigViewer'); 
-% 
-%     m=findobj('Tag','SplitOptions');
-%     disp(m);
-%     set(handle_radio_button, 'SelectedObject', m);
-%   
-%     if ishandle(configViewer_handle)
-%         uistack(configViewer_handle,'top')
-%     else 
-%         mess = sprintf( '\nMain Splitlab Figure closed. Cannot show splitting options.');
-%         warning( mess ); 
-%     end;
-%     
-%     selcbk(handle_radio_button); % This only works in MATLAB 6.0 (R12) and above
-%     return
-% end
-
-
 %% Load last opened project if it exists and check version
 %  if button 'New Project' is pressed (see configpanelGENERAL.m), the entry 
 %  "new_project.pjt" is PREPENDED to pref 'Splitlab','History'. This allows to 
@@ -103,10 +82,9 @@ end
 %% Side panel: radio buttons
 h.menu = uibuttongroup('visible','on','units','pixel','Position',[5 5 120 410],...
     'BackgroundColor','w','HighlightColor',[1 1 1]*.3,...
-    'Tag','radiobutton',...
+    'Tag','radiobuttons',...
     'BorderWidth',1,'BorderType','beveledin',...
     'SelectionChangedFcn', @selcbk);
-drawnow;
 
 
 %% Main Panels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,13 +108,13 @@ configpanelSPLITOPTION;
 h.menu(2) = uicontrol(...
     'Style','Radio','String','General',...
     'BackgroundColor','w',...
-    'pos',[10 350 100 30],'parent',h.menu(1),'HandleVisibility','off',...
+    'pos',[10 350 100 30],'parent',h.menu,'HandleVisibility','off',...
     'Userdata',h.panel([6 8]));
 h.menu(3) = uicontrol(...
     'Style','Radio','String','Station',...
     'BackgroundColor','w',...
     'pos',[10 325 100 30],'parent',h.menu(1),'HandleVisibility','off',...
-    'Userdata',h.panel(1 ));
+    'Userdata',h.panel(1));
 h.menu(4) = uicontrol(...
     'Style','Radio','String','Event Window',...
     'BackgroundColor','w',...
@@ -160,8 +138,8 @@ h.menu(7) = uicontrol(...
 h.menu(8) = uicontrol(...
     'Style','Radio','String','Split Options',...
     'BackgroundColor','w',...
-    'Tag','SplitOptions',...
     'pos',[10 200 100 30],'parent',h.menu(1),'HandleVisibility','off',...
+    'Tag','SplitOptions',...
     'Userdata',h.panel(11));
 
 
@@ -222,16 +200,37 @@ h.menu(14) = uicontrol(...
     'pos',[7 380 106 22],'parent',h.menu(1),'HandleVisibility','off',...
     'Callback','SL_preferences(config);  helpdlg(''Preferences saved to MatLab Preferences!'',''Preferences'')');
 
-% m=findobj('Tag','radiobutton');
-% disp(get( m ));
-% k=set(m, 'SelectedObject',h.menu(7) );
-% set(h.menu(1),'Visible','on');
-% % disp( get(m.SelectedObject)); 
 
-% set(h.menu(1),'SelectedObject',h.menu(2));
-% set(h.panel([6 8]),'Visible','on');
-% set(h.menu(1),'Visible','on');
-% set(h.menu(7),'Enable','on');
+%% CHANGE READIOBUTTON & SHOWN CONTENT PER CODE (and not click).
+%  needs imrpovement
+if nargin==1 %      There is 1 input argument, use function handle
+    configViewer_handle=findobj('Tag','ConfigViewer'); 
+    if ishandle(configViewer_handle)
+        uistack(configViewer_handle,'top')
+        set(h.menu(1), 'SelectedObject',h.menu(8));
+
+        a=get(h.menu(2),'Userdata');
+        b=get(h.menu(3),'Userdata');
+        c=get(h.menu(4),'Userdata');
+        d=get(h.menu(5),'Userdata');
+        e=get(h.menu(6),'Userdata');
+        f=get(h.menu(7),'Userdata');
+        h=get(h.menu(8),'Userdata');
+
+        set(a,'visible','off');
+        set(b,'visible','off');
+        set(c,'visible','off');
+        set(d,'visible','off');
+        set(e,'visible','off');
+        set(f,'visible','off');
+        set(h,'visible','on');   
+    else 
+        mess = sprintf( '\nMain Splitlab Figure closed. Cannot show splitting options.');
+        warning( mess ); 
+    end
+    return
+end
+%drawnow;
 
 
 %% POSTCART or ACKNOWLEDGEMENTS
@@ -255,8 +254,6 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function selcbk(source,eventdata)
 %set selected menu panel visible, others are made invisible
-
-%disp('selcbk');
 
 old = get(eventdata.OldValue,'Userdata');
 new = get(eventdata.NewValue,'Userdata');

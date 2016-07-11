@@ -171,7 +171,7 @@ else
 %                 helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
 %             end
         case 'o'
-            disp('not yet defined.');
+            splitlab( 'change_radio_button' );
             
         case 'j'
             if  sum(thiseq.Ppick ~=0)
