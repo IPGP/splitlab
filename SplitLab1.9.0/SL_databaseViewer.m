@@ -15,16 +15,18 @@ end
 % corresponding to EQ in SeismoViewer ...
 % var_SeismoViewer = {handle_h_list, 'previous'}
 if nargin==1
-    handle_h_list      = var_SeismoViewer{1};
-    pre_or_next_string = var_SeismoViewer{2};
+    handle_h_list      = findobj('tag','TableList');
+    pre_or_next_string = var_SeismoViewer;
     val_h_list         = get(handle_h_list,'Value');
+    
     if strcmp(pre_or_next_string,'previous')
         new_value = val_h_list-1;
         set(handle_h_list,'Value',new_value);
     elseif strcmp(pre_or_next_string,'next')
         new_value = val_h_list+1;
         set(handle_h_list,'Value',new_value);
-    end       
+    end
+    
     getThisLineData(handle_h_list);
     return
 end
@@ -38,9 +40,9 @@ sortorder = [ 5  3  2  1 %date:  day month year
               9  8 10  3 %long
              10 12 13  3 %depth
              11 10 12  3 %Mw
-             12 10  1  3 %baz
+             12 11 10  3 %baz
              13 12 11  3 %Distance
-              1  1  2  3]; % Energy
+             14 14 14  14]; %ID, sort ID only after ID
 
 
 %% Database box
@@ -116,7 +118,7 @@ sorttable([],[],sortorder(col,:), h.list, col);
 
 
 %% Result list
-header    = ' Phase   \Psi_{RC}    \Psi_{EV}   \deltat_{RC}  \deltat_{EV} Q\_manu  Q\_auto   Filter       Remark';
+header    = ' Phase   \Psi_{RC}    \Psi_{EV}   \deltat_{RC}  \deltat_{EV}   Q\_manu  Q\_auto  Filter      Remark';
 h.info(1) = uipanel('parent',h.dlg, 'units','pixel', 'Position',[40 40 ext(3)+17 100],'tag','ResultsPanel');
 h.info(4) = axes('parent',h.info(1), 'units','pixel', 'Position',[2 78 ext(3)+11 18]);
 axis off
@@ -205,12 +207,12 @@ else
             end
             for k = 1:length(R)
                 P = R(k).SplitPhase;
-                Q = R(k).Q;%automatic Quality
-                M = R(k).Qstr;%Manual Quality
+                Q = R(k).Q;     %automatic Quality
+                M = R(k).Qstr;  %Manual Quality
                 %phis = [R(k).phiSC(1) R(k).phiRC(1)];
                 strikes = [R(k).strikes(1) R(k).strikes(3)];
                 dts  = [R(k).dtRC(1)  R(k).dtEV(1)];
-                o = sprintf(['%6s %5.1f' unit ' %5.1f' unit '  %3.1fs  %3.1fs %9s %4.2f   [%4.3f %4.2f] %s'],...
+                o = sprintf(['%6s %5.1f' unit ' %5.1f' unit '  %3.1fs  %3.1fs %9s %5.2f   [%4.3f %4.2f] %s'],...
                             P, strikes,dts, M, Q, R(k).filter(1:2),  R(k).remark);
                 outstr = char(outstr,o);
             end
@@ -235,25 +237,61 @@ save(filename,'eq','config');  %save pjt when clicking through lines (because of
 function sorttable(src,evt,order,h_list, button)
 global eq config
 
-config.tablesortcolumn = button;
-
+%
 dvec=reshape([eq(:).date], 7, [])';
+indices   = (1:size(dvec,1))';
 
 listdata  = [dvec(:,[ 3 2 1 7 4 5 6])...  day month year Julian_day hour minute second
             [eq(:).lat]'   [eq(:).long]'...
             [eq(:).depth]' [eq(:).Mw]'   [eq(:).bazi]'...
-            [eq(:).dis]'   (1:size(dvec,1))'];%
+            [eq(:).dis]'   indices];%
 listdata(listdata == -12345) = 0;
 
+%code for table sort, also when clicking twice !
+try
+   counter = getpref('tmp_vars', 'counter_table');
+catch
+   setpref('tmp_vars', 'counter_table', 0);
+   counter = 0;
+end
 
-%order is passed by corresponding button
-%initial sort order is by date
-[sdat,idx]  = sortrows(listdata, order);
+% depending on number of clicks on button, create correct sorting 'ascend'
+% or 'descend'
+if config.tablesortcolumn == button && button ~= 10 %'ID'
+    counter   = counter + 1;
+    new_order = (-1)^counter * order;
+elseif button ~= 10
+    counter   = 0;
+    new_order = order;
+else  % button == 10 ('ID')
+    counter   = counter + 1;
+    new_order = order;
+end
+config.tablesortcolumn = button;
+setpref('tmp_vars', 'counter_table', counter);
+[sdat,idx]  = sortrows(listdata, new_order);
+
+% sets correct indices depending on if table is sorted ascending
+if sdat(end,order(1)) < sdat(1,order(1))
+    indices = flipud( indices );
+end
+sdat = [sdat(:,1:13)  indices];
+
+% taking care on 'ID' button
+if button == 10;
+    i=0;
+    while i < counter
+        i = i+1; 
+        sdat = flipud(sdat);
+    end
+end
+
+% make sure correct unit is shown
 if strcmp(config.studytype,'Reservoir')
     unit = 'm';
     unit2= 'm ';
 else
-    unit =char(186);
+    unit = char(186);
     unit2= 'km';
 end
 
@@ -311,8 +349,8 @@ function my_closereq(src,evt)
     database = findobj('type','figure', 'tag','EarthView');
     delete(earth);
     delete(database);
-% if both lines uncommented, when EarthViewer is closed global option is
-% changed and dabaseViewer executed to display checkbox correctly
+%%%if both lines uncommented, when EarthViewer is closed global option is
+%%%changed and dabaseViewer executed to display checkbox correctly
     %config.showearth = false;  
     %SL_databaseViewer;
 

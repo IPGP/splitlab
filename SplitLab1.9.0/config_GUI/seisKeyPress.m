@@ -45,6 +45,7 @@ elseif (length(evnt.Key)>1) && (strcmp(evnt.Key(1),'f'))
     hfill        = findobj('Tag','SplitWindow');
     set(hfill,'Xdata',[thiseq.Spick(1); thiseq.Spick(1); thiseq.Spick(2);  thiseq.Spick(2)])
 
+% MAC 'home': fn + control + leftarrow    
 elseif strcmp(evnt.Key,'home') || strcmp(evnt.Key,'escape')
     %jump close to selected phase
     val  = get(findobj('Tag','PhaseSelector'),'Value');
@@ -109,27 +110,27 @@ elseif strcmp(evnt.Key,'downarrow') %zoom out by 20%
     xlim(limit) %zoom out by 20%
 
 
+% MAC 'pageup': fn + uparrow
 elseif strcmp(evnt.Key,'pageup') || (strcmp(evnt.Key,'tab') && ~isempty(evnt.Modifier))  %previous event
     if strcmp(evnt.Key,'pageup') || (strcmp(evnt.Key,'tab') && strcmp(evnt.Modifier,'shift'))
         idx = thiseq.index-1;
         if idx < 1;
             idx = length(eq);
         end;
-        h_list_handle = findobj('tag','TableList'); 
-        SL_databaseViewer( {h_list_handle,'next'} )
+        SL_databaseViewer( 'previous' )
         SL_SeismoViewer(idx);
         %clear idx
     end
-    
+
+% MAC 'pagedown': fn + downarrow
 elseif strcmp(evnt.Key,'pagedown') || strcmp(evnt.Key,'tab') && isempty(evnt.Modifier) %next event
     idx = thiseq.index+1;
     if idx > length(eq);
         idx = 1;
     end;
-    h_list_handle = findobj('tag','TableList'); 
-    SL_databaseViewer( {h_list_handle,'next'} )
-    SL_SeismoViewer(idx); 
-    %clear idx
+        SL_databaseViewer( 'next' )
+        SL_SeismoViewer(idx);
+        %clear idx
     
 elseif strcmp(evnt.Key,'backspace')
     sa=findobj('Tag','seismo');
@@ -142,7 +143,7 @@ elseif strcmp(evnt.Key,'delete')
 else
     switch evnt.Character
         case 'a'
-         configSPLITADVANCED
+            configSPLITADVANCED
         case {'l' 'z'}
             % lock yaxis...
             button = findobj('Tag','LockButton');

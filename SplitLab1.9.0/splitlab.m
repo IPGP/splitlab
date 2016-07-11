@@ -38,9 +38,9 @@ set(0, 'DefaultFigurecolor', [224   223   227]/255 ,...
        'DefaultFigureWindowStyle', 'normal',...
        'DefaultUIControlBackgroundColor', [224   223   227]/255); 
 close(findobj('Type', 'Figure', 'Name', 'Database Viewer'));
-close(findobj('Type', 'Figure', 'Tag', 'EarthView'));  
-close(findobj('Type', 'Figure', 'Tag', 'SeismoFigure'));  
-cfig =findobj('type', 'Figure', 'Tag', 'ConfigViewer','name', ['Configure ' config.version]);
+close(findobj('Type', 'Figure', 'Tag',  'EarthView'));  
+close(findobj('Type', 'Figure', 'Tag',  'SeismoFigure'));  
+cfig =findobj('type', 'Figure', 'Tag',  'ConfigViewer','name', ['Configure ' config.version]);
 
 
 %% try several fonts for best display of text and uicontrols
@@ -74,6 +74,7 @@ end
 if isempty(cfig)
     cfig = figure('name',['Configure ' config.version],...
                   'Tag', 'ConfigViewer',...
+                  'KeyPressFcn', @splitlabKeyPress,...
                   'Menubar','none',...
                   'NumberTitle','off','units','pixel');
 end
@@ -202,11 +203,13 @@ h.menu(14) = uicontrol(...
 
 
 %% CHANGE READIOBUTTON & SHOWN CONTENT PER CODE (and not click).
-%  needs imrpovement
+%  needs improvement, e.g. ugly coded AND the string 'General' is weirdly
+%  above the 'Options for splitting procedure shown' only somethimes shown, 
+%  althought it shouldn't be there.
+%  ALSO it doesn't work yet
 if nargin==1 %      There is 1 input argument, use function handle
-    configViewer_handle=findobj('Tag','ConfigViewer'); 
-    if ishandle(configViewer_handle)
-        uistack(configViewer_handle,'top')
+    if ishandle( cfg )
+        figure( cfg );
         set(h.menu(1), 'SelectedObject',h.menu(8));
 
         a=get(h.menu(2),'Userdata');
@@ -237,7 +240,7 @@ end
 % intrestingly, at startup the first value of the random gegenator is often 0.9501
 % so, generate first dum dummy random numbers, and than in a new round take 
 % two random to state if show postcard or acknowldgement dialogs
-users = {'mibonnin'};
+users = {'mibonnin', 'scholzjr'};
 if ~strcmp(config.request.user, users) 
     rand(100,100);
     R = rand(1,2);   
@@ -375,6 +378,17 @@ if ischar(tmp2)
     
 end
 clear tmp*
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function splitlabKeyPress(source, event)
+
+seisView = findobj('type','figure','Tag','SeismoFigure');
+%number = get(seisView, 'Number');
+
+if strcmp( event.Key, 'o') && ishandle(seisView)
+    figure(seisView);
+end
 
 
 %% This program is part of SplitLab

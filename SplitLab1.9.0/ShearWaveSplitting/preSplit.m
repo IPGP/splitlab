@@ -570,13 +570,11 @@ drawnow;
 
 
 %% Log file; saving all different results
-log = 1; % option for future versions
-if log
-    SL_writeLogFile('LOG',config, thiseq)
-end
+SL_writeLogFile('LOG',config, thiseq)
 
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SUBFUNCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [SG,SH,extime,winStartVec,winStopVec] = localGetFilteredSeismograms(isBatchMode,f1,f2,npoles)
 global config thiseq
 
@@ -700,7 +698,7 @@ SG = SG(extIndex);
 SH = SH(extIndex);
 
 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function  [phi, dt]  = localGetMinimum(mapStack)
 global thiseq config
 

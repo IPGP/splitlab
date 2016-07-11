@@ -1,7 +1,7 @@
 function SL_updatefiltered(seis)
 % update the 3 component display after filtering
 
-global thiseq  config eq
+global thiseq config eq
 
 
 ny = round(1 / thiseq.dt / 2); %nyquist frequency
@@ -34,24 +34,24 @@ if f1==0 & f2==inf
 else
     if f1 > 0  &  f2 < inf
         % bandpass
-        txt = sprintf('SeismoViewer(%.0f/%.0f): start= %.3fHz  stop= %0.2f Hz  Order:%d', config.db_index, length(eq),f1,f2,norder );
+        txt = sprintf('SeismoViewer (%.0f/%.0f): start= %.3fHz  stop= %0.2f Hz  Order:%d', config.db_index, length(eq),f1,f2,norder );
         [b,a]  = butter(norder, [f1 f2]/ny);
         set(ya, 'String', sprintf('f_1 = %4.2f s   f_2 = %4.2f s',1./thiseq.filter(1:2)))
 
     elseif f1==0 &  f2 < inf
         %lowpass
-        txt = sprintf('SeismoViewer(%.0f/%.0f): lowpass stop= %.2fHz  Order:%d', config.db_index, length(eq),f2,norder );
+        txt = sprintf('SeismoViewer (%.0f/%.0f): lowpass stop= %.2fHz  Order:%d', config.db_index, length(eq),f2,norder );
         [b,a]  = butter(norder, [f2]/ny,'low');
         set(ya, 'String', sprintf('f = %4.2fs (lowpass)',1./f2))
 
     elseif f1>0 &  f2 == inf
         %highpass
-        txt = sprintf('SeismoViewer(%.0f/%.0f): highpass  start= %0.3f Hz  Order:%d', config.db_index, length(eq),f1,norder );
+        txt = sprintf('SeismoViewer (%.0f/%.0f): highpass  start= %0.3f Hz  Order:%d', config.db_index, length(eq),f1,norder );
         [b,a]  = butter(norder, [f1]/ny, 'high');
         set(ya, 'String', sprintf('f = %4.2fs (highpass)',1./f1))
     elseif f1<0 &  f2 <0
         %bandstop
-        txt = sprintf('SeismoViewer(%.0f/%.0f): bandstop start= %.3fHz  stop= %0.2f Hz  Order:%d', config.db_index, length(eq),-f2,-f1,norder );
+        txt = sprintf('SeismoViewer (%.0f/%.0f): bandstop start= %.3fHz  stop= %0.2f Hz  Order:%d', config.db_index, length(eq),-f2,-f1,norder );
         [b,a]  = butter(norder, [-f2 -f1]/ny,'stop');
         set(ya, 'String', sprintf('bandstop f_1 = %4.2f s   f_2 = %4.2f s',1./thiseq.filter(2:-1:1)))
     else

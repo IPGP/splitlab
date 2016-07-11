@@ -111,11 +111,14 @@ clear num filename
 thiseq.resultnumber = thiseq.resultnumber+1;
 close(gcbf)
 
+SL_writeLogFile('DATA', config, thiseq)
 
- SL_writeLogFile('DATA',config, thiseq)
 
-%% Re-plot Seismogram figure, with recently splited window marked
+%% Re-plot Seismogram- and DatabaseViewer, with recently splitted window 
+%  and new measurement shown in database
+SL_databaseViewer('same');
 SL_SeismoViewer(thiseq.index)
+
 
 %% This program is part of SplitLab
 %  2006 Andreas Wuestefeld, Universite de Montpellier, France

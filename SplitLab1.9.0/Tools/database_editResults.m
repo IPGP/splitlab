@@ -15,14 +15,17 @@ switch option
         button = questdlg({'Do you want to delete this result from database?';'(Also result image and line in ''splitresults*_STAT.dat''-file)'},'Confirm delete','Yes','No','Yes');
         if strcmp(button,'Yes')
             seisfig = findobj('Type','Figure', 'Tag','SeismoFigure');
+            
+            was_handle = 0;
             if ishandle(seisfig)
-                close(seisfig)
-                warndlg(...
-                    {'We will close and reopen the SeismoViewer to perfom',...
-                     'this operation! An open SeismoViewer may cause database',...
-                     'conflicts. Please excuse this inconvenience!'});
+                was_handle=1;
+                close(seisfig);
+                mess = sprintf(['\nWe will close and re-open the SeismoViewer to perfom ',...
+                     'this operation,\nan open SeismoViewer may cause database ',...
+                     'conflicts.\n']);
+                warning( mess );
             end
-            SL_SeismoViewer(config.db_index)
+           
             tmp  = L(L<=rval);                      %substract header lines from list index
             num  = lval(length(tmp));               %to retrieve index of eq
             val  = rval - tmp(end);                 %index of result of eq(num)
@@ -34,7 +37,7 @@ switch option
             else
                 eq(num).results = eq(num).results(new);
             end
-            
+
             % to update text
             str = get(r_box,'String');              
             len = 1:size(str,1);
@@ -50,7 +53,12 @@ switch option
             pha     = old_result.SplitPhase;
             q_auto  = sprintf('%0.4f',old_result.Q);
             q_manu  = old_result.Qstr;
-
+            
+            %%%%% re-open SeismoViewer if was open before
+            if was_handle==1
+                SL_SeismoViewer(config.db_index);
+            end
+            
             %%%%% save project with updated results
             filename    = fullfile( config.projectdir,config.project );
             save(filename,'eq','config');

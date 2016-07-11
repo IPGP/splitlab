@@ -3,11 +3,9 @@ function SL_writeLogFile(option, config, thiseq)
 % OPTION='DATA' writes the datafile for accepted measurements
 % see ./saveresults
 
-
-    DATE  = sprintf('%4.0f.%03.0f',thiseq.date(1),thiseq.date(7));
     switch upper(option)
         case 'LOG'
-            fname = [config.savedir, filesep, 'all_results_',config.project(1:end-4),'.log'];
+            fname = fullfile(config.savedir,['all_results_',config.project(1:end-4),'.log']);
         case 'DATA'
             if strcmp(thiseq.Qstr(5:8),'Null')
                 fname = fullfile(config.savedir,['splitresultsNULL_' config.project(1:end-4) '.dat' ]);
@@ -18,21 +16,20 @@ function SL_writeLogFile(option, config, thiseq)
             warning('Unknown log file option. Skipping...')
     end
             
-    
-    xst    = exist(fname, 'file');
     fid    = fopen(fname,'r');
     if fid == -1
-        errordlg ({'Problems while opening logfile:',fname,' ', 'Please check output directory'})
+        errordlg ({'Problems while opening logfile:', fname,' ', 'Please check output directory.'})
     else
-%         if ~xst;
-%             fprintf(fid,'Splitting results' );
-%             fprintf(fid,'\ndate     sta  phase  geobaz    baz   inc    filter    RC                       dtRC             SC                       dtSC             EV                       dtEV            autoQ\n' );
-%         end
+
+        % get first line
         firstLine = fgetl( fid );
+        
+        % close file and open again in 'append' mode, go to EOF
         fclose( fid );
         fid   = fopen(fname,'a');
-        fseek(fid, 0, 'eof'); %go to end of file
+        fseek(fid, 0, 'eof');       %go to end of file
   
+        % header line
         header = {...
            sprintf( '%20s','EQ_Date_Time'          )   ...
            sprintf( '%11s','Station'               )   ...
@@ -74,8 +71,8 @@ function SL_writeLogFile(option, config, thiseq)
            sprintf( '%12s', 'Q_manu'               )   ...
            sprintf( '%21s', 'dom_freq_EV_Q-comp'   )   ...
             } ; 
-
-
+        
+        % actual data
         fields = {...
            sprintf( '%20s', datestr(thiseq.date(1:6),31)     )   ...    1    Date
            sprintf( '%11s', config.stnname                   )   ...    2    StationName
@@ -114,11 +111,13 @@ function SL_writeLogFile(option, config, thiseq)
            sprintf( '%20.6f', thiseq.tmpresult.inipol        )   ...   33
            sprintf( '%18.6f', thiseq.tmpresult.SNR(2)        )   ...   34
            sprintf( '%12.6f', thiseq.Q                       )   ...   35 Automatic quality
-           sprintf( '%12s', strtrim(thiseq.Qstr)             )   ...   36 Manual quality
+           sprintf( '%12s',   thiseq.Qstr)                   )   ...   36 Manual quality
            sprintf( '%21.10f',thiseq.tmpresult.domfreq       )   ...   37 Dominant frequency on EV-corrected Q-component
             } ;
         
-        if firstLine == -1      % if there is already a line, no header
+        % if there no first line could be found before (e.g. complete new
+        % file), then write the 'header' as first line
+        if firstLine == -1      
             fprintf(fid, '%s', header{1:end});
             fprintf(fid, '\n');
         end
@@ -126,13 +125,5 @@ function SL_writeLogFile(option, config, thiseq)
         fprintf(fid, '\n');
         fclose(fid);
     end
-   
-    
-    
-    
-    %%
-    function fields = possibleFields
-        global config thiseq
-
         
         
