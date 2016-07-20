@@ -248,10 +248,10 @@ users = {'mibonnin', 'scholzjr'};
 if ~strcmp(config.request.user, users) 
     rand(100,100);
     R = rand(1,2);   
-    if R(1)>.9
+    if R(1)>.92
         postcardware;
     end 
-    if R(2)>.9
+    if R(2)>.92
         acknowledgement;
     end
 end

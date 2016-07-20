@@ -10,7 +10,7 @@ end
 
 
 % If there is 1 input argument, use function for variable passed.
-% Like this, one can call 'getThisLineData' from 'seisKeypress.m' and
+% Like this, one can call 'getThisLineData' from 'seisKeyPress.m' and
 % 'seisFigButtons.m' in order to make databaseViewer show line
 % corresponding to EQ in SeismoViewer ...
 if nargin==1
