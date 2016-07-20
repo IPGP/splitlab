@@ -219,7 +219,8 @@ else
         case {'l', 'z'}
             % lock yaxis...
             button = findobj('Tag','LockButton');
-            if strcmpl('off', state);
+            state = lower(get(button,'State'));
+            if strcmp('off', state);
                 set(button, 'State','On') %this also invokes the "buttonDownFunction"
             else
                 set(button, 'State','Off')
