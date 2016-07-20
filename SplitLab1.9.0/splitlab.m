@@ -37,14 +37,15 @@ if ok==0; warning('Troubles loading matTaup'); end
 set(0, 'DefaultFigurecolor', [224   223   227]/255 ,...
        'DefaultFigureWindowStyle', 'normal',...
        'DefaultUIControlBackgroundColor', [224   223   227]/255); 
-close(findobj('Type', 'Figure', 'Name', 'Database Viewer'));
-close(findobj('Type', 'Figure', 'Tag',  'EarthView'));  
-close(findobj('Type', 'Figure', 'Tag',  'SeismoFigure'));  
-cfig =findobj('type', 'Figure', 'Tag',  'ConfigViewer','name', ['Configure ' config.version]);
+close(findobj('Type','Figure', 'Name','Database Viewer'));
+close(findobj('Type','Figure', 'Tag','EarthView'));  
+close(findobj('Type','Figure', 'Tag','SeismoFigure'));  
+close(findobj('Type','Figure', 'Tag','ResultViewer Options'));  
+cfig =findobj('Type','Figure', 'Tag','ConfigViewer', 'name',['Configure ' config.version]);
 
 
 %% try several fonts for best display of text and uicontrols
-% set(0,'screenPixelsPerInch', 96); %This is the default Windows DPI. we need to fix this for portability reasons! 
+%  set(0,'screenPixelsPerInch', 96); %This is the default Windows DPI. we need to fix this for portability reasons! 
 
 list = listfonts;
 preffont={'M Sans Serif', 'Tahoma', 'Arial','Helvetica','Lucida Sans Unicode'};
@@ -203,37 +204,40 @@ h.menu(14) = uicontrol(...
 
 
 %% CHANGE READIOBUTTON & SHOWN CONTENT PER CODE (and not click).
-%  needs improvement, e.g. ugly coded AND the string 'General' is weirdly
-%  above the 'Options for splitting procedure shown' only somethimes shown, 
-%  althought it shouldn't be there.
-%  ALSO it doesn't work yet
+%  doesn't work. When arguement is passed, I want that the main splitlab
+%  window shows the splitoptions, meaning it should be coded that the last
+%  radiobutton is activated and that the correspondent content is shown.
+%  GENERALLY: there seem to be little issues displaing ONLY the content of
+%  the activated radio button, e.g. sometimes one can see the content of
+%  former radio buttons in the panel gaps .. I've no idea what this is
+%  about...
 if nargin==1 %      There is 1 input argument, use function handle
-    if ishandle( cfg )
-        figure( cfg );
-        set(h.menu(1), 'SelectedObject',h.menu(8));
-
-        a=get(h.menu(2),'Userdata');
-        b=get(h.menu(3),'Userdata');
-        c=get(h.menu(4),'Userdata');
-        d=get(h.menu(5),'Userdata');
-        e=get(h.menu(6),'Userdata');
-        f=get(h.menu(7),'Userdata');
-        h=get(h.menu(8),'Userdata');
-
-        set(a,'visible','off');
-        set(b,'visible','off');
-        set(c,'visible','off');
-        set(d,'visible','off');
-        set(e,'visible','off');
-        set(f,'visible','off');
-        set(h,'visible','on');   
+    if ~isempty( cfg )
+%         figure( cfg );
+%         set(h.menu(1), 'SelectedObject',h.menu(8));
+% 
+%         a=get(h.menu(2),'Userdata');
+%         b=get(h.menu(3),'Userdata');
+%         c=get(h.menu(4),'Userdata');
+%         d=get(h.menu(5),'Userdata');
+%         e=get(h.menu(6),'Userdata');
+%         f=get(h.menu(7),'Userdata');
+%         h=get(h.menu(8),'Userdata');
+% 
+%         set(a,'visible','off');
+%         set(b,'visible','off');
+%         set(c,'visible','off');
+%         set(d,'visible','off');
+%         set(e,'visible','off');
+%         set(f,'visible','off');
+%         set(h,'visible','on');   
     else 
         mess = sprintf( '\nMain Splitlab Figure closed. Cannot show splitting options.');
         warning( mess ); 
     end
     return
 end
-%drawnow;
+drawnow;
 
 
 %% POSTCART or ACKNOWLEDGEMENTS
@@ -386,8 +390,9 @@ function splitlabKeyPress(source, event)
 seisView = findobj('type','figure','Tag','SeismoFigure');
 %number = get(seisView, 'Number');
 
-if strcmp( event.Key, 'o') && ishandle(seisView)
-    figure(seisView);
+isempty(seisView)
+if strcmp( event.Key, 'o') && ~isempty(seisView)
+    uistack(seisView, 'top');
 end
 
 

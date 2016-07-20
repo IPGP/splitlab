@@ -46,12 +46,12 @@ elseif (length(evnt.Key)>1) && (strcmp(evnt.Key(1),'f'))
     set(hfill,'Xdata',[thiseq.Spick(1); thiseq.Spick(1); thiseq.Spick(2);  thiseq.Spick(2)])
 
 % MAC 'home': fn + control + leftarrow    
-elseif strcmp(evnt.Key,'home') || strcmp(evnt.Key,'escape')
+elseif strcmp(evnt.Key,'home')
     %jump close to selected phase
     val  = get(findobj('Tag','PhaseSelector'),'Value');
     %try
     t_home = floor(thiseq.phase.ttimes(val)/10)*10 - 500*thiseq.dt; %~500 samples before phase; at full 10 seconds
-    xlim([t_home t_home+3000*thiseq.dt]) % timewindow of 3000 samples sec
+    xlim([t_home t_home+5000*thiseq.dt]) % timewindow of 3000 samples sec
     %end
 
 elseif strcmp(evnt.Key,'rightarrow')
@@ -62,16 +62,17 @@ elseif strcmp(evnt.Key,'leftarrow')
     xx=xlim;
     xlim(xx-diff(xx)/13)
 
-elseif strcmp(evnt.Key,'uparrow')%zoom in by 20%
+elseif strcmp(evnt.Key,'uparrow') %zoom in by 20%
     xx = xlim;
     point = getCurrentPoint(seis(4));
 
     if isempty(point)
-        limit = (xx + [diff(xx) -diff(xx)] /5);
+        limit = (xx + [diff(xx) - diff(xx)] / 5);
     else
         xp = point(1);
-        limit = xx + [xp-xx(1) (xp-xx(2))] /5;
+        limit = xx + [xp-xx(1) (xp-xx(2))] / 5;
     end
+    
     lim = diff(limit)/thiseq.dt;
     if 100 <= lim;
         sa=findobj('Tag','seismo');
@@ -82,7 +83,6 @@ elseif strcmp(evnt.Key,'uparrow')%zoom in by 20%
     elseif lim < 10
         sa=findobj('Tag','Statusbar');
         set(sa,'String','Sorry, reached maximum Zoom level...')
-
         set(gcbf,'Pointer','crosshair')
         return
     end
@@ -117,9 +117,9 @@ elseif strcmp(evnt.Key,'pageup') || (strcmp(evnt.Key,'tab') && ~isempty(evnt.Mod
         if idx < 1;
             idx = length(eq);
         end;
-        SL_databaseViewer( 'previous' )
+        SL_databaseViewer(idx)
         SL_SeismoViewer(idx);
-        %clear idx
+        clear idx
     end
 
 % MAC 'pagedown': fn + downarrow
@@ -128,79 +128,33 @@ elseif strcmp(evnt.Key,'pagedown') || strcmp(evnt.Key,'tab') && isempty(evnt.Mod
     if idx > length(eq);
         idx = 1;
     end;
-        SL_databaseViewer( 'next' )
+        SL_databaseViewer(idx)
         SL_SeismoViewer(idx);
-        %clear idx
+        clear idx
     
 elseif strcmp(evnt.Key,'backspace')
     sa=findobj('Tag','seismo');
     set(sa,'LineStyle','-','Marker','none')
     xlim('auto')
+    
 elseif strcmp(evnt.Key,'delete')
     trashfunction = @localTrash;
     trashfunction(gcbf,evnt);
-    
+        
 else
     switch evnt.Character
         case 'a'
             configSPLITADVANCED
-        case {'l' 'z'}
-            % lock yaxis...
-            button = findobj('Tag','LockButton');
-            state  = lower(get(button,'State'));
-            if strcmp('off', state);
-                set(button, 'State','On') %this also invokes the "buttonDownFunction"
-            else
-                set(button, 'State','Off')
-            end
-        case 'p'
-            if  sum(thiseq.Ppick ~=0)
-                dummy = SL_calcP_pol('single','Teanby','P');
-                eq(thiseq.index).Ppick = thiseq.Ppick;
-                eq(thiseq.index).phase = thiseq.phase;
-            else
-                helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
-            end
-        case 'P'
-            beep
-            disp('Function not implemented! use "j" instead')
-%             if sum(thiseq.Ppick ~=0)
-%                 dummy = SL_calcP_pol('multi','Teanby','S');
-%                 eq(thiseq.index).Ppick = thiseq.Ppick;
-%                 eq(thiseq.index).phase = thiseq.phase;
-%             else
-%                 helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
-%             end
-        case 'o'
-            splitlab( 'change_radio_button' );
             
-        case 'j'
-            if  sum(thiseq.Ppick ~=0)
-                dummy = SL_calcP_pol('single','Jurkewicz','P');
-                eq(thiseq.index).Ppick = thiseq.Ppick;
-                eq(thiseq.index).phase = thiseq.phase;
-            else
-                helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
+        case 'd'
+            db_handle = findobj('Name','Database Viewer'); 
+            if ~isempty(db_handle); 
+                uistack(db_handle,'top'); 
+            else 
+                SL_databaseViewer; 
             end
-        case 'J'
-            if sum(thiseq.Ppick ~=0)
-                dummy = SL_calcP_pol('multi','Jurkewicz','S');
-                eq(thiseq.index).Ppick = thiseq.Ppick;
-                eq(thiseq.index).phase = thiseq.phase;
-            else
-                helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
-            end
-            
-        case {'s','S'}
-            if  sum(thiseq.Ppick ~= 0);
-              if(evnt.Character == 's')
-                plotfreqz('loglog','semilogx')
-              else
-                plotfreqz('plot','plot')
-              end
-            else
-                helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
-            end
+            clear db_handle;
+        
         case 'f'
             ny = 0.5/thiseq.dt;
             doloop = 1 ;
@@ -220,6 +174,101 @@ else
                     config.filterset(key-1, 2:4) = [f1 f2 norder];
                 end
             end
+            
+        case 'h'
+            tmp = thiseq;
+            tmp = rmfield(tmp, 'seisfiles');
+            files = cell2mat(thiseq.seisfiles(:));
+            txt = ['   |- seisfiles : ' files(1,:);
+                   '   |              ' files(2,:);
+                   '   |              ' files(3,:)];
+            str = strucdisp(tmp,2,1,7);
+            str = char(' thiseq', str(1,:) ,txt, str);
+            h=figure('WindowStyle', 'Modal',... 
+                     'Name','thiseq variable viewer',...
+                     'KeyPressFcn',@lscallback);
+            uicontrol('Units','Normalized',...
+                      'Position',[.05 .05 .9 .9],...
+                      'Style','edit',...
+                      'Parent',h,...
+                      'Value',1,...
+                      'max',100,...
+                      'min',0,...
+                      'BackGroundColor','w',...
+                      'FontName','FixedWidth',...
+                      'String',str)
+
+        case 'j'
+            if  sum(thiseq.Ppick ~=0)
+                dummy = SL_calcP_pol('single','Jurkewicz','P');
+                eq(thiseq.index).Ppick = thiseq.Ppick;
+                eq(thiseq.index).phase = thiseq.phase;
+            else
+                helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
+            end
+            
+        case 'J'
+            if sum(thiseq.Ppick ~=0)
+                dummy = SL_calcP_pol('multi','Jurkewicz','S');
+                eq(thiseq.index).Ppick = thiseq.Ppick;
+                eq(thiseq.index).phase = thiseq.phase;
+            else
+                helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
+            end
+            
+        case {'l', 'z'}
+            % lock yaxis...
+            button = findobj('Tag','LockButton');
+            if strcmpl('off', state);
+                set(button, 'State','On') %this also invokes the "buttonDownFunction"
+            else
+                set(button, 'State','Off')
+            end
+            
+        case 'o'
+            splitlab( 'change_radio_button' );
+        
+        case 'p' % polarisation analysis
+            if  sum(thiseq.Ppick ~=0)
+                dummy = SL_calcP_pol('single','Teanby','P');
+                eq(thiseq.index).Ppick = thiseq.Ppick;
+                eq(thiseq.index).phase = thiseq.phase;
+            else
+                helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
+            end
+            
+        case 'P' % polarisation analysis
+            printdlg(gcbf);
+            
+        case 'r'
+            idx = thiseq.index; 
+            SL_databaseViewer(idx); 
+            SL_SeismoViewer(idx); 
+            clear idx
+        
+        case {'s','S'}  % spectro
+            if sum(thiseq.Ppick ~= 0)
+              if(evnt.Character == 's')
+                plotfreqz('loglog','semilogx');
+              else
+                plotfreqz('plot','plot');
+              end
+            else
+                helpdlg('Please pick a P-Wave window first ','Oups, No P-window...');
+            end
+        
+        case 't'
+            viewphases;
+        
+        case 'T' % polarisation analysis
+            if  sum(thiseq.Ppick ~=0)
+                dummy = SL_calcP_pol('single','Teanby','P');
+                eq(thiseq.index).Ppick = thiseq.Ppick;
+                eq(thiseq.index).phase = thiseq.phase;
+            else
+                helpdlg('Please pick a P-Wave window first ','Oups, No P-window...')
+            end
+            
         case {'0' '1' '2' '3' '4' '5' '6' '7' '8' '9'}
             i = find(config.filterset(:,1) == str2num(evnt.Character));
             f1 = config.filterset(i,2);
@@ -230,20 +279,25 @@ else
             if f1*1.03<f2
                 f1=f1*1.03;
             end
+            
         case '-'
-            f1=f1*.97; 
+            f1=f1*.97;
+            
         case '*'
             ny = round(1 / thiseq.dt / 2); %nyquist frequency
             if f2*1.03<ny
                 f2=f2*1.03;
             end
+            
         case '/'
             if f2*.97>f1
                 f2=f2*.97;
             end
+            
         case '<'
             f1=f1*.97;
             f2=f2*.97;
+                    
         case '>'
             ny = round(1 / thiseq.dt / 2); %nyquist frequency
             if f2*1.03<ny
@@ -294,3 +348,9 @@ end
 
 set(gcbf,'Pointer','crosshair')
 
+
+%% SUBFUNCTIONS
+function lscallback(src,evnt)
+if strcmp(evnt.Key,'return') || strcmp(evnt.Character,'h')
+    close(src);
+end

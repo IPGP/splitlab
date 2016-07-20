@@ -1,4 +1,4 @@
-function SL_databaseViewer(var_SeismoViewer)
+function SL_databaseViewer(eq_index)
 % navigate within the SplitLab database
 
 global eq config
@@ -9,31 +9,22 @@ if isempty(eq)
 end
 
 
-% If there is 1 input argument, use function handle for variable passed.
+% If there is 1 input argument, use function for variable passed.
 % Like this, one can call 'getThisLineData' from 'seisKeypress.m' and
-% 'seisfigbuttons.m' in order to make databaseViewer show line
+% 'seisFigButtons.m' in order to make databaseViewer show line
 % corresponding to EQ in SeismoViewer ...
-% var_SeismoViewer = {handle_h_list, 'previous'}
 if nargin==1
-    handle_h_list      = findobj('tag','TableList');
-    pre_or_next_string = var_SeismoViewer;
-    val_h_list         = get(handle_h_list,'Value');
-    
-    if strcmp(pre_or_next_string,'previous')
-        new_value = val_h_list-1;
-        set(handle_h_list,'Value',new_value);
-    elseif strcmp(pre_or_next_string,'next')
-        new_value = val_h_list+1;
-        set(handle_h_list,'Value',new_value);
+    handle_h_list = findobj('tag','TableList');
+    if ~isempty(handle_h_list);
+        set(handle_h_list,'value',eq_index);    
+        getThisLineData(handle_h_list);
     end
-    
-    getThisLineData(handle_h_list);
     return
 end
 
 %the next lines indicate the order in which columns are sorted when
 %specific button was pressed.
-sortorder = [ 5  3  2  1 %date:  day month year
+sortorder = [ 3  2  1  5 %date:  day month year
               4  1  2  3 %julian day
               5  6  7  1 %time
               8  9 10  3 %lat
@@ -118,7 +109,7 @@ sorttable([],[],sortorder(col,:), h.list, col);
 
 
 %% Result list
-header    = ' Phase   \Psi_{RC}    \Psi_{EV}   \deltat_{RC}  \deltat_{EV}   Q\_manu  Q\_auto  Filter      Remark';
+header    = ' Phase   \Psi_{RC}    \Psi_{EV}   \deltat_{RC}  \deltat_{EV}   Q\_manu  Q\_auto  Filter       Remark';
 h.info(1) = uipanel('parent',h.dlg, 'units','pixel', 'Position',[40 40 ext(3)+17 100],'tag','ResultsPanel');
 h.info(4) = axes('parent',h.info(1), 'units','pixel', 'Position',[2 78 ext(3)+11 18]);
 axis off
@@ -198,7 +189,8 @@ else
     outstr = [];
     for j = 1:length(val)
         R = eq(val(j)).results;
-        outstr = char(['-------------------------------- ' eq(val(j)).dstr ' ---------------------------']);
+        outstr = char(['-------------------------------- ' eq(val(j)).dstr ' -------------------------------------']);
+        %outstr = '';
         if ~isempty(R)
             if strcmp(config.studytype,'Reservoir')
                 unit = 'm';

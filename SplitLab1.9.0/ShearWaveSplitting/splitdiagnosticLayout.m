@@ -2,7 +2,7 @@ function [axH, axRC, axSC, axSeis] = splitdiagnosticLayout(Synfig)
 
 
 set(Synfig,'KeypressFcn', @DiagnosticKeyPress)
-
+good = sprintf('Good\t(g)');
 m1 = uimenu(Synfig,'Label', 'Quality');
 q(1) = uimenu(m1, 'Label', 'Good    ', 'Callback', @q_callback);
 q(2) = uimenu(m1, 'Label', 'Fair    ', 'Callback', @q_callback);

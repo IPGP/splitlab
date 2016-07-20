@@ -79,8 +79,8 @@ config.request.timestamp ='06-2016';
 
 %% default PHASES settings
 config.phases     = {'P','PP','PPP','Pdiff','PKS','PcP','PcS','SP','S','SS', 'Sdiff','SKS','SKKS','SKiKS','ScS','sSKS','pSKS','SKP','pPKS','PS','SKJKS','ScP','PKJKP','PKiKP', 'PKKP','PKKS','SKKP'};
-config.earthmodel ='ak135'; %'prem' 'iasp91'
-config.calcphase   = true;
+config.earthmodel = 'ak135'; %'prem' 'iasp91'
+config.calcphase  = true;
 
 config.Vp       = 3.9;
 config.Vs       = 2.2;
@@ -173,7 +173,7 @@ config.nightstyle  = 1;            % 1 - 'City Nights'
                                    
                                    
 %% default settings of others         
-config.tablesortcolumn    = 1;     % column by which to sort data per default in Database viewer
+config.tablesortcolumn    = 6;     % column by which to sort data per default in Database viewer
 config.db_index           = [];    % let it as it is
 config.isWeiredMAC        = false;
 config.saveErrorSurface   = 1;     % keep error surface for stacking

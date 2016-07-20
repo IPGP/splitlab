@@ -66,7 +66,7 @@ title(['Travel times for ' upper(earthmodel) '-model; depth = ' num2str(depth) '
 
 
 %% %% plot phases
-tpfig=findobj('name','Travel paths','Type','Figure');
+tpfig=findobj('name','Travel Paths','Type','Figure');
 close(tpfig)
 figure
 try
@@ -85,9 +85,9 @@ catch
     axis equal;
 end
 tpfig=gcf;
-set(tpfig,'NumberTitle','off', 'name','Travel paths', 'Position', pos+[pos(3)/2 0 0 0] )
+set(tpfig,'NumberTitle','off', 'name','Travel Paths', 'Position', pos+[pos(3)/2 0 0 0] )
 
-title(['Travel paths for ' upper(earthmodel) '-model; depth = ' num2str(depth) 'km'] )
+title(['Travel Paths for ' upper(earthmodel) '-model; depth = ' num2str(depth) 'km'] )
 
 %%
 function [cx,cy]=circle(r)

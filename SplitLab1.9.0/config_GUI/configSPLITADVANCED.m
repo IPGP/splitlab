@@ -164,8 +164,6 @@ seisView = findobj('type','figure','Tag','SeismoFigure');
 if strcmp( event.Key, 'return') && ishandle(seisView)
     close(source);
     figure(seisView);
-end
-
-if strcmp( event.Character, 'a') && ishandle(seisView)
+elseif strcmp( event.Character, 'a') && ishandle(seisView)
     figure(seisView)
 end

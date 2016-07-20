@@ -116,8 +116,8 @@ SL_writeLogFile('DATA', config, thiseq)
 
 %% Re-plot Seismogram- and DatabaseViewer, with recently splitted window 
 %  and new measurement shown in database
-SL_databaseViewer('same');
-SL_SeismoViewer(thiseq.index)
+SL_databaseViewer(thiseq.index);
+SL_SeismoViewer(thiseq.index);
 
 
 %% This program is part of SplitLab

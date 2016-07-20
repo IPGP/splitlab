@@ -1,4 +1,4 @@
-function phase = SL_calcP_pol(optionstr, polar_method,phase)
+function phase = SL_calcP_pol(optionstr, polar_method, phase)
 %calculate the inclination of the wave from the p-wave polarisation
 global thiseq config eq
 
@@ -66,7 +66,7 @@ for FFF = keysToPress
         continue;
     end
     
-    [bazimuthP, incP]=testRandomise(E(win), N(win), Z(win) , polar_method,phase);
+    [bazimuthP, incP]=testRandomise(E(win), N(win), Z(win) , polar_method, phase);
     
 end
 thiseq.filter = tmp_filter; %reset to original values

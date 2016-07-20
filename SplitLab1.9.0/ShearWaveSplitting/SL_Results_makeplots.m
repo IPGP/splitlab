@@ -1,6 +1,6 @@
 function SL_Results_makeplots(good, fair, poor, goodN, fairN, ...
     evt, back, phiSC, dtSC, phiRC, dtRC, phiEV, dtEV,Omega, inc, Phas)
-% PLot results as Misfit, Stereoplot and as function of backazimuth
+% PLot results as Misfit, Stereoplot and as function of Back-azimuth
 % pramters are parsed from the dialog created in SL_Results.m
 
 global config eq
@@ -295,7 +295,7 @@ set(gca,  'XMinortick', 'on', 'Xtick', [0:45:360],'YTick', linspace(0,config.max
 axis([0 360 0 config.maxSplitTime])
 
 ylabel('delay time')
-xlabel('Backazimuth')
+xlabel('Back-azimuth')
 
 
 
@@ -319,7 +319,7 @@ set(gca,  'XMinortick', 'on', 'Xtick', [0:45:360],'YTick', linspace(0,config.max
 axis([0 360 0 config.maxSplitTime])
 
 
-xlabel('Backazimuth')
+xlabel('Back-azimuth')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 subplot(rowNumbers, 3, 6, 'Layer','Top');
@@ -341,7 +341,7 @@ plot(back(good),  dtEV(good),  goodMarker, 'MarkerSize', 5 );
 
 set(gca,  'XMinortick', 'on', 'Xtick', [0:45:360],'YTick', linspace(0,config.maxSplitTime,5),'FontSize',FontSize)
 axis([0 360 0 config.maxSplitTime])
-xlabel('Backazimuth')
+xlabel('Back-azimuth')
 
 
 if strcmp(defstyle,'.')

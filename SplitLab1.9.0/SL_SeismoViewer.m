@@ -316,6 +316,7 @@ set(seisfig, 'currentAxes', subax(4))
 link_obj = linkprop(subax, {'Xlim','Xgrid','Ygrid'});
 setappdata(subax(4), 'dummy', link_obj);
 
+
 %% Initialise time selector area
 % based on "gline.m" of statistics toolbox
 % is at first invisible (area == 0)
@@ -401,7 +402,7 @@ ylabel(subax(4), sprintf('f_1 = %4.3f Hz   f_2 = %4.3f Hz',thiseq.filter(1:2)),.
        'FontSize', fontsize)
 set(seisfig, ...
     'WindowButtonDownFcn', {@buttonDown, split, subax(4), seis}, ...
-    'KeyPressFcn',         {@seisKeyPress, seis});
+    'KeyPressFcn',         {@seisKeyPress, [seis subax(4)]});
 
 v=version;
 if sscanf(v(1:3),'%f')>=7.4
@@ -410,7 +411,7 @@ end
 
 hold off;
 
-seisfigbuttons(seisfig,seis);
+seisFigButtons(seisfig,seis);
 
 set(phaseMenu,...
     'Callback', 'RotatePhaseSelect(gcbo)',...

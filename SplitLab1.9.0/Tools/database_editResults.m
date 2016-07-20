@@ -9,7 +9,7 @@ rbut  = findobj('Tag','ResultsButton');
 lval = get(l_box,'Value');
 rval = get(r_box,'Value');
 
-L = get(r_box,'Userdata'); %get displayed results sturcture
+L = get(r_box,'Userdata'); %get displayed results structure
 switch option
     case 'Del'
         button = questdlg({'Do you want to delete this result from database?';'(Also result image and line in ''splitresults*_STAT.dat''-file)'},'Confirm delete','Yes','No','Yes');
@@ -20,8 +20,8 @@ switch option
             if ishandle(seisfig)
                 was_handle=1;
                 close(seisfig);
-                mess = sprintf(['\nWe will close and re-open the SeismoViewer to perfom ',...
-                     'this operation,\nan open SeismoViewer may cause database ',...
+                mess = sprintf(['\nWe will close and re-open the SeismoViewer to delete ',...
+                     'this measurement,\nas an open SeismoViewer may cause database ',...
                      'conflicts.\n']);
                 warning( mess );
             end
@@ -57,6 +57,8 @@ switch option
             %%%%% re-open SeismoViewer if was open before
             if was_handle==1
                 SL_SeismoViewer(config.db_index);
+                databaseViewer = findobj('Name','Database Viewer');
+                uistack(databaseViewer,'top');
             end
             
             %%%%% save project with updated results
@@ -92,26 +94,28 @@ switch option
             fullname_dat = fullfile(config.savedir,fname);
 
             % read 'fullname_dat' file
-            fileID = fopen( fullname_dat );
+            fileID = fopen( fullname_dat,'r' );
             file = textscan(fileID,'%s', 'Delimiter','\n', 'HeaderLines',0);
             fclose( fileID );
             [nn,m] = size( file{1} );   %nn = #rows of cell array 'file'
             
             % open 'fullname_dat' and write all lines but the one to delete
-            fileID = fopen(fullname_dat,'w');
+            fileID = fopen( fullname_dat,'w' );
             mess = sprintf('Following measurements deleted in ''%s'':', fname);
             disp( mess );
             
             % loop over measurements in file, disp line to delete, print to
             % file all others
+            deleted_line = false;
             for line_index = 1:nn
                 line      = file{1}{line_index};    % get 'q_comare' in file and round
                 string    = strsplit( line );
                 q_compare = sprintf('%0.4f', round( str2double( string(35) ),4));
                 if ~isempty(strfind(line,date_compare)) && ~isempty(strfind(line,pha)) ...
-                        && ~isempty(strfind(line,q_manu)) && ~isempty(strfind(q_compare,q_auto)) 
+                        && ~isempty(strfind(line,q_manu)) && ~isempty(strfind(q_compare,q_auto)) ...
+                        && ~deleted_line
                     disp( line );
-                    break;      % case more than 2 identical lines, only one deleted
+                    deleted_line = true;    % case identical lines exist, delete only one
                 else
                     fprintf(fileID,'%s\n', line);
                 end
@@ -125,6 +129,10 @@ switch option
         num = lval(length(tmp)); %to retrieve index of eq
         val = rval - tmp(end);   %index of result of eq(num)
         openvar(['eq(' num2str(num) ').results(' num2str(val) ')'])
+        
+        mess = sprintf('If you edited the measurement, please note that this\nthe measurement in the result file is not overwritten !');
+        h=helpdlg( mess );
+        waitfor(h)
 
     case 'Select'
         if any(rval == L)

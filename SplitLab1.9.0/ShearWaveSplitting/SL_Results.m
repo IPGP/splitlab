@@ -3,11 +3,11 @@ function SL_Results
 global eq
 
 
+%% check if project/results are not empty
 if isempty(eq)
     errordlg('Project appears to be empty...! Sorry', 'No database')
     return 
 end
-
 
 x=zeros(1,length(eq));
 for i = 1 : length(eq)
@@ -25,31 +25,43 @@ defwidth = 0.5;
 defstyle = '.';
 
 
-%% XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-%  If you create your own result function, you should only edit below here!
-
-
 %% CREATE DIALOG
-
-S=get(0,'ScreenSize');
-
-figpos = [30 S(4)-450 420 380];
-fig = figure('Position',figpos,'NumberTitle','off','Name','ResultViewer options','Toolbar','None','menubar','none');
-set(fig,'Color', get(0, 'DefaultUIcontrolBackgroundColor'))
-
 Plist={'P','Pdiff','PP','PPP','PcP','PcS','ScS','ScP','PS','SP',...
     'S','Sdiff','SS','SKP','PKS','SKS','SKiKS','sSKS','pSKS', ...
     'pP', 'sP', 'pS', 'sS','PKKP', 'PKKS','SKKS', 'SKKP'};
 
-setappdata(fig, 'phases',  Plist(16))
-setappdata(fig, 'method', 'Manual')
-setappdata(fig, 'Quality', [1 1 1])
-setappdata(fig, 'Nulls',   [1 1])
-setappdata(fig, 'NullLines', 0)
-setappdata(fig, 'theoLines', 1)
-setappdata(fig, 'period', 8)
-setappdata(fig, 'PlotErrors', 0)
-%% Phase data
+S=get(0,'ScreenSize');
+figpos = [30 S(4)-450 420 380];
+
+% check if window already open
+fig = findobj('Tag','ResultViewer Options');
+if isempty(fig)
+    disp('empty');
+    fig = figure('Position',figpos,...
+                 'NumberTitle','on',...
+                 'Name','ResultViewer Options',...
+                 'Tag','ResultViewer Options',...
+                 'Toolbar','None',...
+                 'menubar','none');
+
+    setappdata(fig, 'phases',  Plist(16))
+    setappdata(fig, 'method', 'Manual')
+    setappdata(fig, 'Quality', [1 1 1])
+    setappdata(fig, 'Nulls',   [1 1])
+    setappdata(fig, 'NullLines', 0)
+    setappdata(fig, 'theoLines', 1)
+    setappdata(fig, 'period', 8)
+    setappdata(fig, 'PlotErrors', 0)
+    
+    set(fig,'Color', get(0, 'DefaultUIcontrolBackgroundColor'));
+else
+    uistack(fig, 'top');
+end
+
+
+
+
+%% Phase List on the left
 uicontrol('Units','pixel',...
     'Style','List','Min',1,'Max',20,...
     'BackgroundColor','w',...
@@ -57,6 +69,8 @@ uicontrol('Units','pixel',...
     'Value',16,...
     'String', Plist,...
     'Callback','val=get(gcbo,''Value''); str=get(gcbo,''String'');setappdata(gcbf,''phases'', str(val)); clear str val');
+
+
 %% OK button
 button  =  uicontrol('Units','pixel',...
     'Style','Pushbutton',...
@@ -205,6 +219,7 @@ SL_Results_makeplots(out.good, out.fair, out.poor, out.goodN, out.fairN,  ...
     out.evt, out.back, out.phiSC, out.dtSC, out.phiRC, out.dtRC,...
     out.phiEV, out.dtEV, out.Omega, out.inc, out.Phas );
 
+
 %% XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 function showlines(scr,evt)
 handles = guidata(gcbf);
@@ -223,6 +238,7 @@ else
     %      set(obj.Null,  'Visible', 'off')
 end
 
+
 %% XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 function LocalSetColor(src,evt)
 handles = guidata(gcbf);
@@ -230,6 +246,7 @@ handles = guidata(gcbf);
 C =uisetcolor;
 set(handles.theoLines(:), 'Color', C)
 set(handles.color, 'Userdata', C)
+
 
 %%
 function LocalSetLineStyle(src,evt)
@@ -245,6 +262,7 @@ else
 end
 set(handles.style, 'Userdata', str{val})
 
+
 %%
 function LocalSetLinewidth(src,evt)
 handles = guidata(gcbf);
@@ -252,7 +270,6 @@ handles = guidata(gcbf);
 width = get(gcbo,'Value')*.5;
 set(handles.theoLines(:), 'LineWidth', width)
 set(handles.width, 'UserData', width)
-
 
 
 %%
@@ -351,4 +368,3 @@ else
     defaultname = [config.project(1:end-4) '_ResultPlot' config.exportformat];
     exportfiguredlg(fig, defaultname, config.savedir, config.exportresolution)
 end
-

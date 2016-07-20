@@ -13,7 +13,7 @@ if nargin==0
 end
 
 if ~isfield(thiseq, 'Spick') || (isempty(thiseq.Spick(1)) && isempty(thiseq.Spick(2)))
-    errordlg('no time window picked... Sorry, can''t split','Error')
+    errordlg('no time window picked for S-phase ... Sorry, can''t split','Error')
     return
 end
 
