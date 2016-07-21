@@ -99,7 +99,7 @@ for i=2:length(strlen)
     xy = get(tmp,'extent');
     h.head(i)=uicontrol(h.dlg, 'style','pushbutton', 'FontWeight','bold',...
         'tag','TableButton', 'string',names(i-1), 'position',[40+x figpos(4)-30 xy(3:4)],...
-        'callback',{@sorttable,sortorder(i-1,:),h.list, i-1, false});
+        'callback',{@sorttable,sortorder(i-1,:),h.list, i-1});
 %set(h.head(i),'callback','');
     x = xy(3)+ x - 4;
 end
@@ -110,7 +110,7 @@ set(h.dlg, 'ResizeFcn',@localResizeFcn)
 
 %% Default List display:
 column = config.tablesort(1);
-sorttable([],[],sortorder(column,:), h.list, column, true);
+sorttable([],[],sortorder(column,:), h.list, column);
 
 
 %% Result list
@@ -231,43 +231,78 @@ save(filename,'eq','config');  %save pjt when clicking through lines (because of
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function sorttable(src, evt, sort_order, h_list, column, first)
+function sorttable(src, evt, sort_order, h_list, column)
 global eq config
 
 % sort_order : row of sorttable to be used. E.g.: [11 10 12  3 ] %Mw
 % column     : chosen column to sort after, corresponds to 'sort_order'
-% first      : true if this function is called for 1st time, else false
 
-% define EQ-data to be shown in database viewer
 dvec=reshape([eq(:).date], 7, [])';
 indices   = (1:size(dvec,1))';
 
+% define EQ-data to be shown in database viewer
 listdata  = [dvec(:,[ 3 2 1 7 4 5 6])...  day month year Julian_day hour minute second
             [eq(:).lat]'   [eq(:).long]'...
             [eq(:).depth]' [eq(:).Mw]'   [eq(:).bazi]'...
             [eq(:).dis]'   indices];%
 listdata(listdata == -12345) = 0;
 
-% depending on number of clicks on button, create correct sorting ascend (1)
-% or descend (-1)
+%code for table sort, also when clicking twice !
+
 sort_sign  = config.tablesort(2);
-if ~first
+try
+   counter = getpref('tmp_vars', 'counter_table');
+catch
+   setpref('tmp_vars', 'counter_table', 0);
+   counter = 0;
+end
+
+% depending on number of clicks on button, create correct sorting 'ascend'
+% or 'descend'
+if counter ~= 0;
     if column == config.tablesort(1) && column ~= 10 %'ID'
-        sort_sign = -1 * sort_sign;
+        counter   = counter + 1;
+        sort_sign = (-1) * sort_sign;
+    elseif button ~= 10
+        counter   = 0;
+    else  % button == 10 ('ID')
+
+    end
+end
+counter   = counter + 1;
+setpref('tmp_vars', 'counter_table', counter);
+
+try
+   counter = getpref('tmp_vars', 'counter_table');
+catch
+   setpref('tmp_vars', 'counter_table', 0);
+   counter = 0;
+end
+setpref('tmp_vars', 'counter_table', counter);
+
+sort_order = sort_sign*sort_order;
+[sdat,idx] = sortrows(listdata, sort_order);
+
+% sets correct indices depending on if table is sorted ascending
+if sdat(end,sort_order(1)) < sdat(1,sort_order(1))
+    indices = flipud( indices );
+end
+sdat = [sdat(:,1:13), indices];
+
+% taking care on 'ID' button
+if column == 10;
+    i=0;
+    while i < counter
+        i = i+1; 
+        sdat = flipud( sdat );
     end
 end
 
-% sets correct indices depending on if table is sorted ascending
-sort_order = sort_sign*sort_order;
-[sdat,idx] = sortrows(listdata, sort_order);
-sdat       = [sdat(:,1:13), indices];
-
-% assign tablesort for next time and safe
+% assign tablesort for next time
 config.tablesort(1) = column;
 config.tablesort(2) = sort_sign;
-filename    = fullfile( config.projectdir,config.project );
-save(filename,'eq','config');
-            
+%safe file
+
 % make sure correct unit is shown
 if strcmp(config.studytype, 'Reservoir')
     unit = 'm';

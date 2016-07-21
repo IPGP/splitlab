@@ -50,8 +50,8 @@ elseif strcmp(evnt.Key,'home')
     %jump close to selected phase
     val  = get(findobj('Tag','PhaseSelector'),'Value');
     %try
-    t_home = floor(thiseq.phase.ttimes(val)/10)*10 - 500*thiseq.dt; %~500 samples before phase; at full 10 seconds
-    xlim([t_home t_home+5000*thiseq.dt]) % timewindow of 3000 samples sec
+    t_home = floor(thiseq.phase.ttimes(val)/10)*10 - 750*thiseq.dt; %~500 samples before phase; at full 10 seconds
+    xlim([t_home t_home+6000*thiseq.dt]) % timewindow of 3000 samples sec
     %end
 
 elseif strcmp(evnt.Key,'rightarrow')

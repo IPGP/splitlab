@@ -100,7 +100,7 @@ config.maxSplitTime       = 4; %maximum time to search for delay in inversion
 config.resamplingfreq     = 'raw'; %resample seismogram frequncy; give as string
 config.interpolmethod     = 'pchip';
 config.splitoption        = 'Eigenvalue: min(lambda1 * lambda2)';
-config.inipoloption       = 'fixed'; %for EV method: initial geometrical (from backazimuth) or estimated from wave form  
+config.inipoloption       = 'estimated'; %for EV method: initial geometrical (from backazimuth) or estimated from wave form  
 
 % Colors
 config.Colors.PselectionColor   = [.91 .93  1];
@@ -172,11 +172,11 @@ config.nightstyle  = 1;            % 1 - 'City Nights'
                                    % 3 - 'None'
                                    
                                    
-%% default settings of others         
-config.tablesortcolumn    = 6;     % column by which to sort data per default in Database viewer
-config.db_index           = [];    % let it as it is
-config.isWeiredMAC        = false;
-config.saveErrorSurface   = 1;     % keep error surface for stacking
+%% default settings of others          
+config.tablesort        = [7, 1];  % [column, order] by which to sort data per default in Database viewer
+config.db_index         = [];       % let it as it is
+config.isWeiredMAC      = false;
+config.saveErrorSurface = 1;        % keep error surface for stacking
 
 
 %% This program is part of SplitLab

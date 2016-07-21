@@ -265,15 +265,16 @@ function selcbk(source,eventdata)
 old = get(eventdata.OldValue,'Userdata');
 new = get(eventdata.NewValue,'Userdata');
 
-set (old, 'visible', 'off')
-set (new, 'visible', 'on')
+set (old, 'visible', 'off');
+set (new, 'visible', 'on');
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function loadcallback(source,eventdata)
 evalin('base','global eq thiseq config');
-global config eq
+global config
 val =get(gcbo,'Value');
+
 if  val ==1;
     %"Load" string... do nothing!
     return
@@ -324,14 +325,13 @@ else
 end
 
 config.projectdir = pathstr;
-
 setpref('Splitlab','History', pjtlist);
 
 if ~isfield(config,'version') || isempty(config.version) || (1.2)> sscanf(config.version(9:11),'%f')
     warning('This project is created with an older version of SplitLab. Result format will be converted...')
     SL_convert2ver1_2
 end
-splitlab
+splitlab;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -381,7 +381,7 @@ if ischar(tmp2)
     set(pjtfield,'String',config.project)
     
 end
-clear tmp*
+clear tmp*;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -5,7 +5,7 @@ global eq
 
 %% check if project/results are not empty
 if isempty(eq)
-    errordlg('Project appears to be empty...! Sorry', 'No database')
+    errordlg('Project appears to be empty...! Sorry', 'No database');
     return 
 end
 
@@ -15,7 +15,7 @@ for i = 1 : length(eq)
 end
 %res = find(x==1) ;
 if isempty(find(x==1,1))
-    errordlg('Project does not contain any results! Sorry', 'No Results')
+    errordlg('Project does not contain any results! Sorry', 'No Results');
     return
 end
 
@@ -36,7 +36,6 @@ figpos = [30 S(4)-450 420 380];
 % check if window already open
 fig = findobj('Tag','ResultViewer Options');
 if isempty(fig)
-    disp('empty');
     fig = figure('Position',figpos,...
                  'NumberTitle','on',...
                  'Name','ResultViewer Options',...
