@@ -1,13 +1,14 @@
 function database_editResults(option)
 global eq config
 
+
 r_box = findobj('tag','ResultsBox');
 l_box = findobj('tag','TableList');
 rbut  = findobj('Tag','ResultsButton');
 
 lval = get(l_box,'Value');
 rval = get(r_box,'Value');
-L = get(r_box,'Userdata'); %get displayed results structure
+L    = get(r_box,'Userdata'); %get displayed results structure
 
 
 switch option

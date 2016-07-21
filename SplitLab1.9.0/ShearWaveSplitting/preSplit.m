@@ -280,7 +280,7 @@ for ii=1:length(f1)
                         set(hsplit, 'Xdata', xx(:), 'FaceColor',config.Colors.SselectionColor)
                         set(gcbf,'Pointer','crosshair')
                         set(sbar,'String','Status: Batch processing aborted by user');drawnow;
-                        fprintf(2, 'Aborted... \n')%#ok
+                        fprintf(2, ' Aborted... \n')%#ok
                         return
                     end
                 end
