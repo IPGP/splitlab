@@ -34,6 +34,9 @@ if ok==0; warning('Troubles loading matTaup'); end
 
 
 [p,f] = fileparts(mfilename('fullpath'));  % directory of Splitlab
+
+
+%% prepare figures
 set(0, 'DefaultFigurecolor', [224   223   227]/255 ,...
        'DefaultFigureWindowStyle', 'normal',...
        'DefaultUIControlBackgroundColor', [224   223   227]/255); 
@@ -386,11 +389,8 @@ clear tmp*;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function splitlabKeyPress(source, event)
-
 seisView = findobj('type','figure','Tag','SeismoFigure');
-%number = get(seisView, 'Number');
 
-isempty(seisView)
 if strcmp( event.Key, 'o') && ~isempty(seisView)
     uistack(seisView, 'top');
 end
