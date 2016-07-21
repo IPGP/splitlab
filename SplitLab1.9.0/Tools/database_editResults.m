@@ -5,11 +5,11 @@ r_box = findobj('tag','ResultsBox');
 l_box = findobj('tag','TableList');
 rbut  = findobj('Tag','ResultsButton');
 
-
 lval = get(l_box,'Value');
 rval = get(r_box,'Value');
-
 L = get(r_box,'Userdata'); %get displayed results structure
+
+
 switch option
     case 'Del'
         button = questdlg({'Do you want to delete this result from database?';'(Also result image and line in ''splitresults*_STAT.dat''-file)'},'Confirm delete','Yes','No','Yes');
@@ -93,13 +93,13 @@ switch option
             end
             fullname_dat = fullfile(config.savedir,fname);
 
-            % read lines of 'fullname_dat' file
+            % read lines of 'fullname_dat' file and put into cell
             fileID  = fopen( fullname_dat );
             line  = fgetl(fileID);
             lines = cell(0,1);
             while ischar(line)
                 lines{end+1,1} = line;
-                line = fgetl(fileID);
+                line           = fgetl(fileID);
             end
             fclose(fileID);
 
@@ -125,14 +125,14 @@ switch option
                     fprintf(fileID,'%s\n', line);
                 end
             end
-            fclose( fileID  );
+            fclose( fileID );
         end
 
     case 'Edit'
         tmp = L(L<rval);
         if isempty(tmp); return; end %nothing selected
-        num = lval(length(tmp)); %to retrieve index of eq
-        val = rval - tmp(end);   %index of result of eq(num)
+        num = lval(length(tmp));     %to retrieve index of eq
+        val = rval - tmp(end);       %index of result of eq(num)
         openvar(['eq(' num2str(num) ').results(' num2str(val) ')'])
         
         mess = sprintf('If you edited the measurement, please note that this\nthe measurement in the result file is not overwritten !');
@@ -190,9 +190,6 @@ switch option
             end
         end
 
-
-
-        %% ========================================================================
     case 'Cleanup'
         for i = 1 : length(eq)
             x(i)=~isempty(eq(i).results);
