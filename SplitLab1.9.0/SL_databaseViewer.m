@@ -257,7 +257,7 @@ if ~first
     end
 end
 
-% sets correct indices depending on if table is sorted ascending
+% sets indices always ascending (corresponds to SeismoViewer then ..)
 sort_order = sort_sign*sort_order;
 [sdat,idx] = sortrows(listdata, sort_order);
 sdat       = [sdat(:,1:13), indices];
