@@ -60,7 +60,6 @@ else
     %clf(h.dlg)
     %set(h.dlg,'ResizeFcn','','Position',figpos,'Units','pixel')
     figure(h.dlg)
-    return
 end
 
 %create empty text to get width of text in pixel
@@ -142,8 +141,10 @@ h.button4 = uicontrol('style','pushbutton','Position',[230 8 50 25],...
                       'string','Statistic',...
                       'Tooltipstring', 'Show statistics plot',...
                       'Callback','SL_showeqstats');
-h.button5 = uicontrol('Style','checkbox','String','EarthViewer',...
-                      'pos',[285 8 80 25],'value', config.showearth,...
+h.button5 = uicontrol('Style','checkbox',...
+                      'String','EarthViewer',...
+                      'pos',[285 8 80 25],...
+                      'value', config.showearth,...
                       'Callback','config.showearth = get(gcbo,''Value''); filename = fullfile(config.projectdir,config.project); save(filename,''eq'',''config''); SL_databaseViewer;');          
 
 % for single result
@@ -324,8 +325,8 @@ set(l,'Position',[lold(1:3) figpos(4)-179]);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function my_closereq(src,evt)
-    earth    = findobj('type','figure', 'Name','Database Viewer');
-    database = findobj('type','figure', 'tag','EarthView');
+    database = findobj('type','figure', 'Name','Database Viewer');
+    earth    = findobj('type','figure', 'tag','EarthView');
     delete(earth);
     delete(database);
 %%%if both lines uncommented, when EarthViewer is closed global option is
