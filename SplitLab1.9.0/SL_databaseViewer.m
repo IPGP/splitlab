@@ -244,7 +244,7 @@ indices   = (1:size(dvec,1))';
 
 listdata  = [dvec(:,[ 3 2 1 7 4 5 6])...  day month year Julian_day hour minute second
             [eq(:).lat]'   [eq(:).long]'...
-            [eq(:).depth]' [eq(:).Mw]'   [eq(:).bazi]'...
+            [eq(:).depth]' [eq(:).Mw]'  [eq(:).bazi]'...
             [eq(:).dis]'   indices];%
 listdata(listdata == -12345) = 0;
 
@@ -265,7 +265,7 @@ sdat       = [sdat(:,1:13), indices];
 % assign tablesort for next time and safe
 config.tablesort(1) = column;
 config.tablesort(2) = sort_sign;
-filename    = fullfile( config.projectdir,config.project );
+filename            = fullfile( config.projectdir,config.project );
 save(filename,'eq','config');
             
 % make sure correct unit is shown

@@ -94,27 +94,34 @@ switch option
             fullname_dat = fullfile(config.savedir,fname);
 
             % read lines of 'fullname_dat' file
-            fileID  = fopen( fullname_dat );
-            line  = fgetl(fileID);
-            lines = cell(0,1);
-            while ischar(line)
-                lines{end+1,1} = line;
-                line = fgetl(fileID);
+            fileID  = fopen( fullname_dat);
+            lines   = [];
+            EOF     = false;
+            while ~EOF 
+                disp('while');
+                line  =  fgetl(fileID);
+                disp(
+                lines = [lines, line ]
+                
+                if line == -1 %EOF
+                    EOF = true;
+                    continue;
+                end 
             end
-            fclose(fileID);
-
+            fclose( fileID );
+            disp(lines);
             % open 'fullname_dat' and write all lines but the one to delete
             fileID = fopen( fullname_dat,'w' );
             mess = sprintf('Following measurements deleted in ''%s'':', fname);
             disp( mess );
             
             % loop over all lines in file, disp line to delete, print all 
-            % other lines to file
-            deleted_line = false;
-            for idx = 1:length(lines)
-                line      = lines{idx};
-                string    = strsplit( line ); 
-                q_compare = sprintf('%0.4f', round( str2double( string(36) ),4));
+            % other lines to file2
+             for line = lines
+                disp(line);
+
+                string    = strsplit( line );   
+                q_compare = sprintf('%0.4f', round( str2double( string(35) ),4));
                 
                 if ~isempty(strfind(line,date_compare)) && ~isempty(strfind(line,pha)) ...
                         && ~isempty(strfind(line,q_manu)) && ~isempty(strfind(q_compare,q_auto)) ...
@@ -124,6 +131,7 @@ switch option
                 else
                     fprintf(fileID,'%s\n', line);
                 end
+
             end
             fclose( fileID  );
         end
