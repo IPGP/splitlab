@@ -55,59 +55,59 @@ switch splitoption
     case 'Minimum Energy'
         Ematrix   = Ematrix(:,:,1);
         optionstr ='Minimum Energy';
-        phi = phiSC(1);
-        dt  = dtSC(1);
-        Level    = LevelSC;
-        Maptitle = 'Energy Map of T';
+        phi       = phiSC(1);
+        dt        = dtSC(1);
+        Level     = LevelSC;
+        Maptitle  = 'Energy Map of T';
         allFasts  = allFasts(:,[1 2]);
         allDelays = allDelays(:,[1 2]);
 
     case 'Eigenvalue: min(lambda1 * lambda2)'
         Ematrix   = Ematrix(:,:,2);
         optionstr ='Minimum \lambda1 * \lambda2';
-        phi = phiEV(1);
-        dt  = dtEV(1);
-        Level = LevelEV;
+        phi       = phiEV(1);
+        dt        = dtEV(1);
+        Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalues \lambda1 * \lambda2';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
 
     case 'Eigenvalue: min(lambda2 / lambda1)'
         Ematrix   = Ematrix(:,:,2);
-        optionstr ='Minimum   \lambda2 / \lambda1';
-        phi = phiEV(1);
-        dt  = dtEV(1);
-        Level = LevelEV;
+        optionstr = 'Minimum   \lambda2 / \lambda1';
+        phi       = phiEV(1);
+        dt        = dtEV(1);
+        Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalues \lambda2 / \lambda1';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
         
     case 'Eigenvalue: max(lambda1 / lambda2)'
         Ematrix   = Ematrix(:,:,2);
-        optionstr ='Maximum   \lambda1 / \lambda2';
-        phi = phiEV(1);
-        dt  = dtEV(1);
-        Level = LevelEV;
+        optionstr = 'Maximum   \lambda1 / \lambda2';
+        phi       = phiEV(1);
+        dt        = dtEV(1);
+        Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalues \lambda1 / \lambda2';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
  
     case 'Eigenvalue: min(lambda2)'
-        Ematrix = Ematrix(:,:,2);
+        Ematrix   = Ematrix(:,:,2);
         optionstr ='Minimum  \lambda2';
-        phi = phiEV(1);
-        dt  = dtEV(1);
-        Level =LevelEV;
+        phi       = phiEV(1);
+        dt        = dtEV(1);
+        Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalue \lambda2';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
 
     case 'Eigenvalue: max(lambda1)'
         Ematrix   = Ematrix(:,:,2);
-        optionstr ='Maximum  \lambda1';
-        phi = phiEV(1);
-        dt  = dtEV(1);
-        Level =LevelEV;
+        optionstr = 'Maximum  \lambda1';
+        phi       = phiEV(1);
+        dt        = dtEV(1);
+        Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalue \lambda1';
         allFasts  = allFasts(:,[1 3]);
         allDelays = allDelays(:,[1 3]);
@@ -118,17 +118,43 @@ if strcmpi(config.studytype,'Teleseismic')
     yystr= {'E ', 'N '}; 
     if strcmp(config.inipoloption,'fixed')
         B        = mod(           thiseq.bazi,  90);  % backazimuth lines
-        phi      = mod(phi      + thiseq.bazi, 180);
+        phi      = mod(phi      + thiseq.bazi, 180);  % phi is ~= strike Psi now between 0..180
         phiRC(1) = mod(phiRC(1) + thiseq.bazi, 180);
         phiSC(1) = mod(phiSC(1) + thiseq.bazi, 180);
         phiEV(1) = mod(phiEV(1) + thiseq.bazi, 180);
 	else
         B        = mod(           thiseq.inipol, 90); 
-        phi      = mod(phi      + thiseq.inipol, 180);
+        phi      = mod(phi      + thiseq.inipol, 180); % phi is ~= strike Psi now betwenn 0..180
         phiRC(1) = mod(phiRC(1) + thiseq.inipol, 180);
         phiSC(1) = mod(phiSC(1) + thiseq.inipol, 180);
         phiEV(1) = mod(phiEV(1) + thiseq.inipol, 180);
     end
+    
+    % to shift phis interval from 0...180 to -90...90
+    if phi > 90
+        phi = -180 + phi;
+    elseif phi < -90
+        phi = 180 - phi;
+    end
+    
+    if phiRC(1) > 90
+        phiRC(1) = -180 + phiRC(1);
+    elseif phiRC(1) < -90
+        phiRC(1) = 180 - phiRC(1);
+    end
+    
+    if phiSC(1) > 90
+        phiSC(1) = -180 + phiSC(1);
+    elseif phiSC(1) < -90
+        phiSC(1) = 180 - phiSC(1);
+    end
+    
+    if phiEV(1) > 90
+        phiEV(1) = -180 + phiEV(1);
+    elseif phiEV(1) < -90
+        phiEV(1) = 180 - phiEV(1);
+    end    
+    
 else
     if strcmp(config.inipoloption, 'fixed')
         B     = mod(thiseq.bazi,90); %backazimuth lines
@@ -232,7 +258,7 @@ fill(Xmark,Ymark,'k')
 
 line([dtRC(1) dtRC(1)],[-90 90],'Color',[0 0 1])
 line([0 config.maxSplitTime], [phiRC(1) phiRC(1)],'Color',[0 0 1])
-
+disp([dtSC(1),phiSC(1)]);
 plot( allDelays(:,1), allFasts(:,1), 'b.')
 plot(dtSC(1),phiSC(1),'m+',  dtEV(1),phiEV(1),'rx' , dtRC(1),phiRC(1),'bo')
 title('Map of Correlation Coefficient', 'FontSize', titlefontsize);
@@ -315,7 +341,7 @@ set(gca, 'Ytick', get(gca,'Xtick'))
 hold off
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Energy Map
+%Energy or Eigenvalue Map
 axes(axSC(4))
 hold on
 
@@ -388,4 +414,3 @@ if length(Qvector)>1
     set(axSeis(2),'Layer','Top','XMinorTick','on')
 end
 
-% EOF %
