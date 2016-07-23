@@ -258,7 +258,6 @@ fill(Xmark,Ymark,'k')
 
 line([dtRC(1) dtRC(1)],[-90 90],'Color',[0 0 1])
 line([0 config.maxSplitTime], [phiRC(1) phiRC(1)],'Color',[0 0 1])
-disp([dtSC(1),phiSC(1)]);
 plot( allDelays(:,1), allFasts(:,1), 'b.')
 plot(dtSC(1),phiSC(1),'m+',  dtEV(1),phiEV(1),'rx' , dtRC(1),phiRC(1),'bo')
 title('Map of Correlation Coefficient', 'FontSize', titlefontsize);

@@ -49,10 +49,8 @@ elseif (length(evnt.Key)>1) && (strcmp(evnt.Key(1),'f'))
 elseif strcmp(evnt.Key,'home')
     %jump close to selected phase
     val  = get(findobj('Tag','PhaseSelector'),'Value');
-    %try
-    t_home = floor(thiseq.phase.ttimes(val)/10)*10 - 750*thiseq.dt; %~500 samples before phase; at full 10 seconds
-    xlim([t_home t_home+6000*thiseq.dt]) % timewindow of 3000 samples sec
-    %end
+    t_home = floor(thiseq.phase.ttimes(val)/10)*10 - 30; %~30 seconds before phase; at full 10 seconds
+    xlim([t_home-40 t_home+210]) % timewindow of 150 sec
 
 elseif strcmp(evnt.Key,'rightarrow')
     xx = xlim;
@@ -113,7 +111,7 @@ elseif strcmp(evnt.Key,'downarrow') %zoom out by 20%
 % MAC 'pageup': fn + uparrow
 elseif strcmp(evnt.Key,'pageup') || (strcmp(evnt.Key,'tab') && ~isempty(evnt.Modifier))  %previous event
     if strcmp(evnt.Key,'pageup') || (strcmp(evnt.Key,'tab') && strcmp(evnt.Modifier,'shift'))
-        idx = thiseq.index-1;
+        idx = config.db_index-1;
         if idx < 1;
             idx = length(eq);
         end;

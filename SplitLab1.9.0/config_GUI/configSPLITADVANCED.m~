@@ -72,13 +72,13 @@ else
                      'Position',[270 60  220 255],...
                      'BackgroundColor', [224   223   227]/255);
 
-    hnd(1)  = uicontrol('Style','text','Position',[10 165 120 15], 'String','Units', 'Parent',bpanel, 'tag','WindoBatchOff');
+    hnd(1)  = uicontrol('Style','text','Position',[10 165 120 15], 'String','Units', 'Parent',bpanel);
     hnd(2)  = uicontrol('Style','text','Position',[10 140 120 15], 'String','Begin extension ', 'Parent',bpanel);
     hnd(3)  = uicontrol('Style','text','Position',[10 120 120 15], 'String','End extension ', 'Parent',bpanel);
-    hnd(4)  = uicontrol('Style','text','Position',[10  95 120 15], 'String','No. of Begin Windows', 'Parent',bpanel,'tag','WindoBatchOff');
-    hnd(5)  = uicontrol('Style','text','Position',[10  75 120 15], 'String','No. of End Windows', 'Parent',bpanel,'tag','WindoBatchOff');
-    hnd(6)  = uicontrol('Style','text','Position',[10  55 120 15], 'String','Windowing weight', 'Parent',bpanel,'tag','WindoBatchOff');
-    hnd(7)  = uicontrol('Style','PopUpMenu','Position',[130 165 85 20],'String', {'Seconds' 'Percent' ,'P-window'},'Parent',bpanel,'Value',config.batch.WindowMode,'BackGroundColor','w','Callback',{@activate,'config.batch.WindowMode=get(gcbo,''Value'');'},'tag','WindoBatchOff');
+    hnd(4)  = uicontrol('Style','text','Position',[10  95 120 15], 'String','No. of Begin Windows', 'Parent',bpanel);
+    hnd(5)  = uicontrol('Style','text','Position',[10  75 120 15], 'String','No. of End Windows', 'Parent',bpanel);
+    hnd(6)  = uicontrol('Style','text','Position',[10  55 120 15], 'String','Windowing weight', 'Parent',bpanel);
+    hnd(7)  = uicontrol('Style','PopUpMenu','Position',[130 165 85 20],'String', {'Seconds' 'Percent' ,'P-window'},'Parent',bpanel,'Value',config.batch.WindowMode,'BackGroundColor','w','Callback',{@activate,'config.batch.WindowMode=get(gcbo,''Value'');'});
     hnd(8)  = uicontrol('Style','edit','Position',[130 140 50 18], 'String',num2str(config.batch.StartWin),  'Parent',bpanel,'BackGroundColor','w','Callback','config.batch.StartWin  = str2num(get(gcbo,''String''));' );
     hnd(9)  = uicontrol('Style','edit','Position',[130 120 50 18], 'String',num2str(config.batch.StopWin),   'Parent',bpanel,'BackGroundColor','w','Callback','config.batch.StopWin   = str2num(get(gcbo,''String''));' );
     hnd(10) = uicontrol('Style','edit','Position',[130  95 50 18], 'String',num2str(config.batch.nStartWin), 'Parent',bpanel,'BackGroundColor','w','Callback','config.batch.nStartWin = round(str2num(get(gcbo,''String'')));' );
@@ -156,48 +156,38 @@ function advancedKeyPress(source, event)
 
 global config
 
-seisView       = findobj('Tag', 'SeismoFigure', 'Type','figure');
-filter_cboxes  = findobj('Tag', 'check');
-windowBatch    = findobj('Tag', 'WindoBatchOff');
-hfilter        = findobj('Tag', 'hfilter');
-hwindow        = findobj('Tag', 'hwindow');
+seisView   = findobj('type','figure','Tag','SeismoFigure');
+checkboxes = findobj('Tag','check');
+hfilter    = findobj('Tag', 'hfilter');
+hwindow    = findobj('Tag', 'hfilter');
 
-if strcmp( event.Key, 'return') || strcmp( event.Character, 'a')
+if strcmp( event.Key, 'return') && ~isempty(seisView)
     close(source);
-    if ~isempty(seisView)
-        figure(seisView);
-    end
-    
+    figure(seisView);
+elseif strcmp( event.Character, 'a')
+    figure(seisView)
+elseif strcmp( event.Character, 'f')
+
+elseif strcmp( event.Character, 'w')
+    value   = 1 - get( hwindow, 'value');
+    set(hwindow, 'value', value);
+    config.batch.useWindowsInBatch = value;
 else
     switch event.Character
-        
-        case 'f'    % set batch processing filter (like clicking checkbox)
-            value   = 1 - get( hfilter, 'value');
+        case 'f'
+                value   = 1 - get( hfilter, 'value');
             set(hfilter, 'value', value);
             config.batch.useFilterInBatch = value;
             if value == 1;
-                set(filter_cboxes,'Enable','On');
+                set(checkboxes,'Enable','On');
             elseif value == 0;
-                set(filter_cboxes,'Enable','Off');
+                set(checkboxes,'Enable','Off');
             end
-        
-        case 'w'    % set batch processing window (like clicking checkbox)
-            value   = 1 - get( hwindow, 'value');
-            set(hwindow, 'value', value);
-            config.batch.useWindowsInBatch = value;
-            for i=1:length(windowBatch)
-                if value == 1;
-                    set(windowBatch,'Enable','On');
-                elseif value == 0;
-                    set(windowBatch,'Enable','Off');
-                end
-            end
-           
-        case {'0' '1' '2' '3' '4' '5' '6' '7' '8' '9'}  % set individual filters
+        case {'0' '1' '2' '3' '4' '5' '6' '7' '8' '9'}
             if config.batch.useFilterInBatch == 1;
                 value = 1 - get( checkboxes(str2double(event.Character)+1), 'value');
-                set(checkboxes(str2double(event.Character)+1), 'value', value);
                 config.filterset( str2double(event.Character), 5 ) = value;
+                set(checkboxes(str2double(event.Character)+1), 'value', value);
             end
     end
 end

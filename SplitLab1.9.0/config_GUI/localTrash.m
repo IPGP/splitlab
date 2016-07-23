@@ -19,15 +19,12 @@ switch button
             end
         end
 
-        idx = thiseq.index;
+        idx = config.db_index;
         L   = [1:idx-1 idx+1:length(eq)];        
         eq  = eq(L);
-        SL_SeismoViewer(idx)
         
-        databaseViewer = findobj('Type','Figure', 'Name','Database Viewer');
-        if ~isempty(databaseViewer)
-           SL_databaseViewer
-        end
+        SL_SeismoViewer(idx);
+        SL_databaseViewer(idx);
         
     case 'Later'
 end

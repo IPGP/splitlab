@@ -78,6 +78,7 @@ h.cmenu = uicontextmenu;
 h.list = uicontrol(h.dlg, 'style','listbox',...
                           'Position',[40 150 ext(3)+17 figpos(4)-180],...
                           'tag','TableList',...
+                          'enable','on,///
                           'string',[],...
                           'fontname','fixedWidth',...
                           'fontunits','pixel',...
@@ -191,13 +192,10 @@ if strcmp(get(h_dlg,'SelectionType'),'open')
 else
     %%single click
     h_ax            = findobj('Tag','EQmap');
-    %mark            = findobj('Tag','thisEQMarker');
     r_box           = findobj('Tag','ResultsBox');
     config.db_index = val;   % if EQ clicked in table, assign config.de_index
                              % as this is used to show next time this last
     
-    %if ~isempty(mark),  delete(mark); end
-    % set figure UserData to selection index!
     set(h_dlg,'Userdata',val); %for use with split button
 
     % Result display
@@ -249,14 +247,6 @@ global eq config
 % first      : true if this function is called for 1st time, else false
 
 % define EQ-data to be shown in database viewer
-hlist  = findobj('Tag','TableList');
-val    = get(h_list,'Value');
-disp(val);
-string = get(h_list,'String');
-%line   = string(val,:);
-disp(string(val,:));
-
-
 dvec=reshape([eq(:).date], 7, [])';
 indices   = (1:size(dvec,1))';
 
@@ -315,7 +305,7 @@ clear tmpstr
 set(h_list,...
     'String',outstr,...
     'UserData',idx) %update display, Userdata are sort order incices
-%eq=eq(idx);
+eq=eq(idx);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

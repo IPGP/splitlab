@@ -134,7 +134,7 @@ uipushtool(ht,'CData',icon.edit,...
     'BusyAction','Cancel');
 
 uipushtool(ht,'CData',icon.trash,...
-    'TooltipString','delete',...
+    'TooltipString','delete [enf or fn+backspace (Mac)]',...
     'Separator','on',...
     'ClickedCallback',@localTrash);
 
@@ -163,7 +163,7 @@ global thiseq
 %jump close to selected phase
     val  = get(findobj('Tag','PhaseSelector'),'Value');
     t_home = floor(thiseq.phase.ttimes(val)/10)*10 - 30; %~30 seconds before phase; at full 10 seconds
-    xlim([t_home t_home+150]) % timewindow of 150 sec
+    xlim([t_home-40 t_home+210]) % timewindow of 150 sec
 
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
