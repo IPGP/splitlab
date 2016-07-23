@@ -1,4 +1,4 @@
-function splitlab(var_SeismoViewer)
+function splitlab
 % Main window of the SplitLab toolbox, configure the parameters and projects
 % creating the configuration figure of Splitlab
 
@@ -205,41 +205,6 @@ h.menu(14) = uicontrol(...
     'pos',[7 380 106 22],'parent',h.menu(1),'HandleVisibility','off',...
     'Callback','SL_preferences(config);  helpdlg(''Preferences saved to MatLab Preferences!'',''Preferences'')');
 
-
-%% CHANGE READIOBUTTON & SHOWN CONTENT PER CODE (and not click).
-%  doesn't work. When arguement is passed, I want that the main splitlab
-%  window shows the splitoptions, meaning it should be coded that the last
-%  radiobutton is activated and that the correspondent content is shown.
-%  GENERALLY: there seem to be little issues displaing ONLY the content of
-%  the activated radio button, e.g. sometimes one can see the content of
-%  former radio buttons in the panel gaps .. I've no idea what this is
-%  about...
-if nargin==1 %      There is 1 input argument, use function handle
-    if ~isempty( cfg )
-%         figure( cfg );
-%         set(h.menu(1), 'SelectedObject',h.menu(8));
-% 
-%         a=get(h.menu(2),'Userdata');
-%         b=get(h.menu(3),'Userdata');
-%         c=get(h.menu(4),'Userdata');
-%         d=get(h.menu(5),'Userdata');
-%         e=get(h.menu(6),'Userdata');
-%         f=get(h.menu(7),'Userdata');
-%         h=get(h.menu(8),'Userdata');
-% 
-%         set(a,'visible','off');
-%         set(b,'visible','off');
-%         set(c,'visible','off');
-%         set(d,'visible','off');
-%         set(e,'visible','off');
-%         set(f,'visible','off');
-%         set(h,'visible','on');   
-    else 
-        mess = sprintf( '\nMain Splitlab Figure closed. Cannot show splitting options.');
-        warning( mess ); 
-    end
-    return
-end
 drawnow;
 
 

@@ -225,7 +225,7 @@ else
             end
             
         case 'o'
-            splitlab( 'change_radio_button' );
+            splitlab;
         
         case 'p' % polarisation analysis
             if  sum(thiseq.Ppick ~=0)
