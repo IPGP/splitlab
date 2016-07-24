@@ -209,7 +209,6 @@ else
     figure( cfig );
 end
 
-
 %% code radio-button to see split-options
 if nargin == 1
     seisvi = findobj('Tag','ConfigViewer');
@@ -225,10 +224,8 @@ if nargin == 1
         'pos',[10 200 100 30],'parent',radiob,'HandleVisibility','off',...
         'Userdata',panels(1), 'value',1);
     
-    uistack(seisvi, 'top');
     return
 end
-
 
 %% POSTCART or ACKNOWLEDGEMENTS
 % intrestingly, at startup the first value of the random gegenator is often 0.9501

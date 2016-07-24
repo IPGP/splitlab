@@ -195,9 +195,9 @@ else
            
         case {'0' '1' '2' '3' '4' '5' '6' '7' '8' '9'}  % set individual filters
             if config.batch.useFilterInBatch == 1;
-@                value = 1 - get( filter_cboxes(str2double(event.Character)+1), 'value');
+                value = 1 - get( filter_cboxes(str2double(event.Character)+1), 'value');
                 set(filter_cboxes(str2double(event.Character)+1), 'value', value);
-                config.filterset( str2double(event.Character), 5 ) = value;
+                config.filterset( str2double(event.Character),5 ) = value;
             end
     end
 end
