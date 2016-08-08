@@ -1,15 +1,15 @@
-function splitagain % This function automatically measured anisotropic parameters from yet measured data.
+function splitagain 
 
-%% Get through a SplitLab project and recompute the measurements already performed
+% Get through a SplitLab project and recompute the measurements 
+% already performed plots are not redone
 
 global thiseq config eq
 
 
 for i = 1:length(eq)% Loop over each event with result
     if isempty(eq(i).results);
-        
+        % do nothing
     else
-
 		n    = 0;
 		Qmax = -inf;
 		Qsum = 0;
@@ -38,8 +38,7 @@ for i = 1:length(eq)% Loop over each event with result
 			%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			%      BEGIN SPLITTING
 			%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-        	fprintf(' %s -- Estimating event  %s:%4.0f.%03.0f (%.0f/%.0f) --\n',...
+        	fprintf(' %s -- Estimating event %s: %4.0f.%03.0f (%.0f/%.0f) --',...
             	datestr(now,13) , config.stnname, thiseq.date(1), thiseq.date(7),i , length(eq));
 
 			extime    = config.maxSplitTime * 2; % Extend to both sides
@@ -171,7 +170,7 @@ for i = 1:length(eq)% Loop over each event with result
 
         	% POST-PROCESSING
         	M = [ cosd(gamma)  sind(gamma);
-        		-sind(gamma)  cosd(gamma)   ];
+        		 -sind(gamma)  cosd(gamma)   ];
 
         	QTini   = M * [SG, SH]';    %rotating input wave forms
         	QTcorRC = M * SG_SH_corRC'; %rotating corrected wave forms
@@ -233,11 +232,11 @@ for i = 1:length(eq)% Loop over each event with result
                 
     			if strcmp(config.inipoloption, 'fixed')
         			rota     = thiseq.bazi;
-        			gamma    = gamma    + thiseq.bazi;
+        			%gamma    = gamma + thiseq.bazi;
         			allFasts = mod(allFasts + thiseq.bazi,180);
     			else
         			rota     = thiseq.inipol;
-       				gamma    = gamma    + thiseq.inipol;
+       				%gamma    = gamma + thiseq.inipol;
         			allFasts = mod(allFasts + thiseq.inipol,180);
     			end
                 
@@ -245,14 +244,14 @@ for i = 1:length(eq)% Loop over each event with result
      
     			steps             = floor(mod(rota, 180)/config.StepsPhi) ;
     			CmapStack         = circshift(CmapStack, steps);
-    			Ematrix(:,:,2)  = circshift(Ematrix(:,:,2), steps);
+    			Ematrix(:,:,2)    = circshift(Ematrix(:,:,2), steps);
     
     			steps             = floor(mod(thiseq.bazi, 180)/config.StepsPhi) ;
-    			Ematrix(:,:,1)  = circshift(Ematrix(:,:,1), steps);
+    			Ematrix(:,:,1)    = circshift(Ematrix(:,:,1), steps);
 
-    			phiRC(1) = mod(phiRC(1)+rota,180);
-    			phiSC(1) = mod(phiSC(1)+rota,180);
-    			phiEV(1) = mod(phiEV(1)+rota,180);
+%     			phiRC(1) = mod(phiRC(1)+rota,180);    %if uncommented, phi is like srike
+%     			phiSC(1) = mod(phiSC(1)+rota,180);    %if uncommented, must adabt results plot
+%     			phiEV(1) = mod(phiEV(1)+rota,180);
     
     			if phiRC(1)>90, phiRC(1)=phiRC(1)-180;end
     			if phiSC(1)>90, phiSC(1)=phiSC(1)-180;end
@@ -261,33 +260,6 @@ for i = 1:length(eq)% Loop over each event with result
 
  			fprintf(' Phi = %5.1f; %5.1f; %5.1f    dt = %.1f; %.1f; %.1f\n', ...
     				phiRC(1),phiSC(1),phiEV(1), dtRC(1),dtSC(1), dtEV(1));
-            
-        	% ASSIGN RESULTS FIELD TO GLOBAL VARIABLE
-        	% first temporary, since we don't know if results will be used
-        	% Later, within the diagnostic plot, the result may be assigned to the
-        	% permanent eq.results-structure
-        	% See also: saveresult.m
-
-			thiseq.tmpresult.phiRC = phiRC;
-			thiseq.tmpresult.dtRC  = dtRC;
-			thiseq.tmpresult.phiSC = phiSC;
-			thiseq.tmpresult.dtSC  = dtSC;
-			thiseq.tmpresult.phiEV = phiEV;
-			thiseq.tmpresult.dtEV  = dtEV;
-            thiseq.tmpresult.LevelRC = LevelRC;
-            thiseq.tmpresult.LevelSC = LevelSC;
-            thiseq.tmpresult.LevelEV = LevelEV;
-    		thiseq.tmpresult.ErrorSurface = Ematrix;
-            thiseq.tmpresult.ndfSC = ndfSC;
-            thiseq.tmpresult.ndfEV = ndfEV;
-            
-			thiseq.tmpresult.inipol  = thiseq.inipol;
-			thiseq.tmpresult.domfreq = thiseq.domfreq;
-			thiseq.tmpresult.SNR     = SNR;
-
-			%thiseq.tmpresult.Spick   = SpickBest;
-			%thiseq.tmpresult.splitIntens = splitIntens;
-			%thiseq.tmpresult.remark  = '';  %default remark
  
         	% ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         	%    END SPLITTING
@@ -295,26 +267,32 @@ for i = 1:length(eq)% Loop over each event with result
 
 
         	% COPY RESULTS TO PERMANENT "eq" VARIABLE
-	    	eq(i).results(num).phiRC   = thiseq.tmpresult.phiRC;
-	    	eq(i).results(num).dtRC    = thiseq.tmpresult.dtRC;
-	  		eq(i).results(num).phiSC   = thiseq.tmpresult.phiSC;
-	    	eq(i).results(num).dtSC    = thiseq.tmpresult.dtSC;
-	    	eq(i).results(num).phiEV   = thiseq.tmpresult.phiEV;
-	    	eq(i).results(num).dtEV    = thiseq.tmpresult.dtEV;
-            eq(i).results(num).LevelRC = thiseq.tmpresult.LevelRC;
-            eq(i).results(num).LevelSC = thiseq.tmpresult.LevelSC;
-            eq(i).results(num).LevelEV = thiseq.tmpresult.LevelEV;
-            eq(i).results(num).ErrorSurface = thiseq.tmpresult.ErrorSurface;
-            eq(i).results(num).ndfSC   = thiseq.tmpresult.ndfSC;
-            eq(i).results(num).ndfEV   = thiseq.tmpresult.ndfEV;
+	    	eq(i).results(num).strikes      = thiseq.tmpresult.strikes;
+            eq(i).results(num).dips         = thiseq.tmpresult.dips;
+            eq(i).results(num).Q            = thiseq.Q;
+            eq(i).results(num).phiRC        = phiRC;
+	    	eq(i).results(num).dtRC         = dtRC;
+	  		eq(i).results(num).phiSC        = phiSC;
+	    	eq(i).results(num).dtSC         = dtSC;
+	    	eq(i).results(num).phiEV        = phiEV;
+	    	eq(i).results(num).dtEV         = dtEV;
+            eq(i).results(num).LevelRC      = LevelRC;
+            eq(i).results(num).LevelSC      = LevelSC;
+            eq(i).results(num).LevelEV      = LevelEV;
+            eq(i).results(num).ErrorSurface = Ematrix;
+            eq(i).results(num).ndfSC        = ndfSC;
+            eq(i).results(num).ndfEV        = ndfEV;
+            eq(i).results(num).SNR          = SNR;
+    		eq(i).results(num).timestamp    = datestr(now);
+    		eq(i).results(num).gamma        = gamma;
 
-    		eq(i).results(num).timestamp  =  datestr(now);
-            
             % SAVE PROJECT
-            filename = fullfile(config.projectdir,config.project);
+            filename        = fullfile(config.projectdir,config.project);
             config.db_index = thiseq.index;
             save(filename,'eq','config');
 
     	end %Result Loop
     end %empty check 
-end% eq loop
+end % eq loop
+
+disp('Done.');

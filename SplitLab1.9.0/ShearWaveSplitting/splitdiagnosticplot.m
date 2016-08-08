@@ -130,7 +130,7 @@ if strcmpi(config.studytype,'Teleseismic')
         phiEV(1) = mod(phiEV(1) + thiseq.inipol, 180);
     end
     
-    % to shift phis interval from 0...180 to -90...90
+    % to shift phis interval from 0...180 back to -90...90
     if phi > 90
         phi = -180 + phi;
     elseif phi < -90

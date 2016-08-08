@@ -1,5 +1,6 @@
 % Splitlab Configuration GUI helper function
 
+
 %% SetSplitting Options
 
 h.panel(11) = uipanel('Units','pixel','Title','Options for splitting procedures',...
@@ -213,6 +214,7 @@ switch config.inipoloption
         set(i1,'Value',1)
         config.inipoloption = 'fixed';
 end
+
 
 %% Advanced Button
 uicontrol('Style','pushbutton', 'String', 'Advanced...',...

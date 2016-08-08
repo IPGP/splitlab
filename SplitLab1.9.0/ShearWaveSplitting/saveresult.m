@@ -15,39 +15,36 @@ n   = thiseq.resultnumber;
 num = thiseq.index;
 
 %% copy result to permanent "eq" variable
-eq(num).results(n).SplitPhase =  strtrim(thiseq.SplitPhase);
-eq(num).results(n).incline    =  thiseq.selectedinc;
-eq(num).results(n).inipol     =  thiseq.tmpresult.inipol; 
-eq(num).results(n).filter     =  thiseq.filter;
-
-eq(num).results(n).strikes    =  thiseq.tmpresult.strikes;
-eq(num).results(n).dips       =  thiseq.tmpresult.dips;
-eq(num).results(n).phiRC      =  thiseq.tmpresult.phiRC;
-eq(num).results(n).dtRC       =  thiseq.tmpresult.dtRC;
-eq(num).results(n).phiSC      =  thiseq.tmpresult.phiSC;
-eq(num).results(n).dtSC       =  thiseq.tmpresult.dtSC;
-eq(num).results(n).phiEV      =  thiseq.tmpresult.phiEV;
-eq(num).results(n).dtEV       =  thiseq.tmpresult.dtEV;
-eq(num).results(n).SI         =  thiseq.tmpresult.splitIntens;
-
-
-eq(num).results(n).Q          =  thiseq.Q;
-eq(num).results(n).Qstr       =  thiseq.Qstr;
-
-eq(num).results(n).Spick      =  thiseq.tmpresult.Spick;
-eq(num).results(n).SNR        =  thiseq.tmpresult.SNR;
-eq(num).results(n).remark     =  thiseq.tmpresult.remark;
-eq(num).results(n).method     =  config.splitoption;
-eq(num).results(n).timestamp  =  datestr(now);
+eq(num).results(n).SplitPhase   = strtrim(thiseq.SplitPhase);
+eq(num).results(n).incline      = thiseq.selectedinc;
+eq(num).results(n).inipol       = thiseq.tmpresult.inipol; 
+eq(num).results(n).filter       = thiseq.filter;
+eq(num).results(n).strikes      = thiseq.tmpresult.strikes;
+eq(num).results(n).dips         = thiseq.tmpresult.dips;
+eq(num).results(n).phiRC        = thiseq.tmpresult.phiRC;
+eq(num).results(n).dtRC         = thiseq.tmpresult.dtRC;
+eq(num).results(n).phiSC        = thiseq.tmpresult.phiSC;
+eq(num).results(n).dtSC         = thiseq.tmpresult.dtSC;
+eq(num).results(n).phiEV        = thiseq.tmpresult.phiEV;
+eq(num).results(n).dtEV         = thiseq.tmpresult.dtEV;
+eq(num).results(n).SI           = thiseq.tmpresult.splitIntens;
+eq(num).results(n).Q            = thiseq.Q;
+eq(num).results(n).Qstr         = thiseq.Qstr;
+eq(num).results(n).Spick        = thiseq.tmpresult.Spick;
+eq(num).results(n).SNR          = thiseq.tmpresult.SNR;
+eq(num).results(n).remark       = thiseq.tmpresult.remark;
+eq(num).results(n).method       = config.splitoption;
+eq(num).results(n).timestamp    = datestr(now);
+eq(num).results(n).ErrorSurface = thiseq.tmpresult.ErrorSurface;
+eq(num).results(n).ndfSC        = thiseq.tmpresult.ndfSC;
+eq(num).results(n).ndfEV        = thiseq.tmpresult.ndfEV;
 if isfield(thiseq,'Ppick')
     eq(num).Ppick =thiseq.Ppick;
 end
-    if config.saveErrorSurface
-    eq(num).results(n).ErrorSurface=thiseq.tmpresult.ErrorSurface;
-    end
 
 
-%% SAVE FIGURES ==========================================================
+
+%% SAVE FIGURES
 %change here, if you dont like the figure output (resolution etc)
 switch config.exportformat
     case '.ai'
@@ -67,6 +64,8 @@ switch config.exportformat
     case '.tiff'
         option={ '-dtiff', '-r150', '-noui'};
 end
+
+
 %% save results plots
 fname = sprintf('%4.0f.%03.0f.%02.0f_result_%s%s',...
     thiseq.date([1 7 4]), thiseq.SplitPhase, config.exportformat);
@@ -80,10 +79,7 @@ while exist(fullfile(config.savedir, fname),'file') == 2
     No = No+1;
 end
     
-
 print( option{:}, fullfile(config.savedir,fname));
-
-
 eq(num).results(n).resultplot = fname;
 
 
@@ -102,7 +98,7 @@ eq(num).results(n).resultplot = fname;
 %eq(num).results(n).seisplot = '';%fname;
 
 
-%% SAVE DATABASE ===========================================================
+%% SAVE DATABASE 
 filename    = fullfile(config.projectdir,config.project);
 
 config.db_index = thiseq.index;

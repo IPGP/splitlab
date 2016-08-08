@@ -1,6 +1,7 @@
 function splitWolfeSilver
 
-%% Find the mean "phi" and "dt" for a station using the stacking of energy maps (following Wolfe and Silver (1998)).
+%% Find the mean "phi" and "dt" for a station using the 
+%  stacking of energy maps (following Wolfe and Silver (1998)).
 
 global eq config
 
@@ -89,7 +90,7 @@ filename = fullfile(config.projectdir,config.project);
 %config.db_index = thiseq.index;
 save(filename,'config','eq');
 
-fprintf('Wolfe & Silver gives: phi= %5.1f ± %4.1f; dt= %.1f ± %.1f\n', phi,errbar_phi(1),dt,errbar_t(1))
+fprintf('Wolfe & Silver gives: phi= %5.1f ? %4.1f; dt= %.1f ? %.1f\n', phi,errbar_phi(1),dt,errbar_t(1))
 
 %close all;
 
@@ -108,13 +109,14 @@ titlefontsize = fontsize+3;
 axis([0 config.maxSplitTime -90 90])
 set(gca, 'Xtick',linspace(0,config.maxSplitTime,5),'Ytick',-90:30:90, 'xMinorTick','on','yminorTick','on')
 xlabel('delay time (s)', 'Fontsize', fontsize+5)
-ylabel('fast axis (°)', 'Fontsize',fontsize+5)
+ylabel('fast axis (?)', 'Fontsize',fontsize+5)
 title(plot_title,'FontSize',titlefontsize+2);
 set(h,'FaceColor',[1 1 1]*.90,'EdgeColor','k','linestyle','-','linewidth',1.5)
 
 print('-depsc',ofile);
 
-%%
+%% SUBFUNCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function data = inv_f(~, nu2)
 %using tablelook up for finding the Inverse of the F cumulative
 %distribution function. First Degree of Freedom in our case is always 2

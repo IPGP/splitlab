@@ -173,10 +173,9 @@ config.nightstyle  = 1;            % 1 - 'City Nights'
                                    
                                    
 %% default settings of others          
-config.tablesort        = [7, 1];  % [column, order] by which to sort data per default in Database viewer
+config.tablesort        = [7, 1];   % [column, order] by which to sort data per default in Database viewer
 config.db_index         = [];       % let it as it is
 config.isWeiredMAC      = false;
-config.saveErrorSurface = 1;        % keep error surface for stacking
 
 
 %% This program is part of SplitLab

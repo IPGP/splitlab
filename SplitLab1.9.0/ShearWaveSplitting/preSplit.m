@@ -440,7 +440,7 @@ set(sbar,'String','Status: Calculating confidence regions');drawnow
 
 [errbar_phiRC, errbar_tRC, LevelRC] = geterrorbarsRC(QTini(2,w)', CmapStack,           Cresult);
 [errbar_phiSC, errbar_tSC, LevelSC, ndfSC] = geterrorbars(  QTini(2,w)', EmapStack(:,:,1), Eresult(1));
-[errbar_phiEV, errbar_tEV, LevelEV, ~] = geterrorbars(  QTini(2,w)', EmapStack(:,:,2), Eresult(2));
+[errbar_phiEV, errbar_tEV, LevelEV, ndfEV] = geterrorbars(  QTini(2,w)', EmapStack(:,:,2), Eresult(2));
 
 phiRC   = [phiRC   errbar_phiRC(1)];
 dtRC    = [dtRC    errbar_tRC(1)  ];
@@ -522,27 +522,28 @@ end
 
 
 %% Assign results field to global variable
-% first temporary, since we don't know if results will be used
-% Later, within the diagnostic plot, the result may be assigned to the
-% permanent eq.results-structure
+%  first temporary, since we don't know if results will be used
+%  Later, within the diagnostic plot, the result may be assigned to the
+%  permanent eq.results-structure
 %
-% See also: saveresult.m
-thiseq.tmpresult.phiRC = phiRC;
-thiseq.tmpresult.dtRC  = dtRC;
-thiseq.tmpresult.phiSC = phiSC;
-thiseq.tmpresult.dtSC  = dtSC;
-thiseq.tmpresult.phiEV = phiEV;
-thiseq.tmpresult.dtEV  = dtEV;
-thiseq.tmpresult.splitIntens = splitIntens;
-thiseq.tmpresult.inipol  = thiseq.inipol;
-thiseq.tmpresult.SNR     = SNR;
-thiseq.tmpresult.domfreq = thiseq.domfreq;
-thiseq.tmpresult.Spick   = SpickBest;
-thiseq.tmpresult.remark  = '';  %default remark
-if config.saveErrorSurface
-    thiseq.tmpresult.ErrorSurface = Ematrix;
-    thiseq.tmpresult.ndfSC = ndfSC;
-end
+%  SEE: saveresult.m
+thiseq.tmpresult.phiRC        = phiRC;
+thiseq.tmpresult.dtRC         = dtRC;
+thiseq.tmpresult.phiSC        = phiSC;
+thiseq.tmpresult.dtSC         = dtSC;
+thiseq.tmpresult.phiEV        = phiEV;
+thiseq.tmpresult.dtEV         = dtEV;
+thiseq.tmpresult.splitIntens  = splitIntens;
+thiseq.tmpresult.inipol       = thiseq.inipol;
+thiseq.tmpresult.SNR          = SNR;
+thiseq.tmpresult.domfreq      = thiseq.domfreq;
+thiseq.tmpresult.Spick        = SpickBest;
+thiseq.tmpresult.remark       = '';             %default remark
+thiseq.tmpresult.ErrorSurface = Ematrix;
+thiseq.tmpresult.ndfSC        = ndfSC;
+thiseq.tmpresult.ndfEV        = ndfEV;
+thiseq.tmpresult.gamma        = gamma;
+
 
 %% diagnostic plot
 ttime = now;
