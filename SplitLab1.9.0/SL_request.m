@@ -121,7 +121,7 @@ switch config.request.format
         else
             prefix = sprintf('curl --digest --user "%s:%s" -o ',config.request.user,config.request.password);
         end
-        file_name = strcat(config.datadir, 'event_%03d.mseed');
+        file_name = strcat(config.datadir, '/event_%03d.mseed');
         http      = ' "http://ws.resif.fr/fdsnws/dataselect/1/queryauth?network=';
         fmt       = '%4.0f-%02.0f-%02.0fT%02.0f:%02.0f:%02.0f';
         formatstr = [prefix file_name http config.netw '&station=' config.stnname '&starttime=' fmt '&endtime=' fmt '"\n'];

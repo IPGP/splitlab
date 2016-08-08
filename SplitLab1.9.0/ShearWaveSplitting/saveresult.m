@@ -104,6 +104,7 @@ eq(num).results(n).resultplot = fname;
 
 %% SAVE DATABASE ===========================================================
 filename    = fullfile(config.projectdir,config.project);
+
 config.db_index = thiseq.index;
 save(filename,'eq','config');
 

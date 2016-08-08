@@ -197,7 +197,7 @@ else
             if config.batch.useFilterInBatch == 1;
                 value = 1 - get( filter_cboxes(str2double(event.Character)+1), 'value');
                 set(filter_cboxes(str2double(event.Character)+1), 'value', value);
-                config.filterset( str2double(event.Character),5 ) = value;
+                config.filterset( str2double(event.Character)+1 ,5 ) = value;
             end
     end
 end

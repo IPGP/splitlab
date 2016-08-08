@@ -72,7 +72,8 @@ ConfVi = findobj('Tag', 'ConfigViewer','name',['Configure ' config.version]);
 if ~isempty(ConfVi)
     pos = get(ConfVi,'Position');
 else
-    pos = get(0,'DefaultFigurePosition');
+    p     = get(0,'DefaultFigurePosition');
+    p(3:4)=[560 420];
 end
 close(ConfVi);
            
@@ -85,14 +86,16 @@ cfig = figure('name',['Configure ' config.version],...
               'KeyPressFcn', @splitlabKeyPress,...
               'Menubar','none',...
               'NumberTitle','off',...
-              'Position',pos,...
+              'Position', set(gcf,'Position',p,
               'Resize','off',...
               'units','pixel');
 
 
+
+
 %% Main Panels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 load icon.mat ;
-pos = [130 5 425 410];    % for the lines following ..
+pos   = [130 5 425 410];    % for the following lines ..
 
 configpanelGENERAL;
 configpanelSTATION;

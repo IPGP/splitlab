@@ -55,12 +55,20 @@ switch option
             q_auto  = sprintf('%0.4f',old_result.Q);
             q_manu  = old_result.Qstr;
             
+           
+            %%% re-open database if was open
+            databaseViewer = findobj('Name','Database Viewer');
+            if ~isempty(databaseViewer)
+                close(databaseViewer);
+                SL_databaseViewer;
+            end
+            
+            
             %%%%% re-open SeismoViewer if was open before
             if was_handle==1
                 SL_SeismoViewer(config.db_index);
-                databaseViewer = findobj('Name','Database Viewer');
-                uistack(databaseViewer,'top');
             end
+            
             
             %%%%% save project with updated results
             filename    = fullfile( config.projectdir,config.project );

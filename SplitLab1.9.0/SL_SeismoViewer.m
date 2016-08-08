@@ -13,7 +13,6 @@ if isempty(eq)
     return
 end
 
-config.db_index = idx;
 if isfield(thiseq,'SplitPhase')
     oldphase = thiseq.SplitPhase;
 else
@@ -24,6 +23,7 @@ thiseq = [];
 try
     thiseq = eq(idx); %AW; 07.01.06
     thiseq.index=idx;
+    config.db_index = idx;
 catch
     thiseq = eq(1); %AW; 07.01.06
     thiseq.index=1;

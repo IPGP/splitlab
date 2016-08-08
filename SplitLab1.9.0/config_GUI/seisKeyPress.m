@@ -147,7 +147,7 @@ else
         case 'd'
             db_handle = findobj('Name','Database Viewer'); 
             if ~isempty(db_handle); 
-                uistack(db_handle,'top'); 
+                figure(db_handle); 
             else 
                 SL_databaseViewer; 
             end
@@ -224,8 +224,8 @@ else
                 set(button, 'State','Off')
             end
             
-        case 'o'
-            splitlab('change_radio_button');
+%         case 'o'
+%             splitlab('change_radio_button');
         
         case 'p' % polarisation analysis
             if  sum(thiseq.Ppick ~=0)

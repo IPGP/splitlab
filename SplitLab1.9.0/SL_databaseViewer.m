@@ -9,14 +9,13 @@ if isempty(eq)
 end
 
 
-% If there is 1 input argument, use function for variable passed.
-% Like this, one can call 'getThisLineData' from 'seisKeyPress.m' and
-% 'seisFigButtons.m' in order to make databaseViewer show line
-% corresponding to EQ in SeismoViewer ...
+% If eq_index as argument is passed to this script (from 'seisKeyPress.m'
+% or 'seisFigButtons.m'), call 'getThisLineData' to make databaseViewer 
+% show line corresponding to EQ in SeismoViewer ...
 if nargin==1
     handle_h_list = findobj('tag','TableList');
     if ~isempty(handle_h_list);
-        set(handle_h_list,'value',eq_index);    
+        set(handle_h_list,'value', eq_index);  
         getThisLineData(handle_h_list);
     end
     return
@@ -60,16 +59,23 @@ else
     %clf(h.dlg)
     %set(h.dlg,'ResizeFcn','','Position',figpos,'Units','pixel')
     figure(h.dlg)
+    return
 end
 
 %create empty text to get width of text in pixel
-tmp    = uicontrol(h.dlg, 'style','text', 'fontname','fixedWidth', 'fontunits','pixel',...
-                   'FontWeight','bold', 'fontsize',fontsize, 'String',repmat('*',1,sum(strlen)), 'visible','off');
+tmp    = uicontrol(h.dlg, 'style','text', ...
+                          'fontname','fixedWidth', ...
+                          'fontunits','pixel',...
+                          'FontWeight','bold', ...
+                          'fontsize',fontsize, ...
+                          'String',repmat('*',1,sum(strlen)), ...
+                          'visible','off');
 ext    = get(tmp,'extent');
 pos    = get(h.dlg,'Position');
 pos(3) = ext(3)+95;
 set(h.dlg,'Position',pos);
 
+% set default value for list of EQs 'TableList'
 val=config.db_index;
 if val > length(eq)
     val=[];
@@ -155,7 +161,7 @@ h.button5 = uicontrol('Style','checkbox',...
                       'String','EarthViewer',...
                       'pos',[285 8 80 25],...
                       'value', config.showearth,...
-                      'Callback','config.showearth = get(gcbo,''Value''); filename = fullfile(config.projectdir,config.project); save(filename,''eq'',''config''); SL_databaseViewer;');          
+                      'Callback','config.showearth = get(gcbo,''Value''); filename = fullfile(config.projectdir,config.project); save(filename,''eq'',''config''); clear filename; SL_databaseViewer(config.db_index);');          
 
 % for single result
 h.button6 = uicontrol(h.dlg,'style','pushbutton','Position',[ext(3)-60 8 60 25],...
@@ -194,11 +200,23 @@ else
     %%single click
     h_ax            = findobj('Tag','EQmap');
     r_box           = findobj('Tag','ResultsBox');
+    mark            = findobj('Tag','thisEQMarker');
     config.db_index = val;   % if EQ clicked in table, assign config.de_index
                              % as this is used to show next time this last
     
     set(h_dlg,'Userdata',val); %for use with split button
 
+    %%single click
+    h_ax  = findobj('Tag','EQmap');
+    val   = get(h_list,'Value');
+    r_box = findobj('tag','ResultsBox');
+
+    if ~isempty(mark)
+        delete(mark); 
+    end
+    % set figure UserData to selection index!
+    set(h_dlg,'Userdata',val(1)); %for use with split button    
+    
     % Result display
     outstr = [];
     for j = 1:length(val)
@@ -233,6 +251,9 @@ else
     Mw=round([eq(val).Mw]*10)/10;
     if config.showearth
         SL_Earthview([eq(val).lat],[eq(val).long],Mw,[eq(val).depth],reshape([eq(val).date],7,[])');
+    elseif ~config.showearth
+        EViewer = findobj('tag','EarthView');
+        close(EViewer);
     end
 end
 filename = fullfile(config.projectdir,config.project);   
