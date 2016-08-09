@@ -58,8 +58,6 @@ else
 end
 
 
-
-
 %% Phase List on the left
 uicontrol('Units','pixel',...
     'Style','List','Min',1,'Max',20,...
@@ -73,33 +71,40 @@ uicontrol('Units','pixel',...
 %% Pushbuttons
 button1  =  uicontrol('Units','pixel',...
     'Style','pushbutton',...
-    'pos',[110 90 80 20],...
+    'pos',[110 115 80 20],...
     'String', 'Split again',...
-    'Callback','splitagain');
+    'Callback',@questioncallback);
 
 button2  =  uicontrol('Units','pixel',...
     'Style','Pushbutton',...
-    'Position',[110 65 80 20],...
+    'Position',[110 90 80 20],...
     'String', 'Plot',...
     'Callback',@LocalOKCallback);
 
-button3 =  uicontrol('Units','pixel',...
-    'Style','Pushbutton',...
-    'Position',[110 40 80 20],...
-    'String', 'Save Figure',...
-    'Callback',@localSavePicture);
+% button3 =  uicontrol('Units','pixel',...
+%     'Style','Pushbutton',...
+%     'Position',[110 40 80 20],...
+%     'String', 'Save Figure',...
+%     'Callback',@localSavePicture);
 
 button4 =  uicontrol('Units','pixel',...
     'Style','Pushbutton',...
-    'Position',[110 15 80 20],...
+    'Position',[110 65 80 20],...
     'String', 'Stack W&S',...
     'Callback',@(hObject,callbackdata)splitWolfeSilver);
 
-%button4 =  uicontrol('Units','pixel',...
-%    'Style','Pushbutton',...
-%    'Position',[110 115 80 20],...
-%    'String', 'Averaged SI',...
-%    'Callback',@(hObject,callbackdata)splitChevrot);
+button5 =  uicontrol('Units','pixel',...
+   'Style','Pushbutton',...
+   'Position',[110 40 80 20],...
+   'String', 'Stack S&C',...
+   'Callback',@(hObject,callbackdata)splitSilverChan);
+
+button6 =  uicontrol('Units','pixel',...
+   'Style','Pushbutton',...
+   'Position',[110 15 80 20],...
+   'String', 'Stack Chev',...
+   'Callback',@(hObject,callbackdata)splitChevrot);
+
 
 %%
 r1 = uicontrol('Units','pixel',...
@@ -142,8 +147,6 @@ uicontrol('Units','pixel', 'Style','checkbox',...
     'CallBack','W = get(gcbo,''Value'');  setappdata(gcbf,''PlotErrors'',W); clear W');
 
 
-%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 %% Theroretic line GUI section
 HP = uipanel('Units','pixel','Title','Fit to Model', 'FontSize',10,'Position',[220 10 195 360]);
 handles.show=uicontrol('Units','pixel', 'Style','checkbox','Parent',HP,...
@@ -207,12 +210,8 @@ handles.theoLines = [];
 guidata(fig, handles)
 
 
-
-
-
-
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SUBFUNCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function LocalOKCallback(src,evt)
 out = SL_Results_getvalues;
 if isempty(out)
@@ -225,7 +224,7 @@ SL_Results_makeplots(out.good, out.fair, out.poor, out.goodN, out.fairN,  ...
     out.phiEV, out.dtEV, out.Omega, out.inc, out.Phas );
 
 
-%% XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function showlines(scr,evt)
 handles = guidata(gcbf);
 W = get(gcbo,'Value');
@@ -244,7 +243,7 @@ else
 end
 
 
-%% XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function LocalSetColor(src,evt)
 handles = guidata(gcbf);
 
@@ -253,7 +252,7 @@ set(handles.theoLines(:), 'Color', C)
 set(handles.color, 'Userdata', C)
 
 
-%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function LocalSetLineStyle(src,evt)
 handles = guidata(gcbf);
 
@@ -268,7 +267,7 @@ end
 set(handles.style, 'Userdata', str{val})
 
 
-%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function LocalSetLinewidth(src,evt)
 handles = guidata(gcbf);
 
@@ -277,7 +276,7 @@ set(handles.theoLines(:), 'LineWidth', width)
 set(handles.width, 'UserData', width)
 
 
-%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function periodCallback(src,evt)
 handles = guidata(gcbf);
 val =round(get(gcbo, 'Value'));
@@ -291,7 +290,7 @@ if ~isempty(handles.theoLines)
 end
 
 
-%% XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function L1phiCallback(src,evt)
 handles = guidata(gcbf);
 val =round(get(gcbo, 'Value'));
@@ -301,6 +300,8 @@ if ~isempty(handles.theoLines)
     drawTheoreticLines
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function L2phiCallback(src,evt)
 handles = guidata(gcbf);
 val =round(get(gcbo, 'Value'));
@@ -310,6 +311,8 @@ if ~isempty(handles.theoLines)
     drawTheoreticLines
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function L1dtCallback(src,evt)
 handles = guidata(gcbf);
 val =round(get(gcbo, 'Value')*10)/10;
@@ -319,6 +322,8 @@ if ~isempty(handles.theoLines)
     drawTheoreticLines
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function L2dtCallback(src,evt)
 handles = guidata(gcbf);
 val =round(get(gcbo, 'Value')*10)/10;
@@ -329,7 +334,7 @@ if ~isempty(handles.theoLines)
 end
 
 
-%% XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function ExportTheoLines(src,evt)
 global config
 handles = guidata(gcbf);
@@ -360,16 +365,28 @@ disp('Backazimuthal variation successfully exported:')
 disp(fullfile(pathname, filename))
 
 
-%% XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-function localSavePicture(hFig,evt)
-global config thiseq
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% function localSavePicture(hFig,evt)
+% global config thiseq
+% 
+% tit =['Results of ' config.project ];
+% fig = findobj('type', 'figure','Name', tit);
+% 
+% if isempty(fig)
+%     errordlg(['Sorry, no Result Figure found with title:' tit])
+% else
+%     defaultname = [config.project(1:end-4) '_ResultPlot' config.exportformat];
+%     exportfiguredlg(fig, defaultname, config.savedir, config.exportresolution)
+% end
 
-tit =['Results of ' config.project ];
-fig = findobj('type', 'figure','Name', tit);
 
-if isempty(fig)
-    errordlg(['Sorry, no Result Figure found with title:' tit])
-else
-    defaultname = [config.project(1:end-4) '_ResultPlot' config.exportformat];
-    exportfiguredlg(fig, defaultname, config.savedir, config.exportresolution)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function questioncallback(src,evt)
+choice = questdlg('Continue to split again automatically all measurements yet performed for this project?', ...
+	'Split Again', ...
+	'Ok', 'Cancel', 'Cancel');
+
+switch choice
+    case 'Ok'
+        splitagain;
 end
