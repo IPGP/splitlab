@@ -47,7 +47,7 @@ if config.UseHeaderTimes || strcmp(config.FileNameConvention, '*.e; *.n; *.z')
 else % USE FILENAME
 
     switch config.FileNameConvention
-        case 'RDSEED'
+        case 'RDSEED' % should be soft-coded ..
             % '2012.169.20.32.00.0150.YV.EURO.00.BHE.M.SAC'
             %
             % letter position of Component descriptor in filename
@@ -57,58 +57,26 @@ else % USE FILENAME
             %     dot is [5 9 12 15 18 23 26 31 32 36 38]
             %     thus, pos would be 35
             
-            sizeF = size(F);
-            num_rows = sizeF(1);
-            splitArray = {};
-            
-            for row_index = 1:num_rows
-                char_line_of_F = F(row_index,:);
-                cell_of_line   = strsplit(char_line_of_F, {'.',','}, 'CollapseDelimiters',false);
-                splitArray = [splitArray; cell_of_line ];               
-            end
-            
-            FIyyyy = str2num(char(splitArray(:,1)));
-            FIddd  = str2num(char(splitArray(:,2)));
-            FIHH   = str2num(char(splitArray(:,3)));
-            FIMM   = str2num(char(splitArray(:,4)));
-            FISS   = str2num(char(splitArray(:,5)));
-            FIMMMM = str2num(char(splitArray(:,6)));
-            FIsec  = FIMMMM + FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400; 
-            
-%   OLD SOLUTION - JRS 09/2016             
-%             FIyyyy = str2num(F(:,1:4));%#ok
-%             FIddd  = str2num(F(:,6:8));%#ok
-%             FIHH   = str2num(F(:,10:11));%#ok
-%             FIMM   = str2num(F(:,13:14));%#ok
-%             FISS   = str2num(F(:,16:17));%#ok
-%             FIMMMM = str2num(F(:,18:22));%#ok
-%             FIsec  = FIMMMM + FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
+            FIyyyy = str2num(F(:,1:4));%#ok
+            FIddd  = str2num(F(:,6:8));%#ok
+            FIHH   = str2num(F(:,10:11));%#ok
+            FIMM   = str2num(F(:,13:14));%#ok
+            FISS   = str2num(F(:,16:17));%#ok
+            FIMMMM = str2num(F(:,18:22));%#ok
+            FIsec  = FIMMMM + FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
 
             
-        case 'miniSEED'
+        case 'miniSEED' % should be soft-coded ..
             % miniSEED format (with commas)
             % 'TA.ELFS..LHZ.R.2006,123,153619.SAC'
-            
-            sizeF = size(F);
-            num_rows = sizeF(1);
-            splitArray = {};
-            
-            for row_index = 1:num_rows
-                char_line_of_F = F(row_index,:);
-                cell_of_line   = strsplit(char_line_of_F, {'.',','}, 'CollapseDelimiters',false);
-                splitArray = [splitArray; cell_of_line ];               
-            end
-            
-            FIyyyy = str2num(char(splitArray(:,6)));
-            FIddd  = str2num(char(splitArray(:,7)));
-            FFtime = char(splitArray(:,8));       
-            FIHH   = str2num(FFtime(:,1:2));
-            FIMM   = str2num(FFtime(:,3:4));
-            FISS   = str2num(FFtime(:,5:6));
+            FIyyyy = str2num(F(:,18:21));%#ok
+            FIddd  = str2num(F(:,23:25));%#ok
+            FIHH   = str2num(F(:,27:28));%#ok
+            FIMM   = str2num(F(:,29:30));%#ok
+            FISS   = str2num(F(:,31:32));%#ok
             FIsec  = FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
 
-            
-        case 'RHUM-RUM'
+        case 'RHUM-RUM' % should be soft-coded ..
             % miniSEED format (with points) 
             % 'YV.RR39.00.BH1.M.2012.318.221725.SAC' or also
             % 'YV.RUN01.00.BH1.M.2012.318.221725.SAC' ..
@@ -119,8 +87,9 @@ else % USE FILENAME
             
             for row_index = 1:num_rows
                 char_line_of_F = F(row_index,:);
-                cell_of_line   = strsplit(char_line_of_F, '.', 'CollapseDelimiters',false);
-                splitArray = [splitArray; cell_of_line ];               
+                cell_of_line   = strsplit(char_line_of_F, '.');
+                splitArray = [splitArray; cell_of_line ];
+                
             end
             
             FIyyyy = str2num(char(splitArray(:,6)));
@@ -131,13 +100,12 @@ else % USE FILENAME
             FISS   = str2num(FFtime(:,5:6));
             FIsec  = FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
 
-%   OLD SOLUTION - JRS 09/2016           
+%   OLD SOLUTION            
 %             FIyyyy = str2num(F(:,18:21));%#ok
 %             FIddd  = str2num(F(:,23:25));%#ok
 %             FIHH   = str2num(F(:,27:28));%#ok
 %             FIMM   = str2num(F(:,29:30));%#ok
 %             FISS   = str2num(F(:,31:32));%#ok
-
 
         case 'SEISAN' % should be soft-coded ..
             % SEISAN format '2003-05-26-0947-20S.HOR___003_HORN__BHZ__SAC'
@@ -151,7 +119,6 @@ else % USE FILENAME
             FIddd = dayofyear(FIyyyy',FImonth',FIdd')'; %julian Day
             FIsec =  FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
 
-            
         case 'YYYY.JJJ.hh.mm.ss.stn.sac.e'
             %  Format: 1999.136.15.25.00.ATD.sac.z
             FIyyyy = str2num(F(:,1:4));%#ok
@@ -160,7 +127,6 @@ else % USE FILENAME
             FIMM   = str2num(F(:,13:14));%#ok
             FISS   = str2num(F(:,16:17));%#ok
             FIsec  = FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
-        
             
         case 'YYYY.MM.DD.hh.mm.ss.stn.E.sac';
             % Format: 2003.10.07-05.07.15.DALA.sac.z
@@ -173,7 +139,6 @@ else % USE FILENAME
 
             FIddd = dayofyear(FIyyyy',FImonth',FIdd')';%julian Day
             FIsec  =  FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
-       
             
         case 'YYYY.MM.DD-hh.mm.ss.stn.sac.e';
             % Format: 2003.10.07-05.07.15.DALA.sac.z
@@ -186,7 +151,6 @@ else % USE FILENAME
 
             FIddd = dayofyear(FIyyyy',FImonth',FIdd')';%julian Day
             FIsec  =  FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
-        
             
         case 'YYYY_MM_DD_hhmm_stnn.sac.e';
             % Format: 2005_03_02_1155_pptl.sac (LDG/CEA data)
@@ -199,7 +163,6 @@ else % USE FILENAME
             FIddd = dayofyear(FIyyyy',FImonth',FIdd')';%julian Day
             FIsec = FIMM*60 + FIHH*3600 + (FIddd)*86400;
 
-            
         case 'stn.YYMMDD.hhmmss.e'
             % Format: fp2.030723.213056.X (BroadBand OBS data)
             FIyyyy = 2000 + str2num(F(:,5:6));%#ok %only two-digit year identifier => add 2000, assuming no OBS data before 2000
