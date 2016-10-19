@@ -6,7 +6,7 @@
 h.panel(4) = uipanel('Units','pixel','Title','User info','Position',[130 205 425 210], 'BackgroundColor', [224   223   227]/255 , 'Visible','off');
 
 %% field descriptions text
-txt = {'User name:';
+txt = {'Username:';
     'Password:';
     'Institut:';
     'Phone:';
