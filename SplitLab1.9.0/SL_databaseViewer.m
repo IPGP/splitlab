@@ -38,7 +38,7 @@ sortorder = [ 1  2  3  5 %date:  year month day
 %% Database box
 strlen   = [ 0 12  5 11  9 9 9 6  10 10 4];
 fontsize = 12; %pixel
-names    = {'Date','JDay','Time','lat','long','depth','Mw','back-azi','distance','ID'};
+names    = {'Date','JDay','Time','Lat','Long','Depth','Mw','Back-azi','Distance','ID'};
 
 figpos = get(0,'ScreenSize');
 width  = 365*1.5;
