@@ -40,11 +40,15 @@ strlen   = [ 0 12  5 11  9 9 9 6  10 10 4];
 fontsize = 12; %pixel
 names    = {'Date','JDay','Time','Lat','Long','Depth','Mw','Back-azi','Distance','ID'};
 
-figpos = get(0,'ScreenSize');
-width  = 365*1.5;
-xpos   = figpos(3)- figpos(1) - width*2.22;
-ypos   = 70;
-figpos = [xpos ypos width 270];
+if ispref('Splitlab','DB_position')
+    figpos = getpref('Splitlab','DB_position');
+else
+    figpos = get(0,'ScreenSize');
+    width  = 365*1.5;
+    xpos   = figpos(3)- figpos(1) - width*2.22;
+    ypos   = 70;
+    figpos = [xpos ypos width 270];
+end
 
 h.dlg = findobj('Type','Figure', 'Name','Database Viewer');
 if isempty(h.dlg)
@@ -118,7 +122,6 @@ for i=2:length(strlen)
 %set(h.head(i),'callback','');
     x = xy(3)+ x - 4;
 end
-
 delete(tmp)
 set(h.dlg, 'ResizeFcn',@localResizeFcn)
 
@@ -336,7 +339,7 @@ function localResizeFcn(fig,evt)
 set(fig,'Units','pixels');
 figpos = get(fig,'Position');
 if figpos(4) < 200
-    figpos(4) =200;
+    figpos(4) = 200;
     set(fig,'Position',figpos)
 end
 
@@ -350,6 +353,7 @@ for i =u';
 end
 lold   = get(l,'Position');
 set(l,'Position',[lold(1:3) figpos(4)-179]);
+setpref( 'Splitlab','DB_position',figpos );
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
