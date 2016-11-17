@@ -8,7 +8,6 @@ function splitdiagnosticSetHeader(axH, ...
 
 global thiseq config
 
-
 axes(axH);
 
 str11 = sprintf('%4.0f\\circ  (%4.0f\\circ) \\pm%2.0f', strikes(1), phiRC);

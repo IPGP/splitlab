@@ -13,8 +13,13 @@ if nargin==0
 end
 
 if ~isfield(thiseq, 'Spick') || (isempty(thiseq.Spick(1)) && isempty(thiseq.Spick(2)))
-    errordlg('no time window picked for S-phase ... Sorry, can''t split','Error')
-    return
+    try  % permits splitting aven if now window is yet chosen, instead
+         % first Spick window from former measurement (if existent) is used
+        thiseq.Spick = [thiseq.results(1).Spick];
+    catch
+        errordlg('no time window picked for S-phase ... Sorry, can''t split','Error')
+        return
+    end
 end
 
 if  strcmp('Minimum Energy', config.splitoption) &&  strcmp('estimated', config.inipoloption)

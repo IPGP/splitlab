@@ -20,17 +20,22 @@ for i = 1:length(eq)% Loop over each event with result
 
         % READ SEISMOGRAMS AND ROTATE
         thiseq  = readseis3D(config,thiseq); % Get the seismograms (thiseq.Amp)
+        if isequal(thiseq,0);
+            close(gcf);
+            fprintf('No data for project (skip station): %s\n\n', config.project);
+            return;
+        end
 
     	for num=1:length(eq(i).results) % Loop over number of results per event
             
-        	inc     = thiseq.results(num).incline;
-        	M = rot3D(inc, thiseq.bazi); % The rotation matrix
+        	inc = thiseq.results(num).incline;
+        	M   = rot3D(inc, thiseq.bazi); % The rotation matrix
 
         	ZEN = [thiseq.Amp.Vert, thiseq.Amp.East, thiseq.Amp.North]';
         	LQT = M * ZEN; % Rotating from geographical to ray
 
-        	SG = LQT(2,:)'; % Radial trace
-        	SH = LQT(3,:)'; % Transverse trace
+        	SG  = LQT(2,:)'; % Radial trace
+        	SH  = LQT(3,:)'; % Transverse trace
 
         	thiseq.filter  = thiseq.results(num).filter; % Filter parameters (freq. min., freq. max. and poles)
         	thiseq.Spick   = thiseq.results(num).Spick;  % Analysis windoq previously defined by the user
@@ -284,7 +289,7 @@ for i = 1:length(eq)% Loop over each event with result
             eq(i).results(num).ndfEV        = ndfEV;
             eq(i).results(num).SNR          = SNR;
     		eq(i).results(num).timestamp    = datestr(now);
-    		eq(i).results(num).gamma        = gamma;
+            eq(i).results(num).gamma        = gamma;
 
             % SAVE PROJECT
             filename        = fullfile(config.projectdir,config.project);
@@ -295,4 +300,4 @@ for i = 1:length(eq)% Loop over each event with result
     end %empty check 
 end % eq loop
 
-disp('Done.');
+fprintf('Done.\n\n');

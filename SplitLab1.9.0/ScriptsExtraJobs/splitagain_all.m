@@ -5,6 +5,9 @@ target_files = rdir('/Users/john/Dropbox/JOHNS_WORK/programming/splitlab/', '*.p
 
 for s=1:length(target_files)
 	load( char(target_files(s)), '-mat');
-    fprintf('\nWorking on file: %s ...',config.project);    	% display the project name
+    fprintf('Working on file: %s ..\n', config.project);    	% display the project name
     splitagain;
 end
+
+fprintf('Finished splitting again all.\n');
+clear target_files;

@@ -56,6 +56,8 @@ switch splitoption
         Ematrix   = Ematrix(:,:,1);
         optionstr ='Minimum Energy';
         phi       = phiSC(1);
+        dphi      = phiSC(2);
+        strike    = strikes(2);
         dt        = dtSC(1);
         Level     = LevelSC;
         Maptitle  = 'Energy Map of T';
@@ -66,6 +68,8 @@ switch splitoption
         Ematrix   = Ematrix(:,:,2);
         optionstr ='Minimum \lambda1 * \lambda2';
         phi       = phiEV(1);
+        dphi      = phiEV(2);
+        strike    = strikes(3);
         dt        = dtEV(1);
         Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalues \lambda1 * \lambda2';
@@ -76,6 +80,8 @@ switch splitoption
         Ematrix   = Ematrix(:,:,2);
         optionstr = 'Minimum   \lambda2 / \lambda1';
         phi       = phiEV(1);
+        dphi      = phiEV(2);
+        strike    = strikes(3);
         dt        = dtEV(1);
         Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalues \lambda2 / \lambda1';
@@ -86,6 +92,8 @@ switch splitoption
         Ematrix   = Ematrix(:,:,2);
         optionstr = 'Maximum   \lambda1 / \lambda2';
         phi       = phiEV(1);
+        dphi      = phiEV(2);
+        strike    = strikes(3);
         dt        = dtEV(1);
         Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalues \lambda1 / \lambda2';
@@ -96,6 +104,8 @@ switch splitoption
         Ematrix   = Ematrix(:,:,2);
         optionstr ='Minimum  \lambda2';
         phi       = phiEV(1);
+        dphi      = phiEV(2);
+        strike    = strikes(3);
         dt        = dtEV(1);
         Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalue \lambda2';
@@ -105,7 +115,9 @@ switch splitoption
     case 'Eigenvalue: max(lambda1)'
         Ematrix   = Ematrix(:,:,2);
         optionstr = 'Maximum  \lambda1';
+        dphi      = phiEV(2);
         phi       = phiEV(1);
+        strike    = strikes(3);
         dt        = dtEV(1);
         Level     = LevelEV;
         Maptitle  = 'Map of Eigenvalue \lambda1';
@@ -118,16 +130,8 @@ if strcmpi(config.studytype,'Teleseismic')
     yystr= {'E ', 'N '}; 
     if strcmp(config.inipoloption,'fixed')
         B        = mod(           thiseq.bazi,  90);  % backazimuth lines
-        phi      = mod(phi      + thiseq.bazi, 180);  % phi is ~= strike Psi now between 0..180
-        phiRC(1) = mod(phiRC(1) + thiseq.bazi, 180);
-        phiSC(1) = mod(phiSC(1) + thiseq.bazi, 180);
-        phiEV(1) = mod(phiEV(1) + thiseq.bazi, 180);
 	else
         B        = mod(           thiseq.inipol, 90); 
-        phi      = mod(phi      + thiseq.inipol, 180); % phi is ~= strike Psi now betwenn 0..180
-        phiRC(1) = mod(phiRC(1) + thiseq.inipol, 180);
-        phiSC(1) = mod(phiSC(1) + thiseq.inipol, 180);
-        phiEV(1) = mod(phiEV(1) + thiseq.inipol, 180);
     end
     
     % to shift phis interval from 0...180 back to -90...90
@@ -185,7 +189,7 @@ m1 = max(abs( corFSrc(:,1)));
 m2 = max(abs( corFSrc(:,2)));
 plot(t, sig*corFSrc(:,2)/m2, 'r-', t, corFSrc(:,1)/m1, 'b--', 'LineWidth',1);
 xlim([t(1) t(end)])
-title(['Fast (' char([183 183]) ') & shifted Slow (-)'], 'FontSize', titlefontsize);
+title(['Fast (..) & shifted Slow (-)'], 'FontSize', titlefontsize);
 set(gca,'Ytick' , [-1 0 1])
 ylabel('Rotation-Correlation', 'FontSize', titlefontsize)
 
@@ -193,45 +197,56 @@ ylabel('Rotation-Correlation', 'FontSize', titlefontsize)
 % Corrected seismograms
 axes(axRC(2))
 plot(t, QTcorRC(:,2) ,'r-', t, QTcorRC(:,1),'b--', 'LineWidth',1);
-title(['corrected Q(' char([183 183]) ') & T(-)'], 'FontSize', titlefontsize);
+title(['corrected Q (..) & T (-)'], 'FontSize', titlefontsize);
 xlim([t(1) t(end)])
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Particle motion in S plane
+% Surface Particle motion
 axes(axRC(3))
-pts = linspace(phiRC(1)-phiRC(2), phiRC(1)+phiRC(2), 10) /180*pi; 
-Y = sin(pts);
-X = cos(pts);
-fill ([-X fliplr(X) ], [-Y fliplr(Y) ], [1 1 1]*.9, 'LineStyle', 'none' )
 hold on
-X =  sind(gamma);
-Y =  cosd(gamma);
 
-N   = max(abs([SG_SH_corRC(:); SG(w); SH(w)]));
-XX1 = SG_SH_corRC(:,2)/N;
-YY1 = SG_SH_corRC(:,1)/N;
-XX2 = SH(w)/N;
-YY2 = SG(w)/N;
+% errorwedge
+pts = linspace(strikes(1)-phiRC(2), strikes(1)+phiRC(2), 10) /180*pi;
+Y_ew = cos(pts);
+X_ew = sin(pts);
 
-plot( [-X X], [-Y Y],  'k:' ,...
-      XX1   , YY1   ,  'r-',...
-      XX2   , YY2   ,  'b--',  'LineWidth',1);
+% strike line
+X = sind(strikes(1));
+Y = cosd(strikes(1));
 
-xlabel(['\leftarrow ' yystr{1} ' \rightarrow'], 'Fontsize',fontsize-1);
-ylabel(['\leftarrow ' yystr{2} ' \rightarrow'], 'Fontsize',fontsize-1);
-title(['Particle motion before (' char([183 183]) ') & after (-)'],'FontSize',titlefontsize);
+% particle motions
+N = max(abs([SG_SH_corRC(:); SG(w); SH(w)]));   % normalisation factor
+XX1 = SG_SH_corRC(:,2)/N;                       % particle motion X after
+YY1 = SG_SH_corRC(:,1)/N;                       % particle motion Y after
+XX2 = SH(w)/N;                                  % particle motion X before
+YY2 = SG(w)/N;                                  % particle motion Y before
+
+[XX1, YY1] = rot2D(XX1, YY1, -phi);             % rotate particle motions
+[XX2, YY2] = rot2D(XX2, YY2, -phi);             % about phi so it plots correct
+
+% plotting
+line([-1.5 1.5], [0 0],'Color',[1 1 1]*.8, 'LineWidth',0.01)  
+line([0 0], [-1.5 1.5],'Color',[1 1 1]*.8, 'LineWidth',0.01)
+fill ([-X_ew fliplr(X_ew) ], [-Y_ew fliplr(Y_ew) ], [1 1 1]*.9 ,'LineStyle','none' ) % error wedge
+plot( [-X X], [-Y Y], 'k:' ,...                 % black dotted strike line
+      XX1   , YY1   , 'r-',...                  % particle motion after
+      XX2   , YY2   , 'b--', 'LineWidth',1);    % particle motion before
+                         
+% adjust plot
+xlabel(['\leftarrow ' yystr{1} ' \rightarrow'], 'Fontsize', fontsize-1);
+ylabel(['\leftarrow ' yystr{2} ' \rightarrow'], 'Fontsize', fontsize-1);
+title(['Particle motion before (..) & after (-)'], 'FontSize', titlefontsize);
 axis equal
-
-set(gca, 'xlim', [-1.1 1.1], 'ylim', [-1.1   1.1], 'XtickLabel',[], 'YtickLabel',[])
+set(gca, 'xlim', [-1.1 1.1], 'ylim', [-1.1 1.1], 'XtickLabel',[], 'YtickLabel',[])
 set(gca, 'Ytick', get(gca,'Xtick'))
 hold off
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Correlation Map
 axes(axRC(4));
 hold on;
+
+% determine plot variables
 Cmatrix(end+1,:) = Cmatrix(1,:);
 Cmatrix = Cmatrix .^3;
 
@@ -239,35 +254,36 @@ f  = size(Cmatrix);
 ts = linspace(0,maxtime,f(2));
 ps = linspace(-90, 90, f(1));
 
-maxi = max(Cmatrix(:));% allways <=  1 since correlation coeffcient (^5)
-mini = min(Cmatrix(:));% allways >= -1
-maxmin = abs(mini - maxi);% allways between 0 and 2
-
-nb_contours = ceil(( maxmin)*7);
-[~,h] = contourf(ts, ps, -Cmatrix, -[LevelRC LevelRC].^3);
-%faceobjects = get(h,'Children');
-contour(ts, ps, Cmatrix, nb_contours);
+maxi = max(Cmatrix(:));         % allways <=  1 since correlation coeffcient (^5)
+mini = min(Cmatrix(:));         % allways >= -1
+maxmin = abs(mini - maxi);      % allways between 0 and 2
 
 w1 = maxtime*.03; w2 =3.5;
 Xmark = [0    w1 0    ;    maxtime maxtime-w1 maxtime ;   0       w1   0       ;    maxtime    maxtime-w1   maxtime]';
 Ymark = [B-w2 B  B+w2 ;    B-w2    B          B+w2    ;   B-w2-90 B-90 B+w2-90 ;    B-w2-90    B-90         B+w2-90]';
 
-fill(Xmark,Ymark,'k')
+% plotting
+[~,h] = contourf(ts, ps, -Cmatrix, -[LevelRC LevelRC].^3);
+fill(Xmark,Ymark,'k');
+nb_contours = ceil(( maxmin)*7);
+contour(ts, ps, Cmatrix, nb_contours);
 % plot([0 0]+sampling, [B B-90],'k>','markersize',5,'linewidth',1,'MarkerFaceColor','k' )
 % plot([maxtime maxtime]-sampling, [B B-90],'k<','markersize',5,'linewidth',1,'MarkerFaceColor','k' )
-
+plot( allDelays(:,1), allFasts(:,1), 'b.')                              % result markers
+plot( dtRC(1),strikes(1),'bo', dtSC(1),strikes(2),'g+',  dtEV(1),strikes(3),'rx' )
+line([0 config.maxSplitTime], [strikes(1) strikes(1)],'Color',[0 0 1])
 line([dtRC(1) dtRC(1)],[-90 90],'Color',[0 0 1])
-line([0 config.maxSplitTime], [phiRC(1) phiRC(1)],'Color',[0 0 1])
-plot( allDelays(:,1), allFasts(:,1), 'b.')
-plot(dtSC(1),phiSC(1),'m+',  dtEV(1),phiEV(1),'rx' , dtRC(1),phiRC(1),'bo')
+
+% adjust plot
 title('Map of Correlation Coefficient', 'FontSize', titlefontsize);
-    
 set(gca, 'xMinorTick', 'on','yminorTick', 'on')
 axis([0 config.maxSplitTime -90 90])
 xlabel('dt [s]', 'Fontsize',fontsize-1);
-ylabel('\Phi + init.Pol. \sim Strike', 'Fontsize',fontsize-1)
+ylabel('Strike', 'Fontsize',fontsize-1)
 set(h,'FaceColor', [1 1 1]*.90, 'EdgeColor', 'k', 'linestyle', '-', 'linewidth', 1)
 hold off
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,7 +306,7 @@ m2 = max(abs( corFSsc(:,2)));
 plot(t, sig*corFSsc(:,2)/m2 ,'r-', t, corFSsc(:,1)/m1, 'b--', 'LineWidth', 1);
 xlim([t(1) t(end)])
 ylim([-1 1])
-title(['Fast (' char([183 183]) ') & shifted Slow(-)'], 'FontSize', titlefontsize);
+title(['Fast (..) & shifted Slow (-)'], 'FontSize', titlefontsize);
 set(gca, 'Ytick' , [-1 0 1])
 ylabel(optionstr, 'FontSize', titlefontsize)
 
@@ -298,7 +314,7 @@ ylabel(optionstr, 'FontSize', titlefontsize)
 % corrected seismograms (in Ray-system)
 axes(axSC(2))
 plot( t, QTcorSC(:,2) , 'r-', t, QTcorSC(:,1), 'b--', 'LineWidth',1);
-title(['corrected Q(' char([183 183]) ') & T(-)'], 'FontSize', titlefontsize);
+title(['corrected Q (..) & T (-)'], 'FontSize', titlefontsize);
 xlim([t(1) t(end)])
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,35 +322,38 @@ xlim([t(1) t(end)])
 axes(axSC(3))
 hold on
 
-% Errorwedge
-if strcmp(splitoption, 'Minimum Energy')
-    pts = linspace(phiSC(1)-phiSC(2), phiSC(1)+phiSC(2), 10) /180*pi; 
-else
-    pts = linspace(phiEV(1)-phiEV(2), phiEV(1)+phiEV(2), 10) /180*pi;
-end
-Y = sin(pts);
-X = cos(pts);
-fill ([-X fliplr(X) ], [-Y fliplr(Y) ], [1 1 1]*.9 ,'LineStyle','none' )
+% errorwedge
+pts = linspace(strike-dphi, strike+dphi, 10) /180*pi;
+Y_ew = cos(pts);
+X_ew = sin(pts);
 
-% Gamma line
-X = sind(gamma);
-Y = cosd(gamma);
-N = max(abs([SG_SH_corRC(:); SG(w); SH(w)]));
+% strike line
+X = sind(strike);
+Y = cosd(strike);
 
-XX1 = SG_SH_corSC(:,2)/N;
-YY1 = SG_SH_corSC(:,1)/N; 
-XX2 = SH(w)/N;
-YY2 = SG(w)/N;
+% particle motions
+N = max(abs([SG_SH_corRC(:); SG(w); SH(w)]));   % normalisation factor
+XX1 = SG_SH_corSC(:,2)/N;                       % particle motion X after
+YY1 = SG_SH_corSC(:,1)/N;                       % particle motion Y after
+XX2 = SH(w)/N;                                  % particle motion X before
+YY2 = SG(w)/N;                                  % particle motion Y before
 
-plot( [-X X], [-Y Y], 'k:' ,...
-      XX1   , YY1   , 'r-',...
-      XX2   , YY2   , 'b--', 'LineWidth',1);
+[XX1, YY1] = rot2D(XX1, YY1, -phi);             % rotate particle motions
+[XX2, YY2] = rot2D(XX2, YY2, -phi);             % about phi so it plots correct
 
+% plotting
+line([-1.5 1.5], [0 0],'Color',[1 1 1]*.8, 'LineWidth',0.01)  
+line([0 0], [-1.5 1.5],'Color',[1 1 1]*.8, 'LineWidth',0.01)
+fill ([-X_ew fliplr(X_ew) ], [-Y_ew fliplr(Y_ew) ], [1 1 1]*.9 ,'LineStyle','none' ) % error wedge
+plot( [-X X], [-Y Y], 'k:' ,...                 % black dotted strike line
+      XX1   , YY1   , 'r-',...                  % particle motion after
+      XX2   , YY2   , 'b--', 'LineWidth',1);    % particle motion before
+                         
+% adjust plot
 xlabel(['\leftarrow ' yystr{1} ' \rightarrow'], 'Fontsize', fontsize-1);
 ylabel(['\leftarrow ' yystr{2} ' \rightarrow'], 'Fontsize', fontsize-1);
-title(['Particle motion before (' char([183 183]) ') & after (-)'], 'FontSize', titlefontsize);
+title('Particle motion before (..) & after (-)', 'FontSize', titlefontsize);
 axis equal
-
 set(gca, 'xlim', [-1.1 1.1], 'ylim', [-1.1 1.1], 'XtickLabel',[], 'YtickLabel',[])
 set(gca, 'Ytick', get(gca,'Xtick'))
 hold off
@@ -344,6 +363,7 @@ hold off
 axes(axSC(4))
 hold on
 
+% determine plot variables
 Ematrix(end+1,:) = Ematrix(1,:);
 f  = size(Ematrix);
 ts = linspace(0,maxtime,f(2));
@@ -353,23 +373,21 @@ maxi = max(abs(Ematrix(:)));
 mini = min(abs(Ematrix(:)));
 nb_contours = floor((1 - mini/maxi)*7);
 
-[~,h] = contourf(ts,ps,-Ematrix,-[Level Level]);
-contour(ts, ps, Ematrix, nb_contours);
-
-fill(Xmark,Ymark,'k')
-
-%results
-line([0 config.maxSplitTime], [phi phi],'Color',[0 0 1])
+% plotting
+[~,h] = contourf(ts,ps,-Ematrix,-[Level Level]);            % contour maximum
+fill(Xmark,Ymark,'k')                                       % fill contour
+contour(ts, ps, Ematrix, nb_contours);                      % contour rest
+plot( allDelays(:,2), allFasts(:,2), 'r.')                  % result markers
+plot( dtRC(1),strikes(1),'bo', dtSC(1),strikes(2),'g+',  dtEV(1),strikes(3),'rx' )
+line([0 config.maxSplitTime], [strike strike],'Color',[0 0 1])  % lines for result symbol
 line([dt dt],[-90 90],'Color',[0 0 1])
 
-plot( allDelays(:,2), allFasts(:,2), 'r.')
-plot(dtSC(1),phiSC(1),'m+',  dtEV(1),phiEV(1),'rx' , dtRC(1),phiRC(1),'bo')
-
+% adjust plot
 hold off
 axis([0 config.maxSplitTime -90 90])
 set(gca, 'xMinorTick', 'on', 'yminorTick', 'on')
 xlabel('dt [s]', 'FontSize', fontsize-1);
-ylabel('\Phi + init.Pol. \sim Strike', 'FontSize', fontsize-1)
+ylabel('Strike', 'FontSize', fontsize-1)
 title(Maptitle,'FontSize', titlefontsize);
 set(h,'FaceColor',[1 1 1]*.90,'EdgeColor','k','linestyle','-','linewidth',1)
 
@@ -381,10 +399,11 @@ xx  = [0 0 s s]*sampling;
 m = max(abs( QT(:) ));
 yy  = [0 0 m m ];
 tmp = fill(xx, yy, [1 1 1]*.90, 'EdgeColor','None');% Selection marker
-
 hold on
-plot(t2, QT(1,:), 'b--', t2, QT(2,:), 'r-','LineWidth',1)
+plot(t2,QT(1,:),'b--', t2,QT(2,:),'r-', 'LineWidth',1)
 
+
+% phase arrivals
 tt = thiseq.phase.ttimes;
 A  = thiseq.Spick(1)-extime;
 F  = thiseq.Spick(2)+extime;
@@ -395,7 +414,6 @@ yy = repmat(ylim',size(tt));
 plot(T,yy,'m:')
 
 hold off
-
 xlim([t2(1) t2(end)])
 yy = [ylim fliplr(ylim)];
 set(tmp,'yData',yy)

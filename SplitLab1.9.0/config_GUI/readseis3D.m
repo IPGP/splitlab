@@ -22,7 +22,7 @@ nfile = fullfile(config.datadir, thiseq.seisfiles{2});
 zfile = fullfile(config.datadir, thiseq.seisfiles{3});
 
 if any(2 ~= [exist(efile,'file') exist(nfile,'file') exist(zfile,'file')  ])
-    errordlg({'Files do not exist:',efile, nfile, zfile })
+    errordlg({'Files do not exist:',efile, nfile, zfile }, 'Data Error', 'modal')
     out=0;
     return
 end
