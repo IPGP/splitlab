@@ -15,7 +15,8 @@ end
 if ~isfield(thiseq, 'Spick') || (isempty(thiseq.Spick(1)) && isempty(thiseq.Spick(2)))
     try  % permits splitting aven if now window is yet chosen, instead
          % first Spick window from former measurement (if existent) is used
-        thiseq.Spick = [thiseq.results(1).Spick];
+        thiseq.Spick  = thiseq.results(1).Spick;
+        thiseq.filter = thiseq.results(1).filter;
     catch
         errordlg('no time window picked for S-phase ... Sorry, can''t split','Error')
         return
