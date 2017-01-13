@@ -1,0 +1,11 @@
+Here's what I (Rob Porritt) added/changed:
+
+default configs no longer have John's info ;)
+Added config panel to fetch data via irisFetch.m
+  I know you can change the datacenter base, which will allow using more datacenters such as orfeus or geophon
+  I had to adjust the sizing of the config panel for this extra panel
+Added auto-fetching of station coordinates
+added mseed2sac v1 and v2 for file name conventions
+Added a polar plot of split results to splitdiagnostic plots for legacy
+
+
