@@ -130,6 +130,7 @@ else % USE FILENAME
             FIMM   = str2num(FFtime(:,3:4));
             FISS   = str2num(FFtime(:,5:6));
             FIsec  = FISS + FIMM*60 + FIHH*3600 + (FIddd)*86400;
+            disp(FIddd);
 
 %   OLD SOLUTION - JRS 09/2016           
 %             FIyyyy = str2num(F(:,18:21));%#ok
