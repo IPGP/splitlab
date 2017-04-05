@@ -90,7 +90,7 @@ filename = fullfile(config.projectdir,config.project);
 %config.db_index = thiseq.index;
 save(filename,'config','eq');
 
-fprintf('Wolfe & Silver gives: phi= %5.1f +/- %4.1f; dt= %.1fs +/- %.1fs\n', phi,errbar_phi(1),dt,errbar_t(1))
+fprintf('Wolfe & Silver gives: phi= %5.1f??%4.1f; dt= %.1f ? %.1f\n', phi,errbar_phi(1),dt,errbar_t(1))
 
 %close all;
 

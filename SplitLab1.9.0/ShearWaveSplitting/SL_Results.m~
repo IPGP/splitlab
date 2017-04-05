@@ -30,12 +30,8 @@ Plist={'P','Pdiff','PP','PPP','PcP','PcS','ScS','ScP','PS','SP',...
     'S','Sdiff','SS','SKP','PKS','SKS','SKiKS','sSKS','pSKS', ...
     'pP', 'sP', 'pS', 'sS','PKKP', 'PKKS','SKKS', 'SKKP'};
 
-if ispref('Splitlab','RV_figpos')
-    figpos = getpref('Splitlab','RV_figpos');
-else
-    S=get(0,'ScreenSize');
-    figpos = [30 S(4)-450 420 380];
-end
+S=get(0,'ScreenSize');
+figpos = [30 S(4)-450 420 380];
 
 % check if window already open
 fig = findobj('Tag','ResultViewer Options');
@@ -43,7 +39,6 @@ if isempty(fig)
     fig = figure('Position',figpos,...
                  'NumberTitle','on',...
                  'Name','ResultViewer Options',...
-                 'CloseRequestFcn',@my_closereq,...
                  'Tag','ResultViewer Options',...
                  'Toolbar','None',...
                  'menubar','none');
@@ -399,9 +394,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function my_closereq(src,evt)
-    result    = findobj('type','figure', 'Tag','ResultViewer Options');
-    RV_figpos = get(result,'Position');
-    setpref( 'Splitlab','RV_figpos',RV_figpos );
-    delete(result);
-    
-    
+    seismo    = findobj('type','figure', 'Tag','SeismoFigure');
+    SV_figpos = get(seismo,'Position');
+    setpref( 'Splitlab','SV_figpos',SV_figpos );
+    delete(seismo); 

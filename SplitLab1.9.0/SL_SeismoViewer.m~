@@ -89,7 +89,8 @@ seisfig = findobj('Tag', 'SeismoFigure');
 figname = sprintf('SeismoViewer (%.0f/%.0f): start= %.3fHz  stop= %0.2f Hz  Order: %d', config.db_index, length(eq), thiseq.filter);
 
 if isempty(seisfig)
- 
+    
+    
     if ispref('Splitlab','SV_figpos')
         figpos = getpref('Splitlab','SV_figpos');
     else
@@ -105,8 +106,7 @@ if isempty(seisfig)
                      'Renderer', 'Painters',...
                      'ToolBar', 'None',...
                      'Menubar', 'None',...
-                     'CloseRequestFcn',@my_closereq,...
-                     'Tag', 'SeismoFigure',...
+                     'CloseRequestFcn',@my_closereq,...'Tag', 'SeismoFigure',...
                      'Color', 'w',...
                      'Position', figpos,...
                      'Pointer', 'CrossHair', ...
@@ -750,9 +750,10 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function my_closereq(src,evt)
+global config
     seismo    = findobj('type','figure', 'Tag','SeismoFigure');
-    SV_figpos = get(seismo,'Position');
-    setpref( 'Splitlab','SV_figpos',SV_figpos );
+    SM_figpos = get(seismo,'Position');
+    setpref( 'Splitlab','EV_figpos',SM_figpos );
     delete(seismo); 
     
 

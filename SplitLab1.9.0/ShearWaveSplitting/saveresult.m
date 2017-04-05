@@ -41,7 +41,7 @@ eq(num).results(n).ndfEV        = thiseq.tmpresult.ndfEV;
 if isfield(thiseq,'Ppick')
     eq(num).Ppick =thiseq.Ppick;
 end
-
+eq(num).results(n).gamma        = thiseq.tmpresult.gamma;
 
 
 %% SAVE FIGURES

@@ -40,8 +40,8 @@ strlen   = [ 0 12  5 11  9 9 9 6  10 10 4];
 fontsize = 12; %pixel
 names    = {'Date','JDay','Time','Lat','Long','Depth','Mw','Back-azi','Distance','ID'};
 
-if ispref('Splitlab','DB_figpos')
-    figpos = getpref('Splitlab','DB_figpos');
+if ispref('Splitlab','DB_position')
+    figpos = getpref('Splitlab','DB_position');
 else
     figpos = get(0,'ScreenSize');
     width  = 365*1.5;
@@ -353,22 +353,26 @@ for i =u';
 end
 lold   = get(l,'Position');
 set(l,'Position',[lold(1:3) figpos(4)-179]);
+setpref( 'Splitlab','DB_position',figpos );
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function my_closereq(src,evt)
-    database  = findobj('type','figure', 'Name','Database Viewer');
-    earth     = findobj('type','figure', 'tag','EarthView');
+    database = findobj('type','figure', 'Name','Database Viewer');
+    earth    = findobj('type','figure', 'tag','EarthView');
     
-    DB_figpos = get(database,'Position');
-    EV_figpos = get(earth,'Position');
-       
-    setpref( 'Splitlab','DB_figpos',DB_figpos );
-    setpref( 'Splitlab','EV_figpos',EV_figpos );
+    figpos = get(fig,'Position');
+    figpos = get(fig,'Position');
+   
+    
+    setpref( 'Splitlab','DB_position',figpos );
+    setpref( 'Splitlab','DB_position',figpos );
+
+    
+    disp('yes its closing')
 
     delete(earth);
     delete(database);
-    disp('yes its closing')
 %%%if both lines uncommented, when EarthViewer is closed global option is
 %%%changed and dabaseViewer executed to display checkbox correctly
     %config.showearth = false;  

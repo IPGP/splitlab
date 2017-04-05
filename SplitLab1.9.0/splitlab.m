@@ -68,9 +68,9 @@ close(findobj('Tag' ,'EarthView'));
 close(findobj('Tag' ,'SeismoFigure'));  
 close(findobj('Tag' ,'ResultViewer Options'));
 
-ConfVi = findobj('Tag', 'ConfigViewer','name',['Configure ' config.version]);
-if ~isempty(ConfVi)
-    pos = get(ConfVi,'Position');
+ConfVi = findobj('Tag', 'ConfigViewer','Name',['Configure ' config.version]);
+if ispref('Splitlab','CV_figpos')
+    pos = getpref('Splitlab','CV_figpos'); 
 else
     pos = get(0,'DefaultFigurePosition');
 end
@@ -80,9 +80,10 @@ set(0, 'DefaultFigurecolor', [224   223   227]/255 ,...
        'DefaultFigureWindowStyle', 'normal',...
        'DefaultUIControlBackgroundColor', [224   223   227]/255);
 
-cfig = figure('name',['Configure ' config.version],...
+cfig = figure('Name',['Configure ' config.version],...
               'Tag', 'ConfigViewer',...
               'KeyPressFcn', @splitlabKeyPress,...
+              'CloseRequestFcn',@my_closereq,...
               'Menubar','none',...
               'NumberTitle','off',...
               'Position',pos,...
@@ -362,6 +363,14 @@ if strcmp( event.Key, 'o') && ~isempty(seisView)
     uistack(seisView, 'top');
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function my_closereq(src,evt)
+    configv   = findobj('type','figure', 'Tag','ConfigViewer');
+    CV_figpos = get(configv,'Position');
+    setpref( 'Splitlab','CV_figpos',CV_figpos );
+    delete(findall(0,'Type','figure')); 
+    
 
 %% This program is part of SplitLab
 %  2006 Andreas Wuestefeld, Universite de Montpellier, France
