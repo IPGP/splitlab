@@ -29,7 +29,6 @@ if isempty(earth)
     
     if ispref('Splitlab','EV_figpos')
         figpos = getpref('Splitlab','EV_figpos');
-       disp('here')
     else
         figpos = get(0,'ScreenSize');
         width  = 360*1.5; height=180*1.5;
@@ -37,7 +36,7 @@ if isempty(earth)
         ypos   = 70 ;
         figpos = [xpos ypos width height];
     end
-    disp(figpos)
+    
     if length(depth)>1
         depthstr='*';
         magstr ='*';
@@ -542,10 +541,10 @@ SL_Earthview(in{1},in{2},in{3},in{4},in{5})
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function my_closereq(src,evt)
 global config
-    earth = findobj('type','figure', 'Tag','EarthView');
-    figpos_EV = get(earth,'Position');
-    setpref( 'Splitlab','EV_figpos',EV_figp );
-    disp('yes');
+    earth     = findobj('type','figure', 'Tag','EarthView');
+    EV_figpos = get(earth,'Position');
+    setpref( 'Splitlab','EV_figpos',EV_figpos );
+    button  = 
     delete(earth); 
 % if both lines uncommented, when EarthViewer is closed global option is
 % changed and dabaseViewer executed to display checkbox correctly
