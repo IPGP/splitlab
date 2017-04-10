@@ -1,6 +1,9 @@
 # SplitLab
 
-SplitLab is a Matlab based GUI to facilitate the processing of teleseismic shear-wave splitting observations. In contrast to fully automated techniques, SplitLab offers a per-event approach that maintains a user control during the sequence of processing. For more information, see the [SplitLab webpage](http://splitting.gm.univ-montp2.fr/).
+SplitLab is a Matlab based GUI to facilitate the processing of (teleseismic) shear wave splitting observations. In contrast to fully automated techniques, SplitLab offerssa per-event approach that maintains a user control during the sequence of processing. For more information, see the [SplitLab webpage](http://splitting.gm.univ-montp2.fr/).
+
+Please note further that most SKS splitting measurements published can be found at: 
+http://splitting.gm.univ-montp2.fr/ or likewise mirrowed at: https://ds.iris.edu/spud/swsmeasurement
 
 The most recent version, SplitLab1.9.0, works on **Matlab R2015b** and **R2016a**.
 
