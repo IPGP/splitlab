@@ -71,18 +71,20 @@ for i = 1:length(res)% Loop over each event with result
                 end
             end
 
-            out.evt(k)    = eq(num).date(1)*1000 + eq(num).date(7) + eq(num).date(4)/100;
-            out.back(k)   = eq(num).bazi;
+            out.evt(k)       = eq(num).date(1)*1000 + eq(num).date(7) + eq(num).date(4)/100;
+            out.back(k)      = eq(num).bazi;
 
-            out.dtSC(k,:)   = eq(num).results(val).dtSC;
-            out.phiSC(k,:)  = eq(num).results(val).phiSC;
+            out.dtSC(k,:)    = eq(num).results(val).dtSC;
+            out.phiSC(k,:)   = eq(num).results(val).phiSC;
 
-            out.phiRC(k,:)  = eq(num).results(val).phiRC;
-            out.dtRC(k,:)   = eq(num).results(val).dtRC;
+            out.phiRC(k,:)   = eq(num).results(val).phiRC;
+            out.dtRC(k,:)    = eq(num).results(val).dtRC;
 
-            out.phiEV(k,:)  = eq(num).results(val).phiEV;
-            out.dtEV(k,:)   = eq(num).results(val).dtEV;
+            out.phiEV(k,:)   = eq(num).results(val).phiEV;
+            out.dtEV(k,:)    = eq(num).results(val).dtEV;
 
+            out.strikes(k,:) = eq(num).results(val).strikes;
+            
             out.inc(k)   = eq(num).results(val).incline;
             out.Omega(k) = mod(abs(out.phiSC(k)-out.phiRC(k)), 90);
             out.Phas{k}  = eq(num).results(val).SplitPhase;
@@ -91,7 +93,7 @@ for i = 1:length(res)% Loop over each event with result
     end
 end
 
-
+disp(out.strikes)
 
 count = [length(out.good) length(out.fair) length(out.poor) length(out.fairN) length(out.goodN)];
 

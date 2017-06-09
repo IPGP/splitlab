@@ -290,6 +290,7 @@ for i = 1:length(eq)% Loop over each event with result
             eq(i).results(num).SNR          = SNR;
     		eq(i).results(num).timestamp    = datestr(now);
             eq(i).results(num).gamma        = gamma;
+            eq(i).results(num).domfreq      = thiseq.domfreq;
 
             % SAVE PROJECT
             filename        = fullfile(config.projectdir,config.project);

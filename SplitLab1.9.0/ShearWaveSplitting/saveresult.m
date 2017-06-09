@@ -42,7 +42,7 @@ if isfield(thiseq,'Ppick')
     eq(num).Ppick =thiseq.Ppick;
 end
 eq(num).results(n).gamma        = thiseq.tmpresult.gamma;
-
+eq(num).results(n).domfreq      = thiseq.tmpresult.domfreq;
 
 %% SAVE FIGURES
 %change here, if you dont like the figure output (resolution etc)

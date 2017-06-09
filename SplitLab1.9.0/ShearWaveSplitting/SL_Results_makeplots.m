@@ -1,5 +1,5 @@
 function SL_Results_makeplots(good, fair, poor, goodN, fairN, ...
-    evt, back, phiSC, dtSC, phiRC, dtRC, phiEV, dtEV,Omega, inc, Phas)
+    evt, back, strikes, phiSC, dtSC, phiRC, dtRC, phiEV, dtEV, Omega, inc, Phas)
 % PLot results as Misfit, Stereoplot and as function of Back-azimuth
 % pramters are parsed from the dialog created in SL_Results.m
 
@@ -21,13 +21,12 @@ defcol   = get(handles.color, 'UserData');
 defwidth = get(handles.width, 'UserData');
 defstyle = get(handles.style, 'UserData');
 
-
-
+disp(strikes)
 phiErrSC = [phiSC(:,1) phiSC(:,1)]  +  [-phiSC(:,2)    phiSC(:,2)];
 dtErrSC  = [dtSC(:,1)  dtSC(:,1) ]  +  [-dtSC(:, 2)    dtSC(:,2)];
 phiErrRC = [phiRC(:,1) phiRC(:,1)]  +  [-phiRC(:,2)    phiRC(:,2)];
 dtErrRC  = [dtRC(:,1)  dtRC(:,1) ]  +  [-dtRC(:, 2)    dtRC(:,2)];
-phiErrEV = [phiEV(:,1) phiEV(:,1)]  +  [-phiEV(:,2)    phiEV(:,2)];
+strikeErrEV = [strikes(:,3) strikes(:,3)]  +  [-phiEV(:,2)    phiEV(:,2)];
 dtErrEV  = [dtEV(:,1)  dtEV(:,1) ]  +  [-dtEV(:, 2)    dtEV(:,2)];
 
 
@@ -37,13 +36,14 @@ dtErrEV  = [dtEV(:,1)  dtEV(:,1) ]  +  [-dtEV(:, 2)    dtEV(:,2)];
 
 if any(isinf(dtErrSC)); phiErrSC(isinf(phiErrSC)) = sign(phiErrSC(isinf(phiErrSC))) * 90;  end
 if any(isinf(dtErrRC)); phiErrRC(isinf(phiErrRC)) = sign(phiErrRC(isinf(phiErrRC))) * 90;  end
-if any(isinf(dtErrEV)); phiErrEV(isinf(phiErrEV)) = sign(phiErrEV(isinf(phiErrEV))) * 90;  end
-
+if any(isinf(dtErrEV)); strikeErrEV(isinf(strikeErrEV)) = sign(strikeErrEV(isinf(strikeErrEV))) * 90;  end
+disp(strikeErrEV)
 phiErrSC = mod(phiErrSC+90,180)-90; 
 phiErrRC = mod(phiErrRC+90,180)-90;
-phiErrEV = mod(phiErrEV+90,180)-90;
+%strikeErrEV = mod(strikeErrEV+90,180)-90;
 
-
+disp(strikeErrEV)
+disp(good);
 
 phiSC = phiSC(:,1);
 dtSC  = dtSC(:,1);
@@ -55,7 +55,7 @@ dtEV  = dtEV(:,1);
 
 SignRC   = sign(diff(   [phiErrRC(:,1) phiRC phiErrRC(:,2)]   ,1,2));
 SignSC   = sign(diff(   [phiErrSC(:,1) phiSC phiErrSC(:,2)]   ,1,2));
-SignEV   = sign(diff(   [phiErrEV(:,1) phiEV phiErrEV(:,2)]   ,1,2));
+SignEV   = sign(diff(   [strikeErrEV(:,1) strikes(:,3) strikeErrEV(:,2)]   ,1,2));
 
 
 
@@ -172,11 +172,11 @@ if selected.PlotErrors
     end
     plot(xx,yy,'k-' )
 end
-plot (back(poor), phiRC(poor),  poorMarker, 'MarkerSize', 5 )
-plot (back(fair), phiRC(fair),  fairMarker, 'MarkerSize', 5 )
-plot(back(fairN), phiRC(fairN), fairNMarker, 'MarkerSize', 4 )
-plot( back(goodN),phiRC(goodN), goodNMarker,'MarkerSize', 4 )
-plot( back(good), phiRC(good),  goodMarker, 'MarkerSize', 5 )
+plot(back(poor),  phiRC(poor),  poorMarker, 'MarkerSize', 5)
+plot(back(fair),  phiRC(fair),  fairMarker, 'MarkerSize', 5)
+plot(back(fairN), phiRC(fairN), fairNMarker,'MarkerSize', 4)
+plot(back(goodN), phiRC(goodN), goodNMarker,'MarkerSize', 4)
+plot(back(good),  phiRC(good),  goodMarker, 'MarkerSize', 5)
 hold off
 set(gca, 'XMinortick', 'on', 'Xtick', [-0:45:360], 'Ytick', [-90:30:90], 'YMinortick', 'on','FontSize',FontSize)
 
@@ -243,7 +243,7 @@ t(3) = plot(0:359,zeros(1,360),'color', defcol, 'Marker', '.', 'Linewidth',defwi
 if selected.PlotErrors   
     SS  = find(SignEV(:,1)~=SignEV(:,2));
     xx  = [back;back; nan(size(back))];
-    yy  = [phiErrEV nan(size(back))']';
+    yy  = [strikeErrEV nan(size(back))']';
     for jj = 1:length(SS)
         xx = [xx(:,1:SS(jj)-1), xx(:,SS(jj)), xx(:,SS(jj)), xx(:,SS(jj)+1:end) ];
         tmp = yy( :,SS(jj)+1:end);
@@ -260,7 +260,7 @@ plot (back(poor), phiEV(poor), poorMarker, 'MarkerSize', 5 )
 plot (back(fair), phiEV(fair), fairMarker, 'MarkerSize', 5 )
 plot(back(fairN),phiEV(fairN), fairNMarker,'MarkerSize', 4 )
 plot(back(goodN),phiEV(goodN), goodNMarker,'MarkerSize', 4 )
-plot(back(good), phiEV(good),  goodMarker, 'MarkerSize', 5 )
+plot(back(good), strikes(good,3),  goodMarker, 'MarkerSize', 5 )
 hold off
 set(gca, 'XMinortick', 'on', 'Xtick', [-0:45:360], 'Ytick', [-90:30:90], 'YMinortick', 'on','FontSize',FontSize)
 
@@ -309,8 +309,8 @@ t(5) = plot(0:359,zeros(1,360),'color', defcol, 'Marker', '.', 'Linewidth',defwi
 if selected.PlotErrors
     plot([back;back; nan(size(back))],[dtErrSC nan(size(back))']','k-' )
 end
-plot (back(poor), dtSC(poor),  poorMarker, 'MarkerSize', 5 )
-plot( back(fair), dtSC(fair),  fairMarker, 'MarkerSize', 5 )
+plot(back(poor),  dtSC(poor),  poorMarker, 'MarkerSize', 5 )
+plot(back(fair),  dtSC(fair),  fairMarker, 'MarkerSize', 5 )
 plot(back(fairN), dtSC(fairN), fairNMarker,'MarkerSize', 4 )
 plot(back(goodN), dtSC(goodN), goodNMarker,'MarkerSize', 4 );
 plot(back(good),  dtSC(good),  goodMarker, 'MarkerSize', 5 );

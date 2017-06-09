@@ -76,7 +76,7 @@ function SL_writeLogFile(option, config, thiseq)
 
     % actual data
     fields = {...
-       sprintf( '%20s', datestr(thiseq.date(1:6),31)     )   ...    1    Date
+       strrep( sprintf( '%19s', datestr(thiseq.date(1:6), 31)), ' ', '_')   ...    1    Date
        sprintf( '%11s', config.stnname                   )   ...    2    StationName
        sprintf( '%15.4f', config.slat                    )   ...    3
        sprintf( '%15.4f', config.slong                   )   ...    4

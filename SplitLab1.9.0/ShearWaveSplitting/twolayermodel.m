@@ -60,8 +60,7 @@ else
     t0   = atan(num2./denom2);
     dt0  = t0./(pi*freq);
     phi0 = 0.5*alphap./rad+polaz;
-    
-    
+
     
     k = dt0 < 0;
     phi0(k) = phi0(k) + 90;
@@ -73,10 +72,10 @@ else
     phi0 = mod(phi0,180);
     %
     
-    
     phi0 = [phi0(:) phi0(:)-90];
     phi0(phi0>90)=phi0(phi0>90)-180;
     dt0 = dt0(:);
+    
 end
 %
 % d1=abs(diff(mod(phi0,180)));

@@ -366,7 +366,8 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function my_closereq(src,evt)
-    configv   = findobj('type','figure', 'Tag','ConfigViewer');
+    global config
+    configv   = findobj('type','figure', 'Name',['Configure ' config.version]);
     CV_figpos = get(configv,'Position');
     setpref( 'Splitlab','CV_figpos',CV_figpos );
     delete(findall(0,'Type','figure')); 
