@@ -34,7 +34,7 @@ if isempty(earth)
         width  = 360*1.5; height=180*1.5;
         xpos   = figpos(1) + figpos(3) - width*1.05;
         ypos   = 70 ;
-        figpos = [xpos ypos width height];
+        EV_figpos = [xpos ypos width height];
     end
     
     if length(depth)>1
