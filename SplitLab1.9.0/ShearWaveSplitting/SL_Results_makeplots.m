@@ -21,7 +21,7 @@ defcol   = get(handles.color, 'UserData');
 defwidth = get(handles.width, 'UserData');
 defstyle = get(handles.style, 'UserData');
 
-disp(strikes)
+%disp(strikes)
 phiErrSC = [phiSC(:,1) phiSC(:,1)]  +  [-phiSC(:,2)    phiSC(:,2)];
 dtErrSC  = [dtSC(:,1)  dtSC(:,1) ]  +  [-dtSC(:, 2)    dtSC(:,2)];
 phiErrRC = [phiRC(:,1) phiRC(:,1)]  +  [-phiRC(:,2)    phiRC(:,2)];
@@ -37,13 +37,13 @@ dtErrEV  = [dtEV(:,1)  dtEV(:,1) ]  +  [-dtEV(:, 2)    dtEV(:,2)];
 if any(isinf(dtErrSC)); phiErrSC(isinf(phiErrSC)) = sign(phiErrSC(isinf(phiErrSC))) * 90;  end
 if any(isinf(dtErrRC)); phiErrRC(isinf(phiErrRC)) = sign(phiErrRC(isinf(phiErrRC))) * 90;  end
 if any(isinf(dtErrEV)); strikeErrEV(isinf(strikeErrEV)) = sign(strikeErrEV(isinf(strikeErrEV))) * 90;  end
-disp(strikeErrEV)
+%disp(strikeErrEV)
 phiErrSC = mod(phiErrSC+90,180)-90; 
 phiErrRC = mod(phiErrRC+90,180)-90;
 %strikeErrEV = mod(strikeErrEV+90,180)-90;
 
-disp(strikeErrEV)
-disp(good);
+%disp(strikeErrEV)
+%disp(good);
 
 phiSC = phiSC(:,1);
 dtSC  = dtSC(:,1);
