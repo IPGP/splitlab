@@ -13,19 +13,22 @@ config.version='SplitLab1.9.0';
 %  "new_project.pjt" is PREPENDED to pref 'Splitlab','History'. This allows to 
 %  create an if-statement which will run splitlab with the default settings
 %  which serve as template for the new project.
-pjtlist = getpref('Splitlab','History');
-if strcmp( pjtlist{1},'new_project.pjt' )                   
-    setpref( 'Splitlab','History', {pjtlist{2:end}} );      %rm first entry of 'Splitlab','History'
-    pjtlist = getpref('Splitlab','History');                %reset pjtlist
-else
-    try                                     
+try
+    pjtlist = getpref('Splitlab','History');
+    
+    if strcmp( pjtlist{1},'new_project.pjt' )                   
+        setpref( 'Splitlab','History', {pjtlist{2:end}} );      %rm first entry of 'Splitlab','History'
+        pjtlist = getpref('Splitlab','History');                %reset pjtlist    
+    else
         % try to load last project                  
-        load('-mat',pjtlist{1});
-    catch
-        % if fail to load last project, open splitlab with
-        % default settings instead
-        warning( 'No project loaded. Please choose manually or use default settings to create new one !\n' );
+        load('-mat',pjtlist{1});   
     end
+
+catch
+    % if fail to load last project, open splitlab with
+    % default settings instead
+    pjtlist = {};
+    warning( 'No project loaded. Please choose manually or use default settings to create new one !' );
 end
 SL_checkversion
 
