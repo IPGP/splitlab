@@ -29,7 +29,7 @@ switch Answer
         try
             workbar(.1, 'Connecting to http://www.ldeo.columbia.edu/.../qcmt.ndk')
             pause(.7)
-            qcmt=SL_urlread('http://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/NEW_QUICK/qcmt.ndk');
+            qcmt=SL_urlread('https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/NEW_QUICK/qcmt.ndk');
 
             L= length(qcmt)/81/5; %81 characters (including NewLine) and 5 lines per earthquake
             disp([num2str(L) ' earthquakes in the Quick CMT file...'])
