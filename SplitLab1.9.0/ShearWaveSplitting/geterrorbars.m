@@ -69,7 +69,7 @@ F2 = sum(mag.^2);
 F4 = sum(mag.^4);
 
 F2 = F2-.5*mag(1).^2-.5*mag(end).^2;
-F4 = F4-.5*mag(1).^4-.5*mag(end).^4;
+F4 = (4/3)*F4 - mag(1).^4 - mag(end).^4;
 
 % based on theory, the following expression should yield
 % the correct number of degrees of freedom.(see appendix of silver
