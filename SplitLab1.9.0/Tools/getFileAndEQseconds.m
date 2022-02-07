@@ -9,6 +9,16 @@ function [FIsec, FIyyyy, EQsec, Omarker] = getFileAndEQseconds(F,eqin,offset)
 % Windows user can try a renamer , for example 1-4aren (one-for all renamer)
 % http://www.1-4a.com/rename/ perhaps this adress is still valid
 
+%==========================================================================
+% Yvonne Fröhlich (YF), Karlsruhe Institute of Technology (KIT),
+% Email: yvonne.froehlich@kit.edu
+% July-December 2021
+%
+% modifications to fix extraction of start time by SplitLab
+% (unconsidered milliseconds or seconds of start time)
+%
+%==========================================================================
+
 global config
 
 if config.UseHeaderTimes || strcmp(config.FileNameConvention, '*.e; *.n; *.z')
@@ -45,6 +55,11 @@ if config.UseHeaderTimes || strcmp(config.FileNameConvention, '*.e; *.n; *.z')
 
 
 else % USE FILENAME
+
+	% YF add warning 2021/Nov/28
+    msgbox( {'When extracting the \bfstart time\rm from the \bffile name\rm be sure that this time is \bf\itreally\rm the exact \bfstart time\rm of the \bftrace!'}, ...
+            'Check start time' ,'warn', ...
+            struct('WindowStyle',{'modal'},'Interpreter',{'tex'}) );
 
     switch config.FileNameConvention
         case 'RDSEED'
@@ -89,6 +104,11 @@ else % USE FILENAME
             % miniSEED format (with commas)
             % 'TA.ELFS..LHZ.R.2006,123,153619.SAC'
             
+			% YF add warning 2021/Nov/28
+			msgbox( 'Only correct for traces with start times of \bfzero milliseconds\rm!', ...
+                    'Check milliseconds' ,'warn', ...
+                    struct('WindowStyle',{'modal'},'Interpreter',{'tex'}) );
+
             sizeF = size(F);
             num_rows = sizeF(1);
             splitArray = {};
@@ -113,6 +133,11 @@ else % USE FILENAME
             % 'YV.RR39.00.BH1.M.2012.318.221725.SAC' or also
             % 'YV.RUN01.00.BH1.M.2012.318.221725.SAC' ..
             
+			% YF add warning 2021/Nov/28
+			msgbox( 'Only correct for traces with start times of \bfzero milliseconds\rm!', ...
+                    'Check milliseconds' ,'warn', ...
+                    struct('WindowStyle',{'modal'},'Interpreter',{'tex'}) );
+
             sizeF = size(F);
             num_rows = sizeF(1);
             splitArray = {};
@@ -142,6 +167,12 @@ else % USE FILENAME
 
         case 'SEISAN' % should be soft-coded ..
             % SEISAN format '2003-05-26-0947-20S.HOR___003_HORN__BHZ__SAC'
+
+			% YF add warning 2021/Nov/28
+			msgbox( 'Only correct for traces with start times of \bfzero milliseconds\rm!', ...
+                    'Check milliseconds' ,'warn', ...
+                    struct('WindowStyle',{'modal'},'Interpreter',{'tex'}) );
+
             FIyyyy = str2num(F(:,1:4));%#ok
             FImonth= str2num(F(:,6:7));%#ok
             FIdd   = str2num(F(:,9:10));%#ok
@@ -155,6 +186,12 @@ else % USE FILENAME
             
         case 'YYYY.JJJ.hh.mm.ss.stn.sac.e'
             %  Format: 1999.136.15.25.00.ATD.sac.z
+
+			% YF add warning 2021/Nov/28
+			msgbox( 'Only correct for traces with start times of \bfzero milliseconds\rm!', ...
+                    'Check milliseconds' ,'warn', ...
+                    struct('WindowStyle',{'modal'},'Interpreter',{'tex'}) );
+
             FIyyyy = str2num(F(:,1:4));%#ok
             FIddd  = str2num(F(:,6:8));%#ok
             FIHH   = str2num(F(:,10:11));%#ok
@@ -165,6 +202,12 @@ else % USE FILENAME
             
         case 'YYYY.MM.DD.hh.mm.ss.stn.E.sac';
             % Format: 2003.10.07-05.07.15.DALA.sac.z
+
+			% YF add warning 2021/Nov/28
+			msgbox( 'Only correct for traces with start times of \bfzero milliseconds\rm!', ...
+                    'Check milliseconds' ,'warn', ...
+                    struct('WindowStyle',{'modal'},'Interpreter',{'tex'}) );
+
             FIyyyy = str2num(F(:,1:4));%#ok
             FImonth= str2num(F(:,6:7));%#ok
             FIdd   = str2num(F(:,9:10));%#ok
@@ -178,6 +221,12 @@ else % USE FILENAME
             
         case 'YYYY.MM.DD-hh.mm.ss.stn.sac.e';
             % Format: 2003.10.07-05.07.15.DALA.sac.z
+
+			% YF add warning 2021/Nov/28
+			msgbox( 'Only correct for traces with start times of \bfzero milliseconds\rm!', ...
+                    'Check milliseconds' ,'warn', ...
+                    struct('WindowStyle',{'modal'},'Interpreter',{'tex'}) );
+
             FIyyyy = str2num(F(:,1:4));%#ok
             FImonth= str2num(F(:,6:7));%#ok
             FIdd   = str2num(F(:,9:10));%#ok
@@ -191,6 +240,12 @@ else % USE FILENAME
             
         case 'YYYY_MM_DD_hhmm_stnn.sac.e';
             % Format: 2005_03_02_1155_pptl.sac (LDG/CEA data)
+
+			% YF add warning 2021/Nov/28
+			msgbox( 'Only correct for traces with start times of \bfzero seconds\rm!', ...
+                    'Check seconds' ,'warn', ...
+                    struct('WindowStyle',{'modal'},'Interpreter',{'tex'}) );
+
             FIyyyy = str2num(F(:,1:4));%#ok
             FImonth= str2num(F(:,6:7));%#ok
             FIdd   = str2num(F(:,9:10));%#ok
@@ -203,6 +258,13 @@ else % USE FILENAME
             
         case 'stn.YYMMDD.hhmmss.e'
             % Format: fp2.030723.213056.X (BroadBand OBS data)
+
+			% YF add warning 2021/Nov/28
+			msgbox( {'Only correct for traces with start times of \bfzero milliseconds\rm!'; ...
+					'Only correct for \bfyear 2000 or later\rm!'}, ...
+                    'Check milliseconds and year' ,'warn', ...
+                    struct('WindowStyle',{'modal'},'Interpreter',{'tex'}) );
+
             FIyyyy = 2000 + str2num(F(:,5:6));%#ok %only two-digit year identifier => add 2000, assuming no OBS data before 2000
             FImonth= str2num(F(:,7:8));%#ok
             FIdd   = str2num(F(:,9:10));%#ok
