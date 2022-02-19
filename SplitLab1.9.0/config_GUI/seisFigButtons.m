@@ -243,12 +243,12 @@ Amp    = Amp(:,window);
 time   = time(window);
 
 
-if thiseq.system=='ENV'
-    cname ='ENZ';
+if strcmp(thiseq.system,'ENV')
+    cname = 'ENZ';
     cmpinc = [90  90   0];
     cmpaz  = [0   90  90];
-elseif thiseq.system=='LTQ'
-    cname ='LTQ';
+elseif strcmp(thiseq.system,'LTQ')
+    cname = 'QTL';
     cmpinc = [-12345.0 -12345.0 -12345.0];
     cmpaz  = [-12345.0 -12345.0 -12345.0];
 end
