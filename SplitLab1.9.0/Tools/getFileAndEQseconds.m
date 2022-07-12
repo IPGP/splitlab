@@ -10,11 +10,12 @@ function [FIsec, FIyyyy, EQsec, Omarker] = getFileAndEQseconds(F,eqin,offset)
 % http://www.1-4a.com/rename/ perhaps this adress is still valid
 
 %==========================================================================
-% Yvonne Fröhlich (YF), Karlsruhe Institute of Technology (KIT),
-% Email: yvonne.froehlich@kit.edu
 % July-December 2021
-%
-% modifications to fix extraction of start time by SplitLab
+% Yvonne Fröhlich (YF), Karlsruhe Institute of Technology (KIT),
+% ORCID: 0000-0002-8566-0619
+% Email: yvonne.froehlich@kit.edu
+% GitHub: https://github.com/yvonnefroehlich/SplitLab-TemporalAlignment
+% => modifications to fix extraction of start time by SplitLab
 % (unconsidered milliseconds or seconds of start time)
 %
 %==========================================================================
